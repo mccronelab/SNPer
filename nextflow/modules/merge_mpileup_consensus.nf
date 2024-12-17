@@ -1,4 +1,6 @@
 process MERGE_MPILEUP_CONSENSUS {
+    publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy'
+
     input:
         path reference_genome
         tuple val(key), path(bam_A), path(bam_A_index), path(bam_B), path(bam_B_index)
