@@ -1,4 +1,5 @@
 process FASTQC {
+    publishDir = "${output_dir}/fastqc/", mode: 'copy'
     container = "staphb/fastqc:latest"
 
     input:

@@ -4,7 +4,7 @@ process BWA_MEM {
     input:
         path reference
         val suffix
-        tuple val(key), path(reads_1), path(reads_2)
+        tuple val(key), path(paired_reads)
 
     output:
         tuple val(key), path("*.sam")
@@ -12,6 +12,6 @@ process BWA_MEM {
     script:
     """
     bwa index ${reference}
-    bwa mem -o ${key}${suffix}.sam ${reference} ${reads_1} ${reads_2}
+    bwa mem -o ${key}${suffix}.sam ${reference} ${paired_reads}
     """
 }

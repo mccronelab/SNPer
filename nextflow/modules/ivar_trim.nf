@@ -1,5 +1,5 @@
 process IVAR_TRIM {
-    container = "staphb/ivar:latest"
+    //container = "staphb/ivar:latest"
 
     input:
         tuple val(key), path(sorted_bam), path(bam_index)
@@ -10,6 +10,6 @@ process IVAR_TRIM {
 
     script:
     """
-    ivar trim -i ${sorted_bam} -b ${primer_bedfile} -p ${sorted_bam.baseName}.primertrim.bam
+    ivar trim -i ${sorted_bam} -b ${primer_bedfile} -p ${sorted_bam.simpleName}.primertrim.bam
     """
 }
