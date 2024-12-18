@@ -10,8 +10,8 @@ process BWA_MEM {
         tuple val(key), path("*.sam")
 
     script:
-    """
-    bwa index ${reference}
-    bwa mem -o ${key}${suffix}.sam ${reference} ${paired_reads}
-    """
+        """
+        bwa index ${reference}
+        bwa mem -o ${key}${suffix}.sam ${reference} ${paired_reads}
+        """
 }

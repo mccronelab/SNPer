@@ -1,4 +1,4 @@
-# SNPer v0.1.0-Alpha
+# SNPer v0.1.1-Alpha
 
 ## Description
 
@@ -15,12 +15,23 @@ This is the initial version of SNPer. Heavily based on the Lauring Lab's VOC tra
 - min_depth: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
 
 ## Changelog
-- Add process for FASTQC quality control
-- Add process for BWA mem reference alignment
-- Add workflow that manages consensus sequence generation
-- Add main.nf
 
+### v0.1.1-Alpha
 
-### v0.1.0
+- Remove unncessary equal signs from all process directives
+- Add publishDir directive to process that generates consensus
+- Correct error in changelog item placement
+- Change `primer_bedfile` in `main.nf` to be an instance of a file, rather than a Channel of Paths. As a result, it can be provided to more than a single process.
+
+### v0.1.0-Alpha
 
 - Add README.md
+- Add process that generates FASTQC quality reports.
+- Add process that aligns reads to reference genome with BWA mem.
+- Add process that filters, sorts, and indexes BAM files with samtools.
+- Add process that uses iVar trim to remove primers from reads.
+- Add process that sorts BAM files with Picard.
+- Add process that gets coverage information with samtools.
+- Adds process that runs samtools merge and mpileup, then generates consensus with iVar consensus.
+- Add workflow that manages consensus sequence generation.
+- Add main.nf
