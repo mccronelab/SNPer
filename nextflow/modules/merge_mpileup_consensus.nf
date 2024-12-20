@@ -6,7 +6,7 @@ process MERGE_MPILEUP_CONSENSUS {
         tuple val(key), path(bam_A), path(bam_A_index), path(bam_B), path(bam_B_index)
 
     output:
-        path "${key}.fa"
+        tuple val(key), path("${key}.fa")
 
     script:
     """
