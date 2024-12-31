@@ -1,4 +1,4 @@
-process BWA_ALIGN_FILTER_SORT {
+process BWA_MEM_FILTER_SORT {
     input:
         tuple val(key), path(consensus_seq), path(consensus_bwt)
         path primer_fasta
