@@ -13,6 +13,7 @@ workflow {
     primer_bed = file(params.primer_bedfile)
     primer_fasta = file(params.primer_fasta)
     primer_pairs = file(params.primer_pair_tsv)
+    primer_info = file(params.primer_info_tsv)
 
     // produces a triple channel with key, path(read1), path(read2)
     // key is shared text between base names of path(read1) and path(read2)
@@ -23,6 +24,6 @@ workflow {
     // tuple (consensus_name, consensus.fasta)
     consensus_seqs = CONSENSUS_GEN(reference_fasta, techinal_rep_A, techinal_rep_B, primer_bed)
 
-    CALL_VARIANTS_IVAR(reference_fasta, reference_gff, primer_bed, primer_pairs, primer_fasta, consensus_seqs)
+    CALL_VARIANTS_IVAR(reference_fasta, reference_gff, primer_bed, primer_pairs, primer_fasta, primer_info, consensus_seqs)
 
 }
