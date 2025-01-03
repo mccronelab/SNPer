@@ -11,6 +11,6 @@ process MERGE_MPILEUP_CONSENSUS {
     script:
     """
     samtools merge ${key}_merged.bam ${bam_A} ${bam_B}
-    samtools mpileup -a -A -d 100000 -Q 0 --reference ${reference_genome} ${key}_merged.bam | ivar consensus -p ${key}.fasta -n N -q ${params.min_qual_score} -t ${params.consensus_threshold} -m ${params.min_depth}
+    samtools mpileup -a -A -d 100000 -Q 0 --reference ${reference_genome} ${key}_merged.bam | ivar consensus -p ${key}.fasta -n N -q ${params.consensus_min_qual_score} -t ${params.consensus_threshold} -m ${params.consensus_min_depth}
     """
 }

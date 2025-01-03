@@ -3,6 +3,8 @@ include { BWA_MEM_FILTER_SORT } from "../modules/bwa_mem_filter_sort"
 include { BAM_TO_BED } from '../modules/bam_to_bed'
 include { CALL_PRIMER_VARIANTS } from '../modules/call_primer_variants'
 include { MASK_PRIMERS } from '../modules/mask_primers.nf'
+include { REMOVE_MASKED_SORT_INDEX } from '../modules/remove_masked_sort_index'
+include { CALL_MASKED_VARIANTS } from '../modules/call_masked_variants'
 
 workflow CALL_VARIANTS_IVAR {
     take:
@@ -36,12 +38,16 @@ workflow CALL_VARIANTS_IVAR {
         // tuple (key: consensus_name, mismatches.tsv, primer_bed)
         mismatches_and_beds = CALL_PRIMER_VARIANTS(bams_and_beds, consensus_seq)
 
+        // tuple (key: consensus_name, masked_primers.txt)
         masks = MASK_PRIMERS(mismatches_and_beds, primer_info)
+        // tuple (key: consensus_name, masked_primers.txt, primers.bam)
+        masks_and_bams = masks.join(primer_bams)
+        // tuple (key: consensus_name, masked.bam, masked.bam.bai)
+        masked_reads_removed = REMOVE_MASKED_SORT_INDEX(masks_and_bams, primer_bed)
+        masked_reads_removed_consensus = masked_reads_removed.join(consensus_seq)
 
-        
-
-
-
+        // tuple (key: consensus_name, )
+        called_variants = CALL_MASKED_VARIANTS(masked_reads_removed_consensus, reference_gff)
 
     emit:
         variants = called_variants

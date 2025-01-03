@@ -4,7 +4,7 @@ process BWA_MEM_FILTER_SORT {
         path primer_fasta
 
     output:
-        tuple val(consensus_seq.simpleName), path("${consensus_seq.simpleName}_1.bam")
+        tuple val(consensus_seq.simpleName), path("${consensus_seq.simpleName}_*.bam")
 
     script:
     // bwa mem -k: minimum seed length

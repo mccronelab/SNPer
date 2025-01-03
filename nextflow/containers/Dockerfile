@@ -8,4 +8,5 @@ RUN apt-get update && \
     ivar \
     picard-tools \
     bwa \
-    fastqc
+    fastqc \
+    bedtools
