@@ -5,6 +5,14 @@ Standard Nucleotide Pipeline (emerging resource)
 
 This is the initial version of SNPer. Heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
 
+## Testing / dev
+
+```
+nextflow run ./ -profile test
+```
+
+_Requires docker_
+
 ## Parameters (last update: v0.2.0-Alpha)
 
 - reference_fasta: A path to the reference genome for the replicon of interest.

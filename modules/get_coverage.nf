@@ -1,6 +1,5 @@
 process GET_COVERAGE {
     publishDir "${params.output_dir}/consensus_coverage", mode: 'copy'
-    container "staphb/samtools:latest"
 
     input:
         tuple val(key), path(sorted_trimmed_bam), path(bam_index)
