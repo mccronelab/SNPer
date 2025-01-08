@@ -1,4 +1,4 @@
 dev/*
-work/*
-.nextflow/*
+work/**/*
+.nextflow/**/*
 .nextflow*
