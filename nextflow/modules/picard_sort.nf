@@ -7,6 +7,6 @@ process PICARD_SORT {
 
     script:
     """
-    PicardCommandLine SortSam SO=coordinate INPUT=${trimmed_bam} OUTPUT=${trimmed_bam.simpleName}.removed.primertrim.sorted.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true
+    picard SortSam SO=coordinate INPUT=${trimmed_bam} OUTPUT=${trimmed_bam.simpleName}.removed.primertrim.sorted.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true
     """
 }

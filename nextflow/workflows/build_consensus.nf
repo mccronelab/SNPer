@@ -1,50 +1,46 @@
 // This workflow uses BWA mem, samtools, picard, and iVar to build a consensus genome
 
-include { FASTQC as FASTQC_A } from "../modules/fastqc"
-include { FASTQC as FASTQC_B } from "../modules/fastqc"
-include { BWA_MEM as BWA_MEM_A } from "../modules/bwa_mem"
-include { BWA_MEM as BWA_MEM_B } from "../modules/bwa_mem"
-include { FILTER_SORT_INDEX as FILTER_SORT_INDEX_A } from "../modules/filter_sort_index"
-include { FILTER_SORT_INDEX as FILTER_SORT_INDEX_B } from "../modules/filter_sort_index"
-include { IVAR_TRIM as IVAR_TRIM_A } from "../modules/ivar_trim"
-include { IVAR_TRIM as IVAR_TRIM_B } from "../modules/ivar_trim"
-include { PICARD_SORT as PICARD_SORT_A } from "../modules/picard_sort"
-include { PICARD_SORT as PICARD_SORT_B } from "../modules/picard_sort"
-include { GET_COVERAGE as GET_COVERAGE_A } from "../modules/get_coverage"
-include { GET_COVERAGE as GET_COVERAGE_B } from "../modules/get_coverage"
+include { FASTQC} from "../modules/fastqc"
+include { BWA_MEM  } from "../modules/bwa_mem"
+include { FILTER_SORT_INDEX  } from "../modules/filter_sort_index"
+include { IVAR_TRIM  } from "../modules/ivar_trim"
+include { PICARD_SORT  } from "../modules/picard_sort"
+include { GET_COVERAGE  } from "../modules/get_coverage"
 include { MERGE_MPILEUP_CONSENSUS } from "../modules/merge_mpileup_consensus"
 
 workflow CONSENSUS_GEN {
     take:
-        reference_genome // should be a variable or singleton channel with path to reference workflow
-        technical_rep_A
-        technical_rep_B
-        primer_bed
+        samples // tuple (key,[fastq1,fastq2])
 
     main:
+
+        primer_bed = file(params.primer_bed)
+        reference = file(params.reference_fasta)
+
         // each fastqc channel tuple contains a key, [path(read1), path(read2)]
-        FASTQC_A(technical_rep_A)
-        FASTQC_B(technical_rep_B)
+        FASTQC(samples)
+        
+        // TODO add fastp step
 
-        aligned_sam_A = BWA_MEM_A(reference_genome, "_A", technical_rep_A)
-        aligned_sam_B = BWA_MEM_B(reference_genome, "_B", technical_rep_B)
+       bam = samples.map { key, reads -> tuple(key, reads, reference) } 
+        |   BWA_MEM  // (key, path(*sam))
+        |   FILTER_SORT_INDEX // tuple val(key), path("*.sorted.bam"), path("*.bai")
 
-        bam_A = FILTER_SORT_INDEX_A(aligned_sam_A)
-        bam_B = FILTER_SORT_INDEX_B(aligned_sam_B)
+        
+        polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key,sortedBam,bamIndex,primer_bed)} 
+        | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
+        | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
-        prim_trim_bam_A = IVAR_TRIM_A(bam_A, primer_bed)
-        prim_trim_bam_B = IVAR_TRIM_B(bam_B, primer_bed)
+        //TODO remove dups?
 
-        sorted_prim_trim_bam_A = PICARD_SORT_A(prim_trim_bam_A)
-        sorted_prim_trim_bam_B = PICARD_SORT_B(prim_trim_bam_B)
+        GET_COVERAGE(polished_bam)
 
-        GET_COVERAGE_A(sorted_prim_trim_bam_A)
-        GET_COVERAGE_B(sorted_prim_trim_bam_B)
+        paired_replicates = polished_bam
+                            .groupTuple() // [key, [bams], [bais]]
 
-        paired_replicates = sorted_prim_trim_bam_A.join(sorted_prim_trim_bam_B)
 
-        consensus_sequence = MERGE_MPILEUP_CONSENSUS(reference_genome, paired_replicates)
+        consensus_sequence = MERGE_MPILEUP_CONSENSUS(paired_replicates)
 
     emit:
-        consensus = consensus_sequence
+        consensus = consensus_sequence // (key, consensus.fa)
 }

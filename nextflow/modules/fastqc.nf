@@ -7,7 +7,8 @@ process FASTQC {
         tuple val(key), path(paired_reads)
     
     output:
-        tuple val(key), path("*_1_fastqc.zip"), path("*_2_fastqc.zip")
+        tuple val(key), path("*.html"), emit: html
+        tuple val(key), path("*.zip") , emit: zip
 
     script:
         // supplying 2 paths here produces 2 output files

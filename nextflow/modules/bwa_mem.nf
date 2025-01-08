@@ -1,10 +1,8 @@
 process BWA_MEM {
-    container "staphb/bwa:latest"
+    container "quay.io/mccronelab/snper"
 
     input:
-        path reference
-        val suffix
-        tuple val(key), path(paired_reads)
+        tuple val(key), path(paired_reads), path(reference)
 
     output:
         tuple val(key), path("*.sam")
@@ -12,6 +10,6 @@ process BWA_MEM {
     script:
         """
         bwa index ${reference}
-        bwa mem -o ${key}${suffix}.sam ${reference} ${paired_reads}
+        bwa mem -o ${paired_reads[1].simpleName.split("_")[0]}.sam ${reference} ${paired_reads} # assumes nothing after _ is important for meta data
         """
 }
