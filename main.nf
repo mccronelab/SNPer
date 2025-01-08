@@ -19,8 +19,10 @@ workflow {
     samples  = PROCESS_SAMPLE_SHEET(input_ch) //[key, [fastq1,fastq2]]
 
     // tuple (consensus_name, consensus.fasta)
-    CONSENSUS_GEN(samples).view()
+    consensus = CONSENSUS_GEN(samples)
 
-    // CALL_VARIANTS_IVAR(reference_fasta, reference_gff, primer_bed, primer_pairs, primer_fasta, primer_info, consensus_seqs)
+
+    samples_with_consensus = samples.combine(consensus,by:0) //[key, [fastq1,fastq2], consensus]
+    CALL_VARIANTS_IVAR(samples_with_consensus)
 
 }
