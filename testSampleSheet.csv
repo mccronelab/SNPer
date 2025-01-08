@@ -1,0 +1,4 @@
+sample,fastq1,fastq2
+HS10498, ./data/renamed_fastq/HS10498-A_1.fastq.gz, ./data/renamed_fastq/HS10498-A_2.fastq.gz
+HS10498, ./data/renamed_fastq/HS10498-B_1.fastq.gz, ./data/renamed_fastq/HS10498-B_2.fastq.gz
+MHM1600, ./data/renamed_fastq/MHM1600-B_1.fastq.gz, ./data/renamed_fastq/MHM1600-B_2.fastq.gz

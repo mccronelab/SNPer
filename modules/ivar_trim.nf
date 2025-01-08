@@ -1,5 +1,4 @@
 process IVAR_TRIM {
-    //container = "staphb/ivar:latest"
 
     input:
         tuple val(key), path(sorted_bam), path(bam_index), path(primer_bedfile)

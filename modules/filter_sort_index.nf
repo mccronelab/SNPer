@@ -1,5 +1,4 @@
 process FILTER_SORT_INDEX {
-    container "staphb/samtools:latest"
 
     input:
         tuple val(key), path(sam_file)

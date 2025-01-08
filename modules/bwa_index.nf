@@ -1,5 +1,4 @@
 process BWA_MEM {
-    container "staphb/bwa:latest"
 
     input:
         path(reference)

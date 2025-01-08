@@ -1,6 +1,5 @@
 process FASTQC {
     publishDir "${params.output_dir}/fastqc/", mode: 'copy'
-    container "staphb/fastqc:latest"
 
     input:
         // this input pattern matches the output of channel.fromFilePairs()

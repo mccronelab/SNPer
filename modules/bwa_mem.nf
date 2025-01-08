@@ -1,5 +1,4 @@
 process BWA_MEM {
-    container "quay.io/mccronelab/snper"
 
     input:
         tuple val(key), path(paired_reads), path(reference)
