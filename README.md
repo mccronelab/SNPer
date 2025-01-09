@@ -1,9 +1,17 @@
-# SNPer v0.1.1-Alpha
+# SNPer v0.3.0-Alpha
 Standard Nucleotide Pipeline (emerging resource)
 
 ## Description
 
 This is the initial version of SNPer. Heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
+
+## Testing / dev
+
+```
+nextflow run ./ -profile test
+```
+
+_Requires docker_
 
 ## Parameters (last update: v0.2.0-Alpha)
 
@@ -27,6 +35,11 @@ This is the initial version of SNPer. Heavily based on the Lauring Lab's VOC tra
 - Investigate whether the Wuhan01 reference genome GFF file used in the last process of the `call_variants_ivar` workflow (the specific process being `call_masked_variants`) does what we hope it does (accruately describes the ORF boundaries in consensus genomes)
 
 ## Changelog
+### v0.2.0-Alpha
+- refactor workflow to take sample sheet as input
+- one consensus for each sample - one variant tsv for each sequencing library
+- move all files out of `nextflow` directory
+- adds default parameters to the config file
 
 ### v0.2.0-Alpha (WIP)
 - Add workflow that calls variants with iVar (call_variants_ivar).
