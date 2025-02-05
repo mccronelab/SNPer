@@ -1,5 +1,8 @@
 process FASTQC {
     publishDir "${params.output_dir}/fastqc/", mode: 'copy'
+    cpus 1
+    memory 2G
+    time 12.h
 
     input:
         // this input pattern matches the output of channel.fromFilePairs()

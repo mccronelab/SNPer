@@ -1,6 +1,10 @@
 process IVAR_VARIANTS {
     publishDir "${params.output_dir}/variants/", mode: 'copy'
 
+    cpus 1
+    memory 2G
+    time 12.h
+
     input:
         tuple val(key), path(bam) , path(consensus), path(reference_gff)
     output:

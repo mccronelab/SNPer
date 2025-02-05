@@ -1,4 +1,8 @@
 process PICARD_SORT {
+    cpus 1
+    memory 20G
+    time 12.h
+
     input:
         tuple val(key), path(trimmed_bam)
 

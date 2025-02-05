@@ -1,6 +1,10 @@
 process GET_COVERAGE {
     publishDir "${params.output_dir}/consensus_coverage", mode: 'copy'
 
+    cpus 1
+    memory 1G
+    time 1.h
+
     input:
         tuple val(key), path(sorted_trimmed_bam), path(bam_index)
 

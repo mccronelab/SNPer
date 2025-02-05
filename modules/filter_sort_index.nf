@@ -1,4 +1,7 @@
 process FILTER_SORT_INDEX {
+    cpus 1
+    memory 2G
+    time 12.h
 
     input:
         tuple val(key), path(sam_file)

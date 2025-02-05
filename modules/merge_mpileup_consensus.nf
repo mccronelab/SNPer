@@ -1,6 +1,9 @@
 
 process MERGE_MPILEUP_CONSENSUS {
     publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy'
+    cpus 1
+    memory 4G
+    time 12.h
 
     input:
         tuple val(key), path(bams), path(bais)
