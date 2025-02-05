@@ -1,4 +1,4 @@
-# SNPer v0.3.0-Alpha
+# SNPer v0.3.1-Alpha
 Standard Nucleotide Pipeline (emerging resource)
 
 ## Description
@@ -13,15 +13,11 @@ nextflow run ./ -profile test
 
 _Requires docker_
 
-## Parameters (last update: v0.2.0-Alpha)
+## Parameters (last update: v0.3.1-Alpha)
 
 - reference_fasta: A path to the reference genome for the replicon of interest.
 - reference_gff: Path to GFF file describing ORFs on reference genome.
-- fastq_dir: Path to directory containing ALL input FASTQ files. Accepts .gz zipped files.
 - primer_bedfile: Path to .bed file containig ARCTIC primers.
-- primer_pair_tsv: Path to .tsv file where each line has two columns: the left primer and right primer.
-- primer_info_tsv: Path to a different .tsv file where each line has two columns: left primer and right primer.
-- primer_fasta: Path to FASTA file with sequence of each primer.
 - output_dir: Path where output will be stored.
 - consensus_min_qual_score: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - consensus_threshold: Minimum frequency threshold to call consensus (0-1, default 0).
@@ -30,18 +26,31 @@ _Requires docker_
 - variant_min_mapQ: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
 - variant_freq_threshold: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
 
-## Development TODOs
-- Investigate whether using consensus genomes in variant calling process is how this should work (trying the reference Wuhan01 genome, as in the Snakemake workflow, results in errors at `samtools mpileup`)
-- Investigate whether the Wuhan01 reference genome GFF file used in the last process of the `call_variants_ivar` workflow (the specific process being `call_masked_variants`) does what we hope it does (accruately describes the ORF boundaries in consensus genomes)
-
 ## Changelog
-### v0.2.0-Alpha
+
+### v0.3.1-Alpha (commit a9ae099f9ffd8d25649192716b8eab38ee7b0a39)
+- Add default resource allocations to each process based on usage information
+    - bwa_mem.nf
+    - fastqc.nf
+    - filter_sort_index.nf
+    - get_coverage.nf
+    - ivar_variants.nf
+    - merge_mpileup_consensus.nf
+    - picard_sort.nf
+
+- Update bwa_mem.nf to work with MIDGE dataset naming scheme
+- Add SLURM executor profile to nextflow.config
+- Address variable naming conflicts and syntax issues in call_variants_ivar.nf
+- Add file size filtering to call_variants_ivar.nf to remove empty consensus genomes or BAM files from workflow
+- Update README parameters list
+
+### v0.3.0-Alpha
 - refactor workflow to take sample sheet as input
 - one consensus for each sample - one variant tsv for each sequencing library
 - move all files out of `nextflow` directory
 - adds default parameters to the config file
 
-### v0.2.0-Alpha (WIP)
+### v0.2.0-Alpha
 - Add workflow that calls variants with iVar (call_variants_ivar).
     - Add process that maps to a reference, filters and sorts mapped reads (bwa_mem_filter_sort)
     - Add process that generates bwa index, samtools faidx (bwa_samtools_index)
