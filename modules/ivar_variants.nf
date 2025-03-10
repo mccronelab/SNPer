@@ -12,7 +12,7 @@ process IVAR_VARIANTS {
     script:
     """
     samtools sort ${bam} \
-    | samtools mpileup -aa -A -d 100000 -B -Q 0 - \
+    | samtools mpileup -aa -A -d 100000 -Q 0  --reference ${consensus} - \
     | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_min_mapQ} -t ${params.variant_freq_threshold} -r ${consensus} -g ${reference_gff}
     """
 }

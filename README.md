@@ -13,7 +13,7 @@ nextflow run ./ -profile test
 
 _Requires docker_
 
-## Parameters (last update: v0.3.1-Alpha)
+## Parameters (last update: v0.3.0-Alpha)
 
 - reference_fasta: A path to the reference genome for the replicon of interest.
 - reference_gff: Path to GFF file describing ORFs on reference genome.
@@ -25,10 +25,28 @@ _Requires docker_
 - variant_min_qual_score: Minimum score for base to be counted in variant calling. Default to 30.
 - variant_min_mapQ: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
 - variant_freq_threshold: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
+- tiled_amplicons: Boolean variable that indicates whether sequencing data comes from tiled amplicons,
+    which requires additional filtering for primers.
 
 ## Changelog
 
-### v0.3.1-Alpha (commit a9ae099f9ffd8d25649192716b8eab38ee7b0a39)
+### v0.3.0-Alpha
+
+- Add workflow for trimming primers, removing reads with primer mismatches (trim_and_mask).
+    - Add process for aligning FASTA with `bwa mem`, which requires specific seed and threshold settings to work well (align_fasta_filter_sort).
+    - Add process for calling variants (mismatches) on primer sequences (ivar_primer_variants).
+- Update get_coverage process to use variant calling MapQ threshold.
+- Add `--reference` to `samtools mpileup` in ivar_variants and enabled BAQ.
+- Update parameter names in mask_primers to be more informative.
+- Update parameter names in remove_masked_sort_index to be more informative.
+- Refactor build_consensus workflow to emit reads aligned to the consensus, indexes, and the consensus itself. This allows us to potentially go straight to variant calling, for datasets that don't require primer trimming and read removal (tiled amplicon sequencing samples).
+- Rework call_variants_ivar workflow to remove read trimming steps.
+- Add ORF GFF remapping process (liftoff.nf), and add to call_variants_ivar workflow.
+- Create samtools_sort process to replace picard_sort, allowing us to remove a dependency.
+
+
+### v0.2.2-Alpha
+
 - Add default resource allocations to each process based on usage information
     - bwa_mem.nf
     - fastqc.nf
@@ -44,13 +62,21 @@ _Requires docker_
 - Add file size filtering to call_variants_ivar.nf to remove empty consensus genomes or BAM files from workflow
 - Update README parameters list
 
-### v0.3.0-Alpha
+
+### v0.2.1-Alpha
+
 - refactor workflow to take sample sheet as input
 - one consensus for each sample - one variant tsv for each sequencing library
 - move all files out of `nextflow` directory
 - adds default parameters to the config file
 
+<<<<<<< Updated upstream
 ### v0.2.0-Alpha
+=======
+
+### v0.2.0-Alpha
+
+>>>>>>> Stashed changes
 - Add workflow that calls variants with iVar (call_variants_ivar).
     - Add process that maps to a reference, filters and sorts mapped reads (bwa_mem_filter_sort)
     - Add process that generates bwa index, samtools faidx (bwa_samtools_index)

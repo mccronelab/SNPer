@@ -6,13 +6,13 @@ process GET_COVERAGE {
     time 1.h
 
     input:
-        tuple val(key), path(sorted_trimmed_bam), path(bam_index)
+        tuple val(key), path(bam), path(bam_index)
 
     output:
         path "*.csv"
 
     script:
         """
-        samtools depth -a -d 100000 ${sorted_trimmed_bam} > ${sorted_trimmed_bam.baseName}_coverage.csv
+        samtools depth -a -d 100000 ${bam} -Q ${params.variant_min_mapQ} > ${bam.baseName}_coverage.csv
         """
 }

@@ -13,34 +13,37 @@ workflow CONSENSUS_GEN {
         samples // tuple (key,[fastq1,fastq2])
 
     main:
-
         primer_bed = file(params.primer_bed)
         reference = file(params.reference_fasta)
+
+        samples.view()
 
         // each fastqc channel tuple contains a key, [path(read1), path(read2)]
         FASTQC(samples)
         
         // TODO add fastp step
 
-       bam = samples.map { key, reads -> tuple(key, reads, reference) } 
-        |   BWA_MEM  // (key, path(*sam))
-        |   FILTER_SORT_INDEX // tuple val(key), path("*.sorted.bam"), path("*.bai")
+        bam = samples.map { key, reads -> tuple(key, reads, reference) } 
+          | BWA_MEM  // (key, path(*sam))
+          | FILTER_SORT_INDEX // tuple val(key), path("*.sorted.bam"), path("*.bai")
 
         
-        polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key,sortedBam,bamIndex,primer_bed)} 
-        | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
-        | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
+        polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key, sortedBam, bamIndex, primer_bed)} 
+          | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
+          | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
-        //TODO remove dups?
+        consensus_sequence = polished_bam.groupTuple() // [key, [bams], [bais]]
+          | MERGE_MPILEUP_CONSENSUS
 
-        GET_COVERAGE(polished_bam)
+        variant_bam = samples.join(consensus_sequence) // key, [reads], consensus
+          | BWA_MEM // key, sams
+          | FILTER_SORT_INDEX // key, sorted bam, index
 
-        paired_replicates = polished_bam
-                            .groupTuple() // [key, [bams], [bais]]
+        GET_COVERAGE(variant_bam)
 
-
-        consensus_sequence = MERGE_MPILEUP_CONSENSUS(paired_replicates)
+        // BWA_MEM() doesn't output the consensus, so we rejoin it
+        variant_bam_consensus = variant_bam.join(consensus_sequence) // key, sorted bam, index, consensus
 
     emit:
-        consensus = consensus_sequence // (key, consensus.fa)
+        reads_and_consensus = variant_bam_consensus // (key, sorted bam, bam index, consensus.fa)
 }

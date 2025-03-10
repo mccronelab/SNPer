@@ -1,6 +1,7 @@
 include { CONSENSUS_GEN } from "./workflows/build_consensus"
 include { CALL_VARIANTS_IVAR } from './workflows/call_variants_ivar'
-include {PROCESS_SAMPLE_SHEET} from './workflows/process_sample_sheet'
+include { TRIM_AND_MASK } from './workflows/trim_and_mask'
+include { PROCESS_SAMPLE_SHEET } from './workflows/process_sample_sheet'
 
 nextflow.enable.dsl=2
 // strict mode: https://www.nextflow.io/docs/latest/reference/feature-flags.html#config-feature-flags
@@ -19,10 +20,12 @@ workflow {
     samples  = PROCESS_SAMPLE_SHEET(input_ch) //[key, [fastq1,fastq2]]
 
     // tuple (consensus_name, consensus.fasta)
-    consensus = CONSENSUS_GEN(samples)
+    aligned_reads_and_consensus = CONSENSUS_GEN(samples)
 
+    if (params.tiled_amplicons == true) {
+        aligned_reads_and_consensus = TRIM_AND_MASK(aligned_reads_and_consensus)
+    }
 
-    samples_with_consensus = samples.combine(consensus,by:0) //[key, [fastq1,fastq2], consensus]
-    CALL_VARIANTS_IVAR(samples_with_consensus)
+    CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
 
 }
