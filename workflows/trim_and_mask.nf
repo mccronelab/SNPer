@@ -20,11 +20,11 @@ workflow TRIM_AND_MASK {
         reference_primers_fasta = file(params.primers_fasta)
         primer_pairs = file(params.primer_pairs_tsv)
 
-        consensus_sequence_ref_bed = split.consensus_seqs.map{
+        consensus_sequence_ref_primers = split.consensus_seqs.map{
                 key, consensus -> tuple(key, consensus, reference_primers_fasta)
-            }.unique()
+            }.unique().view()
 
-        trimmed_with_consensus = ALIGN_FASTA_FILTER_SORT(consensus_sequence_ref_bed) // [key, consensus, sorted_bam]
+        trimmed_with_consensus = ALIGN_FASTA_FILTER_SORT(consensus_sequence_ref_primers) // [key, consensus, sorted_bam]
           | IVAR_PRIMER_VARIANTS // [key, aligned_primer_bed, mismatch_tsv]
           | map { key, bed, tsv -> tuple(key, bed, tsv, primer_pairs) }
           | MASK_PRIMERS // [key, aligned_primer_bed, mismatch_list_txt]

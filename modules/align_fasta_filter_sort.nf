@@ -11,6 +11,7 @@ process ALIGN_FASTA_FILTER_SORT {
 
     script:
     """
+    bwa index ${consensus}
     bwa mem -k 5 -T 16 ${consensus} ${fasta} \\
     | samtools view -bS -F 4 \\
     | samtools sort -o ${consensus.simpleName}.fasta.bam

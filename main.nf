@@ -23,9 +23,11 @@ workflow {
     aligned_reads_and_consensus = CONSENSUS_GEN(samples)
 
     if (params.tiled_amplicons == true) {
-        aligned_reads_and_consensus = TRIM_AND_MASK(aligned_reads_and_consensus)
+        TRIM_AND_MASK(aligned_reads_and_consensus)
+          | CALL_VARIANTS_IVAR
     }
-
-    CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
+    else {
+        CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
+    }
 
 }

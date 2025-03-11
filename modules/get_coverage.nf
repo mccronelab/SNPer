@@ -1,5 +1,5 @@
 process GET_COVERAGE {
-    publishDir "${params.output_dir}/consensus_coverage", mode: 'copy'
+    publishDir "${params.output_dir}/replicate_coverage", mode: 'copy'
 
     cpus 1
     memory 1G

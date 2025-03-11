@@ -30,6 +30,19 @@ _Requires docker_
 
 ## Changelog
 
+### v0.3.1-Alpha
+- Add missing params to test profile.
+- Add indexing to align_fasta_filter_sort.nf.
+- Change coverage output directory name to make it clear we have coverage for replicates now.
+- Fix input order in mask_primers.nf.
+- Fix bugs in build_consensus.nf:
+    - Rename processes invoked more than once.
+    - Filter out empty consensus genomes.
+    - Update join() to combine() where we expect 1 consensus genome to match to multiple replicates.
+- Fix bugs in call_variants_ivar.nf:
+    - join() uses parentheses, not {}.
+- Bugs in trim_and_mask.nf related to ivar_primer_variants.nf still need to be addressed.
+
 ### v0.3.0-Alpha
 
 - Add workflow for trimming primers, removing reads with primer mismatches (trim_and_mask).

@@ -19,7 +19,7 @@ workflow CALL_VARIANTS_IVAR {
         per_consensus_gff = consensus_fastas.map {key, consensus -> tuple(key, reference_fasta, consensus, reference_gff) }
           | LIFTOFF
 
-        filtered_bams.join{ per_consensus_gff }
+        filtered_bams.join(per_consensus_gff)
           | IVAR_VARIANTS
           | set{ variants }
 

@@ -1,6 +1,6 @@
 process IVAR_PRIMER_VARIANTS {
     input:
-        tuple val(key), path(consensus), path(bam)
+        tuple val(key), path(bam), path(consensus)
 
     output:
         tuple val(key), path("${consensus.simpleName}_primers.bed"), path("${consensus.simpleName}_primer_variants.tsv")
