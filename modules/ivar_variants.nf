@@ -6,7 +6,7 @@ process IVAR_VARIANTS {
     time 12.h
 
     input:
-        tuple val(key), path(bam) , path(consensus), path(reference_gff)
+        tuple val(key), path(bam), path(consensus), path(reference_gff)
     output:
         tuple val(key), path("*tsv")
     script:
