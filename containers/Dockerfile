@@ -9,4 +9,19 @@ RUN apt-get update && \
     picard-tools \
     bwa \
     fastqc \
-    bedtools
+    bedtools \
+    git \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    build-essential \
+    libparasail-dev \
+    minimap2
+
+COPY setup_liftoff-env.sh setup_liftoff-env.sh
+
+RUN chmod +x /setup_liftoff-env.sh \
+    && ./setup_liftoff-env.sh
+
+ENV PATH="/liftoff-env/bin:$PATH"

@@ -6,13 +6,13 @@ process IVAR_VARIANTS {
     time 12.h
 
     input:
-        tuple val(key), path(bam) , path(consensus), path(reference_gff)
+        tuple val(key), path(bam), path(consensus), path(gff)
     output:
         tuple val(key), path("*tsv")
     script:
     """
     samtools sort ${bam} \
     | samtools mpileup -aa -A -d 100000 -Q 0  --reference ${consensus} - \
-    | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_min_mapQ} -t ${params.variant_freq_threshold} -r ${consensus} -g ${reference_gff}
+    | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_min_mapQ} -t ${params.variant_freq_threshold} -r ${consensus} -g ${gff}
     """
 }
