@@ -44,10 +44,14 @@ _Requires docker_
     - Drop unnecessary index files before calling ivar_variants.nf.
 - Fix bugs in trim_and_mask.nf:
     - Fix slightly incorrect input parameter references, rename variables for better clarity.
+    - Remove duplicated consensus sequences in split.consensus_seq during combine().
 - Fix order of arguments in script block of liftoff.nf.
-- Add commands to liftoff.nf that enter environment where liftoff is installed.
+- Add Liftoff to Docker image.
 - Fix extra space throwing off a comma in ivar_variants.nf.
+- Rename GFF input parameter in ivar_variants (reference_gff to gff), since we now use GFFs realigned to each consensus.
 - Update rhino_test params.
+- Fix output name bug in ivar_primer_variants.nf.
+- Fix input order mixup in remove_masked_sort_index.nf.
 
 ### v0.3.0-Alpha
 

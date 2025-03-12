@@ -8,7 +8,7 @@ process IVAR_PRIMER_VARIANTS {
     script:
         """
         samtools mpileup -A -d 0 --reference ${consensus} -Q 0 ${bam} \\
-        | ivar variants -p ${consensus}_primer_variants -t 0.02
+        | ivar variants -p ${consensus.simpleName}_primer_variants -t 0.02
 
         bedtools bamtobed -i ${bam} > ${bam.simpleName}_primers.bed
         """
