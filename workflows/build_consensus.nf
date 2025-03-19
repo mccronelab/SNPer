@@ -18,12 +18,10 @@ workflow CONSENSUS_GEN {
         primer_bed = file(params.primer_bed)
         reference = file(params.reference_fasta)
 
-        // each fastqc channel tuple contains a key, [path(read1), path(read2)]
+        // each fastqc channel tuple contains a key, replicate, [path(read1), path(read2)]
         FASTQC(samples)
-        
-        // TODO add fastp step
 
-        bam = samples.map { key, reads -> tuple(key, reads, reference) } 
+        bam = samples.map { key, replicate, reads -> tuple(key, replicate, reads, reference) } 
           | BWA_MEM_CON  // (key, path(*sam))
           | FSI_CON // tuple val(key), path("*.sorted.bam"), path("*.bai")
 
@@ -38,7 +36,7 @@ workflow CONSENSUS_GEN {
         // filter out empty consensus sequences
         consensus_sequence = consensus_sequence.filter { _key, consensus -> consensus.size() >= 1000 }
 
-        variant_bam = samples.combine(consensus_sequence, by:0) // key, [reads], consensus
+        variant_bam = samples.combine(consensus_sequence, by:0) // key, replicate, [reads], consensus
           | BWA_MEM_VAR // key, sams
           | FSI_VAR // key, sorted bam, index
 

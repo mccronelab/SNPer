@@ -6,7 +6,7 @@ process FASTQC {
 
     input:
         // this input pattern matches the output of channel.fromFilePairs()
-        tuple val(key), path(paired_reads)
+        tuple val(key), val(replicate_id), path(paired_reads)
     
     output:
         tuple val(key), path("*.html"), emit: html
