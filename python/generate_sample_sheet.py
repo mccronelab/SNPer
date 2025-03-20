@@ -68,7 +68,7 @@ def _main():
             replicate_list.append(replicate.strip())
 
     with open(output_path, "w", encoding="utf8") as sampleSheet:
-        sampleSheet.write(f"sample,fastq1,fastq2\n")
+        sampleSheet.write(f"sample,replicate_id,fastq1,fastq2\n")
 
         for replicate in replicate_list:
             # currently, this will only work for underscores. If need be, use re.split() to support multiple break characters
