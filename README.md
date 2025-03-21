@@ -30,6 +30,22 @@ _Requires docker_
 
 ## Changelog
 
+### v0.4.0-Alpha
+- Update sample sheet to explicitly include a replicate ID field, so we don't have to try to 
+extract it from file names during process execution.
+    - Update `bwa_mem.nf` and `fastqc.nf` processes to handle new sample sheet configuration.
+    - Update `build_consensus.nf` and `process_sample_sheet.nf` workflows to handle new sample
+    sheet configuration.
+- Add BED file size filter to `trim_and_mask.nf` workflow to filter out completely empty files.
+- Start tracking supplemental Python script `generate_sample_sheet.py`. It's not a particularly
+robust solution, but it's been sufficient so far.
+- Add convert_tsv_coords.py in /bin/.
+- Add convert_tsv_coords.nf.
+- Add call to convert_tsv_coords.nf to call_variants_ivar.nf
+- Ensure consistent use of spaces in files in workflows/.
+- Add Python's Bio package to SNPer image.
+    
+
 ### v0.3.1-Alpha
 - Add missing params to test profile.
 - Add indexing to align_fasta_filter_sort.nf.

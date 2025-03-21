@@ -7,6 +7,8 @@ source liftoff-env/bin/activate
 
 pip installl --upgrade pip
 pip install setuptools
+# install Bio for convert_tsv_coords.py
+pip install Bio
 
 # install liftoff
 git clone https://github.com/agshumate/Liftoff liftoff 
