@@ -5,7 +5,7 @@ process BWA_MEM {
 
 
     input:
-        tuple val(key), path(paired_reads), path(reference)
+        tuple val(key), val(replicate_id), path(paired_reads), path(reference)
 
     output:
         tuple val(key), path("*.sam")
@@ -13,6 +13,6 @@ process BWA_MEM {
     script:
         """
         bwa index ${reference}
-        bwa mem -o ${key}_${paired_reads[1].simpleName.split("_")[1]}.sam ${reference} ${paired_reads} # assumes nothing after _ is important for meta data
+        bwa mem -o ${replicate_id}.sam ${reference} ${paired_reads}
         """
 }
