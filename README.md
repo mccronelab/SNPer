@@ -30,6 +30,10 @@ _Requires docker_
 
 ## Changelog
 
+### v0.4.0.1-Alpha
+- Add MAFFT to image.
+- Fix bug related to convert_tsv_coords.py being called as an executable.
+
 ### v0.4.0-Alpha
 - Update sample sheet to explicitly include a replicate ID field, so we don't have to try to 
 extract it from file names during process execution.
