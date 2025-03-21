@@ -30,6 +30,10 @@ _Requires docker_
 
 ## Changelog
 
+### v0.4.0.1-Alpha
+- Add MAFFT to image.
+- Fix bug related to convert_tsv_coords.py being called as an executable.
+
 ### v0.4.0-Alpha
 - Update sample sheet to explicitly include a replicate ID field, so we don't have to try to 
 extract it from file names during process execution.
@@ -109,13 +113,9 @@ robust solution, but it's been sufficient so far.
 - move all files out of `nextflow` directory
 - adds default parameters to the config file
 
-<<<<<<< Updated upstream
-### v0.2.0-Alpha
-=======
 
 ### v0.2.0-Alpha
 
->>>>>>> Stashed changes
 - Add workflow that calls variants with iVar (call_variants_ivar).
     - Add process that maps to a reference, filters and sorts mapped reads (bwa_mem_filter_sort)
     - Add process that generates bwa index, samtools faidx (bwa_samtools_index)

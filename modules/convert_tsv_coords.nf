@@ -14,6 +14,6 @@ process CONVERT_TSV_COORDS {
     script:
         """
         cat ${reference} ${consensus} > ref_and_target.fa
-        convert_tsv_coords.py ref_and_target.fa ${variant_tsv} ${variant_tsv.simpleName}.ref_coords.tsv
+        python3 ${projectDir}/bin/convert_tsv_coords.py ref_and_target.fa ${variant_tsv} ${variant_tsv.simpleName}.ref_coords.tsv
         """
 }
