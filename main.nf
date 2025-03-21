@@ -29,5 +29,4 @@ workflow {
     else {
         CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
     }
-
 }

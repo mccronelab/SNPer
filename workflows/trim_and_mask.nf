@@ -22,7 +22,7 @@ workflow TRIM_AND_MASK {
         reference_primers_fasta = file(params.primer_fasta)
         primer_pairs_tsv = file(params.primer_pairs)
 
-        consensus_sequence_ref_primers = split.consensus_seqs.map{
+        consensus_sequence_ref_primers = split.consensus_seqs.map {
                 key, consensus -> tuple(key, consensus, reference_primers_fasta)
             }.unique()
 
