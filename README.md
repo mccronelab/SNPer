@@ -39,6 +39,11 @@ extract it from file names during process execution.
 - Add BED file size filter to `trim_and_mask.nf` workflow to filter out completely empty files.
 - Start tracking supplemental Python script `generate_sample_sheet.py`. It's not a particularly
 robust solution, but it's been sufficient so far.
+- Add convert_tsv_coords.py in /bin/.
+- Add convert_tsv_coords.nf.
+- Add call to convert_tsv_coords.nf to call_variants_ivar.nf
+- Ensure consistent use of spaces in files in workflows/.
+- Add Python's Bio package to SNPer image.
     
 
 ### v0.3.1-Alpha
