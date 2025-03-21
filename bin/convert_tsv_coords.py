@@ -1,5 +1,3 @@
-#! usr/bin/env python3
-
 # convert_gff_coords.py
 # Description: Accepts a reference genome, a target genome, and a TSV file describing variants
 # in iVar output format. This script aligns the reference and target genome to create a genomic 

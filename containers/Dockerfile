@@ -17,7 +17,8 @@ RUN apt-get update && \
     python3-venv \
     build-essential \
     libparasail-dev \
-    minimap2
+    minimap2 \
+    mafft
 
 COPY setup_liftoff-env.sh setup_liftoff-env.sh
 

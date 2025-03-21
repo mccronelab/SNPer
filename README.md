@@ -109,13 +109,9 @@ robust solution, but it's been sufficient so far.
 - move all files out of `nextflow` directory
 - adds default parameters to the config file
 
-<<<<<<< Updated upstream
-### v0.2.0-Alpha
-=======
 
 ### v0.2.0-Alpha
 
->>>>>>> Stashed changes
 - Add workflow that calls variants with iVar (call_variants_ivar).
     - Add process that maps to a reference, filters and sorts mapped reads (bwa_mem_filter_sort)
     - Add process that generates bwa index, samtools faidx (bwa_samtools_index)
