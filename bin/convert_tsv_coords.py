@@ -7,7 +7,7 @@
 # Author: Conner Copeland
 # Contact: ccopelan@fredhutch.org
 # Created 2025-03-12
-# Updated 2025-03-13
+# Updated 2025-03-23
 
 import argparse
 import subprocess
@@ -15,6 +15,19 @@ import sys
 
 from Bio import SeqIO
 from typing import *
+
+
+def write_fasta_db(reference_path: str, consensus_path:str, db_path) -> None:
+    """
+    Writes reference_path's and consensus_path's contents to a single, concatenated file,
+    permitting MAFFT alignment. Should always write the reference sequence first.
+    """
+    reference_record = SeqIO.parse(reference_path, "fasta")
+    consensus_record = SeqIO.parse(consensus_path, "fasta")
+
+    with open(db_path, "w", encoding="utf8") as fasta_db_file:
+        SeqIO.write(reference_record, fasta_db_file, "fasta")
+        SeqIO.write(consensus_record, fasta_db_file, "fasta")
 
 
 def convert_coordinates(tsv_path: str, output_path: str, target_to_ref: Dict[int,int]) -> None:
@@ -66,19 +79,23 @@ def mafft_alignment(genomes_path: str) -> SeqIO.SeqRecord:
     return list(SeqIO.parse(temp_path, format="fasta"))
 
 
-def create_mapping(genomes_path: str) -> Dict[int, int]:
+def create_mapping(reference_path: str, consensus_path: str, db_path: str) -> Dict[int, int]:
     """
     Takes in a path to a FASTA file containing reference and target genomes. Aligns the genomes
     and returns a mapping from the target genome coordinates to the reference genome
     coordinates.
 
     Args:
-        genomes_path (str): Path to FASTA file with reference sequence, then target sequence.
+        reference_path (str): Path to FASTA file with reference sequence, then target sequence.
+        consensus_path (str):
+        db_path (str):
 
     Returns:
         Dict: Dictionary where target coordinate keys map to reference coordinate values.
     """
-    alignment_list = mafft_alignment(genomes_path)
+    write_fasta_db(reference_path, consensus_path, db_path)
+
+    alignment_list = mafft_alignment(db_path)
 
     reference_ali = alignment_list[0].seq
     target_ali = alignment_list[1].seq
@@ -115,18 +132,24 @@ def parse_args(sys_args: str) -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         sys_args,
-        description = "Aligns a target and reference genome, creating a mapping between the two " \
+        description = "Aligns a reference and consensus genome, creating a mapping between the two " \
         "that accounts for indels. This mapping is then used to convert the genomic coordinates " \
-        "of a TSV file describing variants on the target genome to the equivalent coordinates in " \
+        "of a TSV file describing variants on the consensus genome to the equivalent coordinates in " \
         "the reference genome. Outputs a TSV file with converted coordinates that are relative to " \
         "the reference genome."
     )
 
     parser.add_argument(
-        "genomes_fasta",
+        "reference_fasta",
         type = str,
-        help = "Path to file containing both reference and target genomes. File is in FASTA format " \
-        "and should list the reference sequence first."
+        help = "Path to file containing reference genome to align against. File must be in FASTA " \
+            "format and contain only one sequence."
+    )
+
+    parser.add_argument(
+        "consensus_fasta",
+        type = str,
+        help = "Path to consensus genome file. Must be in FASTA format and contain only one sequence."
     )
 
     parser.add_argument(
@@ -145,12 +168,17 @@ def parse_args(sys_args: str) -> argparse.Namespace:
 
 
 def _main():
+    # input arguments
     args = parse_args(sys.argv[1:])
-    genomes_path = args.genomes_fasta
+    reference_path = args.reference_fasta
+    consensus_path = args.consensus_fasta
     tsv_path = args.target_variants
     output_path = args.output
 
-    target_to_ref_dict = create_mapping(genomes_path)
+    # stuff that shouldn't need to change
+    db_path = "reference_and_consensus.fa"
+
+    target_to_ref_dict = create_mapping(reference_path, consensus_path, db_path)
     convert_coordinates(tsv_path, output_path, target_to_ref_dict)
 
 

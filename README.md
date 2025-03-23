@@ -30,6 +30,11 @@ _Requires docker_
 
 ## Changelog
 
+### v0.4.0.2-Alpha
+- Remove `stageInMode` directive from `convert_tsv_coords.nf`, as it was causing an input bug.
+- Rewrite `convert_tsv_coords.py` to combine separate reference, consensus files into one FASTA file.
+- Increase default `queueSize`.
+
 ### v0.4.0.1-Alpha
 - Add MAFFT to image.
 - Fix bug related to convert_tsv_coords.py being called as an executable.
