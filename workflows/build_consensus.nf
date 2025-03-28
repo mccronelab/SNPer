@@ -27,6 +27,7 @@ workflow CONSENSUS_GEN {
 
         
         polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key, sortedBam, bamIndex, primer_bed)} 
+          | filter { _key, sortedBam, _bamIndex, _primer_bed -> sortedBam.size() >= 1000 } //filter out empty BAMs
           | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
           | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
