@@ -1,8 +1,10 @@
 process FASTQC {
     publishDir "${params.output_dir}/fastqc/", mode: 'copy'
+    errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
+
     cpus 1
-    memory 2G
-    time 12.h
+    memory { 2G * task.attempt }
+    time { 4.h * task.attempt }
 
     input:
         // this input pattern matches the output of channel.fromFilePairs()

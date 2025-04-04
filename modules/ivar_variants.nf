@@ -1,9 +1,11 @@
 process IVAR_VARIANTS {
     publishDir "${params.output_dir}/variants/", mode: 'copy'
+    // retry if error message indicates a failure due to resource limits
+    errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 
     cpus 1
-    memory 2G
-    time 12.h
+    memory { 2G * task.attempt }
+    time { 4.h * task.attempt }
 
     input:
         tuple val(key), path(bam), path(consensus), path(gff)
