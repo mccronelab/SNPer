@@ -2,10 +2,11 @@
 
 ## v0.4.1-Alpha
 - Begin reworking documentation in preparation for making the repository public:
-    - Move changelog to its own file.
+    - Move changelog to its own Markdown file.
     - Update README parameter list.
     - Add Quick Start Guide to README.
     - Add Description to README.
+    - Add step-by-step descriptions of each subworkflow.
 - Replace all double quotes with single quotes in `nextflow.config` to resolve error.
 -  Add dynamic resource allocation to resource-intensive processes, triggered when a crash occurs due to exceeding resource limitations:
     - `convert_tsv_coords.nf`
@@ -13,6 +14,8 @@
     - `ivar_variants.nf`
     - `merge_mpileup_consensus.nf`
     - `picard_sort.nf`
+    - Add maxRetries 3 for all processes in `nextflow.config`.
+- Fix spacing issues in `ivar_variants.nf`, `liftoff.nf` process definitions.
 
 ## v0.4.0.2-Alpha
 - Remove `stageInMode` directive from `convert_tsv_coords.nf`, as it was causing an input bug.

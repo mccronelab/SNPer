@@ -9,8 +9,10 @@ process IVAR_VARIANTS {
 
     input:
         tuple val(key), path(bam), path(consensus), path(gff)
+
     output:
         tuple val(key), path("*tsv")
+        
     script:
     """
     samtools sort ${bam} \
