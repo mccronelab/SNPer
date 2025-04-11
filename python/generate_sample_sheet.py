@@ -60,6 +60,15 @@ def parse_args(sys_args: str) -> argparse.Namespace:
         help="Set if input data has replicates. Default is False."
     )
 
+    parser.add_argument(
+        "--delimiter",
+        type=str,
+        default = "_",
+        help="Character to use to separate the sample ID from the replicate ID in input file names " \
+             "(from identifier_list). For example, if a replicate is named 1234_A, this " \
+             "should be '_'. If a replicate is named 1234-A, this should be '-'. Default is '_'."
+    )
+
     return parser.parse_args()
 
 
@@ -69,6 +78,7 @@ def _main():
     fastq_dir_path = args.fastq_dir
     output_path = args.output_sheet
     has_replicates = args.replicated
+    delimiter = args.delimiter
 
     file_ID_list = []
 
@@ -83,8 +93,8 @@ def _main():
             if has_replicates:
                 # in this case, there's a replicate ID we want to split off from sample ID
                 # currently, this will only work for underscores. If need be, use re.split() to support multiple break characters
-                sample_list = file_ID.split("_")[:-1]
-                sample = "_".join(sample_list)
+                sample_list = file_ID.split(delimiter)[:-1]
+                sample = delimiter.join(sample_list)
                 sampleSheet.write(f"{sample}, {file_ID}, {fastq_dir_path}/{file_ID}_1.fastq.gz, {fastq_dir_path}/{file_ID}_2.fastq.gz\n")
 
             else:
