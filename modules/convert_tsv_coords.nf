@@ -1,6 +1,5 @@
 process CONVERT_TSV_COORDS {
     publishDir "${params.output_dir}/reference_coordinate_variants/", mode: 'copy'
-    containerOptions '--bind /hpc/temp/mccrone_j/nextflow_work/'
 
     cpus 1
     memory 2G
