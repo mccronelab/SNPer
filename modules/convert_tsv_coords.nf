@@ -1,8 +1,9 @@
 process CONVERT_TSV_COORDS {
     publishDir "${params.output_dir}/reference_coordinate_variants/", mode: 'copy'
+    scratch false
 
     cpus 1
-    memory 2G
+    memory 4G
     time 12.h
 
     input:

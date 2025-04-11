@@ -23,6 +23,7 @@ workflow TRIM_AND_MASK {
 
         primer_bed = file(params.primer_bed)
         trimmed_bams = split.aligned_reads.map { key, bam, index -> tuple(key, bam, index, primer_bed) }
+          | filter { _key, bam, _bamIndex, _primer_bed -> bam.size() >= 1000 } //filter out empty BAMs
           | IVAR_TRIM
           | PICARD_SORT // tuple(key, sorted_bam, sorted_bam_index)
 
