@@ -15,7 +15,7 @@ workflow CONSENSUS_GEN {
         samples // tuple (key,[fastq1,fastq2])
 
     main:
-        primer_bed = file(params.primer_bed)
+       
         reference = file(params.reference_fasta)
 
         // each fastqc channel tuple contains a key, replicate, [path(read1), path(read2)]
@@ -25,11 +25,16 @@ workflow CONSENSUS_GEN {
           | BWA_MEM_CON  // (key, path(*sam))
           | FSI_CON // tuple val(key), path("*.sorted.bam"), path("*.bai")
 
-        
-        polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key, sortedBam, bamIndex, primer_bed)} 
-          | filter { _key, sortedBam, _bamIndex, _primer_bed -> sortedBam.size() >= 1000 } //filter out empty BAMs
-          | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
-          | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
+        if(params.tiled_amplicons){
+          primer_bed = file(params.primer_bed)
+          polished_bam = bam.map { key, sortedBam, bamIndex -> tuple(key, sortedBam, bamIndex, primer_bed)} 
+            | filter { _key, sortedBam, _bamIndex, _primer_bed -> sortedBam.size() >= 1000 } //filter out empty BAMs
+            | IVAR_TRIM  //  tuple val(key), path("*.primertrim.bam")
+            | PICARD_SORT // tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
+        }else{
+          polished_bam = bam 
+        }
+
 
         consensus_sequence = polished_bam.groupTuple() // [key, [bams], [bais]]
           | MERGE_MPILEUP_CONSENSUS // key, consensus
