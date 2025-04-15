@@ -42,7 +42,7 @@ nextflow run main.nf -profile test_apptainer
 
 1. Run FASTQC on reads, saving output.
 2. With `BWA mem`, align reads to the reference sequence. Then, filter out unmapped reads and sort the output BAM file.
-3. Using `iVar trim`, mask primers on reads based on the contents of the primer BEDfile, then sort.
+3. (Tiled Amplicon Only) Using `iVar trim`, mask primers on reads based on the contents of the primer BEDfile, then sort.
 4. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`.
 5. Map FASTQ reads to the consensus genome, which will enable variant calling later on. Filter out unmapped reads and sort output BAM file.
 6. Get coverage information for reads mapped to the consensus genome.
@@ -53,10 +53,11 @@ nextflow run main.nf -profile test_apptainer
 - Output: Trimmed FASTQ reads aligned to a consensus genome. Reads with primers that do not match the consensus genome are removed.
 
 1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
-2. Reference primers are aligned to the consensus genome.
-3. Using `iVar variants`, primer variants are called. The resulting BAM file is coverted to a BEDfile with `bedtools bamtobed`. Empty BEDfiles (where no primer variants were identified) are removed.
-4. Using `iVar getmasked`, generate a list of primers with mismatches (variants) to the consensus genome.
-5. Using `ivar removereads`, throw away reads with primer mismatches relative to the consensus sequence. Then, sort and index the filtered BAM file with `samtools`.
+2. Filter out empty consensus-aligned BAM files, trim primers with `ivar trim`, and sort trimmed BAMs.
+3. Reference primers are aligned to the consensus genome.
+4. Using `iVar variants`, primer variants are called. The resulting BAM file is coverted to a BEDfile with `bedtools bamtobed`. Empty BEDfiles (where no primer variants were identified) are removed.
+5. Using `iVar getmasked`, generate a list of primers with mismatches (variants) to the consensus genome.
+6. Using `ivar removereads`, throw away reads with primer mismatches relative to the consensus sequence. Then, sort and index the filtered BAM file with `samtools`.
 
 ### Calling Variants with iVar
 - Input: BAM files paired with BAM indices and their consensus sequence. Reference sequence GFF file. Reference sequence in FASTA format.
