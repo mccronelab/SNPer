@@ -1,9 +1,9 @@
 #! bin/bash
 
 # create venv
-python3 -m venv liftoff-env \
+python3 -m venv snper-env \
 # activate it
-source liftoff-env/bin/activate
+source snper-env/bin/activate
 
 pip installl --upgrade pip
 pip install setuptools
@@ -14,3 +14,6 @@ pip install Bio
 git clone https://github.com/agshumate/Liftoff liftoff 
 cd liftoff
 python setup.py install
+
+# install cutadapt
+pip install cutadapt

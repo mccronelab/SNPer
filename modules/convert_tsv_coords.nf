@@ -7,15 +7,17 @@ process CONVERT_TSV_COORDS {
     memory { 2G * task.attempt * task.cpus}
     time { 4.h * task.attempt }
 
+
     input:
-        tuple val(key), path(consensus), val(reference), val(variant_tsv)
+        tuple val(key), path(consensus), path(reference), val(variant_tsv)
 
     output:
         tuple val(key), path("${variant_tsv.simpleName}.ref_coords.tsv")
 
     script:
+        // prevent MAFFT from running into permissions issues on clusters by reassigning $TMPDIR
         """
-        cat ${reference} ${consensus} > ref_and_target.fa
-        python3 ${projectDir}/bin/convert_tsv_coords.py ref_and_target.fa ${variant_tsv} ${variant_tsv.simpleName}.ref_coords.tsv
+        export TMPDIR="\$(pwd)/tmp/"
+        python3 ${projectDir}/bin/convert_tsv_coords.py ${reference} ${consensus} ${variant_tsv} ${variant_tsv.simpleName}.ref_coords.tsv
         """
 }

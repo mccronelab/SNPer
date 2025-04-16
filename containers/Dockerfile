@@ -20,9 +20,9 @@ RUN apt-get update && \
     minimap2 \
     mafft
 
-COPY setup_liftoff-env.sh setup_liftoff-env.sh
+COPY setup_snper-env.sh setup_snper-env.sh
 
-RUN chmod +x /setup_liftoff-env.sh \
-    && ./setup_liftoff-env.sh
+RUN chmod +x /setup_snper-env.sh \
+    && ./setup_snper-env.sh
 
-ENV PATH="/liftoff-env/bin:$PATH"
+ENV PATH="/snper-env/bin:$PATH"
