@@ -1,7 +1,11 @@
 process BWA_MEM {
-    cpus 1
-    memory 2G
-    time 12.h
+    errorStrategy 'retry'
+    maxRetries 3
+
+    cpus {1 * task.attempt}
+    // need to account for potentially increasing CPU allocation
+    memory { 2G * task.attempt * task.cpus}
+    time { 4.h * task.attempt }
 
 
     input:
