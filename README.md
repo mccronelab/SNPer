@@ -1,4 +1,4 @@
-# SNPer v0.1.0.1-Beta
+# SNPer v0.1.0.2-Beta
 
 ## Description
 
@@ -86,7 +86,7 @@ _Requires docker_
 - `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
 - `consensus_min_depth`: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
-- `variant_min_qual_score`: Minimum score for base to be counted in variant calling. Default to 30.
+- `variant_minQ`: Minimum score for base to be counted in variant calling. Default to 30.
 - `variant_min_mapQ`: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
 - `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
 - `tiled_amplicons`: Boolean variable that indicates whether sequencing data comes from tiled amplicons,

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.0.2-Beta
+- Set test profile to faster test with files on GitHub.
+- Update README parameter list.
+- Correct double calling of parameter in `ivar_primer_variants.nf`.
+
 ## v0.1.0.1-Beta
 - Fix typos in README.
 
