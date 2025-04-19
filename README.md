@@ -1,9 +1,71 @@
-# SNPer v0.3.1-Alpha
-Standard Nucleotide Pipeline (emerging resource)
+# SNPer v0.1.0-Beta
 
 ## Description
 
-This is the initial version of SNPer. Heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
+An in-development, Nextflow-managed viral in-host variant calling workflow. SNPer uses BWA-mem and iVar to align FASTQ files to a reference genome, construct a consensus sequence, and then call variants relative to the consensus. SNPer can handle either single or replicated samples and includes a primer mismatch detection step to improve variant calling in tiled amplicon data. SNPer also comes with a Docker image that manages workflow dependencies, which is [available here](https://quay.io/repository/mccronelab/snper). The intitial version of SNPer is heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
+
+## Quick-Start Guide
+
+### Docker or Apptainer (Recommended)
+Required Software:
+- Java, any version from 17-23 (to run Nextflow, [available here](https://www.oracle.com/java/technologies/downloads/?er=221886))
+- Nextflow (to run the workflow, [available here](https://www.nextflow.io/docs/latest/install.html#install-nextflow))
+- Docker or Apptainer (to run the container. Docker is [available here](https://docs.docker.com/get-started/get-docker/), ask your local HPC staff about Apptainer)
+- Git (to clone the repo, [available here](https://git-scm.com/downloads))
+
+To download the latest version of SNPer, run:
+```
+git clone https://github.com/mccronelab/SNPer.git
+cd SNPer/
+```
+
+To test SNPer, ensure that Docker is running:
+```
+nextflow run main.nf -profile test
+```
+
+Alternatively, if you have Apptainer, ensure that it is loaded/running:
+```
+nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
+```
+
+## Workflow
+
+### Sample Sheet Processing
+- Input: Sample Sheet (CSV format)
+- Output: A tuple containing Sample ID, Replicate ID (if no replicates, this is the sample ID), FASTQ_1, FASTQ_2
+
+### Build Consensus Sequence
+- Input: A tuple containing Sample ID, Replicate ID, and FASTQ reads. Reference Sequence, Primer BEDfile
+- Output: BAM files where FASTQ reads are aligned to a consensus genome.
+
+1. Run FASTQC on reads, saving output.
+2. With `BWA mem`, align reads to the reference sequence. Then, filter out unmapped reads and sort the output BAM file.
+3. (Tiled Amplicon Only) Using `iVar trim`, mask primers on reads based on the contents of the primer BEDfile, then sort.
+4. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`.
+5. Map FASTQ reads to the consensus genome, which will enable variant calling later on. Filter out unmapped reads and sort output BAM file.
+6. Get coverage information for reads mapped to the consensus genome.
+7. 
+
+### Trimming Reads and Masking Primers (Tiled Amplicon Only)
+- Input: BAM files where FASTQ reads are aligned to a consensus genome. Consensus Sequence.
+- Output: Trimmed FASTQ reads aligned to a consensus genome. Reads with primers that do not match the consensus genome are removed.
+
+1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
+2. Filter out empty consensus-aligned BAM files, trim primers with `ivar trim`, and sort trimmed BAMs.
+3. Reference primers are aligned to the consensus genome.
+4. Using `iVar variants`, primer variants are called. The resulting BAM file is coverted to a BEDfile with `bedtools bamtobed`. Empty BEDfiles (where no primer variants were identified) are removed.
+5. Using `iVar getmasked`, generate a list of primers with mismatches (variants) to the consensus genome.
+6. Using `ivar removereads`, throw away reads with primer mismatches relative to the consensus sequence. Then, sort and index the filtered BAM file with `samtools`.
+
+### Calling Variants with iVar
+- Input: BAM files paired with BAM indices and their consensus sequence. Reference sequence GFF file. Reference sequence in FASTA format.
+- Output: TSV files containing variants. Two types of TSVs are produced: one with variant positions relative to the consensus genome, and one with variant positions aligned to the reference genome.
+
+1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
+2. Submit the reference FASTA, reference GFF, and consensus FASTA to LiftOff. LiftOff aligns the reference and consensus sequences, then transfers GFF annotations where appropriate. This gives us a consensus GFF file.
+3. Call variants relative to the consensus genome with `iVar variants`.
+4. Call `convert_tsv_coords.py`, a relatively simple Python script that aligns the reference and consensus genome with MAFFT, then creates a mapping between positions on each genome based on the alignment. Used to convert consensus variant positions to their equivalent positions on the reference genome.
 
 ## Testing / dev
 
@@ -15,154 +77,18 @@ _Requires docker_
 
 ## Parameters (last update: v0.3.0-Alpha)
 
-- reference_fasta: A path to the reference genome for the replicon of interest.
-- reference_gff: Path to GFF file describing ORFs on reference genome.
-- primer_bedfile: Path to .bed file containig ARCTIC primers.
-- output_dir: Path where output will be stored.
-- consensus_min_qual_score: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
-- consensus_threshold: Minimum frequency threshold to call consensus (0-1, default 0).
-- consensus_min_depth: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
-- variant_min_qual_score: Minimum score for base to be counted in variant calling. Default to 30.
-- variant_min_mapQ: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
-- variant_freq_threshold: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
-- tiled_amplicons: Boolean variable that indicates whether sequencing data comes from tiled amplicons,
+-   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
+- `reference_fasta`: A path to the reference genome for the replicon of interest.
+- `reference_gff`: Path to GFF file describing ORFs on reference genome.
+- `primer_bedfile`: Path to .bed file containig ARCTIC primers.
+- `primer_fasta`: Path to file with FASTA sequences for each primer.
+- `primer_pairs`: Path to TSV file that lists each pair of left and right primers.
+- `output_dir`: Path where output will be stored.
+- `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
+- `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
+- `consensus_min_depth`: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
+- `variant_min_qual_score`: Minimum score for base to be counted in variant calling. Default to 30.
+- `variant_min_mapQ`: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
+- `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
+- `tiled_amplicons`: Boolean variable that indicates whether sequencing data comes from tiled amplicons,
     which requires additional filtering for primers.
-
-## Changelog
-
-### v0.4.0.2-Alpha
-- Remove `stageInMode` directive from `convert_tsv_coords.nf`, as it was causing an input bug.
-- Rewrite `convert_tsv_coords.py` to combine separate reference, consensus files into one FASTA file.
-- Increase default `queueSize`.
-
-### v0.4.0.1-Alpha
-- Add MAFFT to image.
-- Fix bug related to convert_tsv_coords.py being called as an executable.
-
-### v0.4.0-Alpha
-- Update sample sheet to explicitly include a replicate ID field, so we don't have to try to 
-extract it from file names during process execution.
-    - Update `bwa_mem.nf` and `fastqc.nf` processes to handle new sample sheet configuration.
-    - Update `build_consensus.nf` and `process_sample_sheet.nf` workflows to handle new sample
-    sheet configuration.
-- Add BED file size filter to `trim_and_mask.nf` workflow to filter out completely empty files.
-- Start tracking supplemental Python script `generate_sample_sheet.py`. It's not a particularly
-robust solution, but it's been sufficient so far.
-- Add convert_tsv_coords.py in /bin/.
-- Add convert_tsv_coords.nf.
-- Add call to convert_tsv_coords.nf to call_variants_ivar.nf
-- Ensure consistent use of spaces in files in workflows/.
-- Add Python's Bio package to SNPer image.
-    
-
-### v0.3.1-Alpha
-- Add missing params to test profile.
-- Add indexing to align_fasta_filter_sort.nf.
-- Change coverage output directory name to make it clear we have coverage for replicates now.
-- Fix input order in mask_primers.nf.
-- Fix bugs in build_consensus.nf:
-    - Rename processes invoked more than once.
-    - Filter out empty consensus genomes.
-    - Update join() to combine() where we expect 1 consensus genome to match to multiple replicates.
-- Fix bugs in call_variants_ivar.nf:
-    - join() uses parentheses, not {}.
-    - Drop unnecessary index files before calling ivar_variants.nf.
-- Fix bugs in trim_and_mask.nf:
-    - Fix slightly incorrect input parameter references, rename variables for better clarity.
-    - Remove duplicated consensus sequences in split.consensus_seq during combine().
-- Fix order of arguments in script block of liftoff.nf.
-- Add Liftoff to Docker image.
-- Fix extra space throwing off a comma in ivar_variants.nf.
-- Rename GFF input parameter in ivar_variants (reference_gff to gff), since we now use GFFs realigned to each consensus.
-- Update rhino_test params.
-- Fix output name bug in ivar_primer_variants.nf.
-- Fix input order mixup in remove_masked_sort_index.nf.
-
-### v0.3.0-Alpha
-
-- Add workflow for trimming primers, removing reads with primer mismatches (trim_and_mask).
-    - Add process for aligning FASTA with `bwa mem`, which requires specific seed and threshold settings to work well (align_fasta_filter_sort).
-    - Add process for calling variants (mismatches) on primer sequences (ivar_primer_variants).
-- Update get_coverage process to use variant calling MapQ threshold.
-- Add `--reference` to `samtools mpileup` in ivar_variants and enabled BAQ.
-- Update parameter names in mask_primers to be more informative.
-- Update parameter names in remove_masked_sort_index to be more informative.
-- Refactor build_consensus workflow to emit reads aligned to the consensus, indexes, and the consensus itself. This allows us to potentially go straight to variant calling, for datasets that don't require primer trimming and read removal (tiled amplicon sequencing samples).
-- Rework call_variants_ivar workflow to remove read trimming steps.
-- Add ORF GFF remapping process (liftoff.nf), and add to call_variants_ivar workflow.
-- Create samtools_sort process to replace picard_sort, allowing us to remove a dependency.
-
-
-### v0.2.2-Alpha
-
-- Add default resource allocations to each process based on usage information
-    - bwa_mem.nf
-    - fastqc.nf
-    - filter_sort_index.nf
-    - get_coverage.nf
-    - ivar_variants.nf
-    - merge_mpileup_consensus.nf
-    - picard_sort.nf
-
-- Update bwa_mem.nf to work with MIDGE dataset naming scheme
-- Add SLURM executor profile to nextflow.config
-- Address variable naming conflicts and syntax issues in call_variants_ivar.nf
-- Add file size filtering to call_variants_ivar.nf to remove empty consensus genomes or BAM files from workflow
-- Update README parameters list
-
-
-### v0.2.1-Alpha
-
-- refactor workflow to take sample sheet as input
-- one consensus for each sample - one variant tsv for each sequencing library
-- move all files out of `nextflow` directory
-- adds default parameters to the config file
-
-
-### v0.2.0-Alpha
-
-- Add workflow that calls variants with iVar (call_variants_ivar).
-    - Add process that maps to a reference, filters and sorts mapped reads (bwa_mem_filter_sort)
-    - Add process that generates bwa index, samtools faidx (bwa_samtools_index)
-    - Add process that converts BAM files to BED files (bam_to_bed)
-    - Add process that calls variants in primer sequences (call_primer_variants)
-    - Add process that detects mismatches between primer sequences and consensus sequences, and flags associated reads for masking (mask_primers)
-    - Add process that removes masked reads, then sorts and indexes masked BAM files (remove_masked_sort_index)
-    - Add process that calls variants against consensus genomes, using Wuhan01 ORFs (call_masked_variants)
-- Update workflow parameters
-    - Add parameter variant_min_qual_score
-    - Add parameter variant_min_mapQ
-    - Add parameter variant_min_depth
-    - Add parameter variant_freq_threshold
-    - Add parameter primer_info_tsv
-    - Rename parameter min_qual_score to consensus_min_qual_score, to avoid confusion with a similar parameter used in variant calling.
-    - Rename parameter min_depth to consensus_min_depth, to avoid confusion as above.
-- Remove deprecated `-S` flag from `bwa mem` processes.
-- Move README up one level out of `SNPer/nextflow/`.
-- Modify `merge_mpileup_consensus` to emit a tuple with a key and FASTA path, instead of just the path.
-- Add new workflow parameters: primer_fasta, primer_pair_tsv, reference_gff. Update reference parameter to reference_fasta
-- Create Dockerfile to manage workflow dependencies. 
-- Update `picard_sort.nf` to call `PicardCommandLine`.
-- Update `merge_mpileup_consensus` to emit tuple with key for later joining, instead of just consensus sequences.
-- Set workflow to strict mode. This has a number of effects, but of particular interest to us, it sets the workflow to fail if a `join()` operation is called on a channel with duplicate keys, and will fail if a key in one channel doesn't have a partner in the other. See [Nextflow Documentation](https://www.nextflow.io/docs/latest/reference/feature-flags.html) for the full list of effects.
-
-
-### v0.1.1-Alpha
-
-- Remove unncessary equal signs from all process directives.
-- Add publishDir directive to process that generates consensus.
-- Correct error in changelog item placement.
-- Change `primer_bedfile` in `main.nf` to be an instance of a file, rather than a Channel of Paths. As a result, it can be provided to more than a single process.
-
-### v0.1.0-Alpha
-
-- Add README.md
-- Add process that generates FASTQC quality reports.
-- Add process that aligns reads to reference genome with BWA mem.
-- Add process that filters, sorts, and indexes BAM files with samtools.
-- Add process that uses iVar trim to remove primers from reads.
-- Add process that sorts BAM files with Picard.
-- Add process that gets coverage information with samtools.
-- Adds process that runs samtools merge and mpileup, then generates consensus with iVar consensus.
-- Add workflow that manages consensus sequence generation.
-- Add main.nf
