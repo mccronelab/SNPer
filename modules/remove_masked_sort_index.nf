@@ -4,7 +4,7 @@ process REMOVE_MASKED_SORT_INDEX {
         tuple val(key), path(primer_bed_file), path(mask_txt), path(bam_file), path(index)
 
     output:
-        tuple val(key), path("${bam_file.simpleName}_masked.bam"), path("${bam_file.simpleName}_masked.bam.bai")
+        tuple val(key), path("${bam_file.simpleName}.masked.bam"), path("${bam_file.simpleName}.masked.bam.bai")
 
     script:
     """
