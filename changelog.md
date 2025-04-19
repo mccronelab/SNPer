@@ -2,6 +2,7 @@
 
 ## v0.1.0.2-Beta
 - Set test profile to faster test with files on GitHub.
+    - Add MN908947.3 GFF3 annotation file.
 - Update README parameter list.
 - Correct double calling of parameter in `ivar_primer_variants.nf`.
 
