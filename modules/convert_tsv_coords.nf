@@ -7,7 +7,6 @@ process CONVERT_TSV_COORDS {
     memory { 2G * task.attempt * task.cpus}
     time { 4.h * task.attempt }
 
-
     input:
         tuple val(key), path(consensus), path(reference), val(variant_tsv)
 
