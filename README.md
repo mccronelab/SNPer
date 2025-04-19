@@ -12,6 +12,12 @@ Required Software:
 - Nextflow (to run the workflow, [available here](https://www.nextflow.io/docs/latest/install.html#install-nextflow))
 - Docker or Apptainer (to run the container. Docker is [available here](https://docs.docker.com/get-started/get-docker/), ask your local HPC staff about Apptainer)
 
+To download the latest version of SNPer and run it locally, run:
+```
+git clone https://github.com/mccronelab/SNPer.git
+cd SNPer/
+```
+
 To test SNPer, ensure that Docker is running:
 ```
 nextflow run https://github.com/mccronelab/SNPer.git -profile test
@@ -22,10 +28,8 @@ Alternatively, if you have Apptainer, ensure that it is loaded/running:
 nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
 ```
 
-To download the latest version of SNPer and run it locally, run:
+Alternative, you can run the local copy of the main workflow with:
 ```
-git clone https://github.com/mccronelab/SNPer.git
-cd SNPer/
 nextflow run main.nf -profile test
 ```
 
