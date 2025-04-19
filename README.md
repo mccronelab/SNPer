@@ -1,4 +1,4 @@
-# SNPer v0.1.0-Beta
+# SNPer v0.1.0.1-Beta
 
 ## Description
 
@@ -11,22 +11,22 @@ Required Software:
 - Java, any version from 17-23 (to run Nextflow, [available here](https://www.oracle.com/java/technologies/downloads/?er=221886))
 - Nextflow (to run the workflow, [available here](https://www.nextflow.io/docs/latest/install.html#install-nextflow))
 - Docker or Apptainer (to run the container. Docker is [available here](https://docs.docker.com/get-started/get-docker/), ask your local HPC staff about Apptainer)
-- Git (to clone the repo, [available here](https://git-scm.com/downloads))
-
-To download the latest version of SNPer, run:
-```
-git clone https://github.com/mccronelab/SNPer.git
-cd SNPer/
-```
 
 To test SNPer, ensure that Docker is running:
 ```
-nextflow run main.nf -profile test
+nextflow run https://github.com/mccronelab/SNPer.git -profile test
 ```
 
 Alternatively, if you have Apptainer, ensure that it is loaded/running:
 ```
 nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
+```
+
+To download the latest version of SNPer and run it locally, run:
+```
+git clone https://github.com/mccronelab/SNPer.git
+cd SNPer/
+nextflow run main.nf -profile test
 ```
 
 ## Workflow
@@ -45,14 +45,13 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
 4. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`.
 5. Map FASTQ reads to the consensus genome, which will enable variant calling later on. Filter out unmapped reads and sort output BAM file.
 6. Get coverage information for reads mapped to the consensus genome.
-7. 
 
 ### Trimming Reads and Masking Primers (Tiled Amplicon Only)
 - Input: BAM files where FASTQ reads are aligned to a consensus genome. Consensus Sequence.
 - Output: Trimmed FASTQ reads aligned to a consensus genome. Reads with primers that do not match the consensus genome are removed.
 
 1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
-2. Filter out empty consensus-aligned BAM files, trim primers with `ivar trim`, and sort trimmed BAMs.
+2. Filter out empty consensus-aligned BAM files, align primers to consensus genome, trim primers with `ivar trim`, and sort trimmed BAMs.
 3. Reference primers are aligned to the consensus genome.
 4. Using `iVar variants`, primer variants are called. The resulting BAM file is coverted to a BEDfile with `bedtools bamtobed`. Empty BEDfiles (where no primer variants were identified) are removed.
 5. Using `iVar getmasked`, generate a list of primers with mismatches (variants) to the consensus genome.

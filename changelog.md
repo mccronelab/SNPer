@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.1.0.1-Beta
+- Fix typos in README.
+
 ## 0.1.0-Beta
 - Open up repository to general public.
 - Address major primer mismatch detection bug:
