@@ -1,7 +1,9 @@
 process PICARD_SORT {
+    errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
+
     cpus 1
-    memory 20G
-    time 12.h
+    memory { 2G * task.attempt }
+    time { 4.h * task.attempt }
 
     input:
         tuple val(key), path(trimmed_bam)
