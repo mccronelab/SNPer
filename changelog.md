@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-Beta
+- Open up repository to general public.
+- Address major primer mismatch detection bug:
+    - `trim_and_mask.nf`: Realign primers to consensus genome before trimming primers.
+- Tweak README to make some text clearer.
+
 ## v0.4.1-Alpha
 - Begin reworking documentation in preparation for making the repository public:
     - Move changelog to its own Markdown file.

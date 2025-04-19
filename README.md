@@ -1,9 +1,8 @@
-# SNPer v0.4.0.3-Alpha
-Standard Nucleotide Pipeline (emerging resource)
+# SNPer v0.1.0-Beta
 
 ## Description
 
-An in-development, Nextflow-managed viral in-host variant calling workflow. SNPer uses BWA-mem and iVar to align FASTQ files to a reference genome, construct a consensus sequence, and then call variants relative to the consensus. SNPer can handle either single or replicated samples and includes a primer mismatch detection step to improve variant calling in tiled amplicon data. SNPer also comes with a Docker image that manages most of its dependencies, which is [available here](https://quay.io/repository/mccronelab/snper). The intitial version of SNPer is heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
+An in-development, Nextflow-managed viral in-host variant calling workflow. SNPer uses BWA-mem and iVar to align FASTQ files to a reference genome, construct a consensus sequence, and then call variants relative to the consensus. SNPer can handle either single or replicated samples and includes a primer mismatch detection step to improve variant calling in tiled amplicon data. SNPer also comes with a Docker image that manages workflow dependencies, which is [available here](https://quay.io/repository/mccronelab/snper). The intitial version of SNPer is heavily based on the Lauring Lab's VOC transmission pipeline as a jumping-off point: https://github.com/lauringlab/SARS-CoV-2_VOC_transmission_bottleneck
 
 ## Quick-Start Guide
 
@@ -27,7 +26,7 @@ nextflow run main.nf -profile test
 
 Alternatively, if you have Apptainer, ensure that it is loaded/running:
 ```
-nextflow run main.nf -profile test_apptainer
+nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
 ```
 
 ## Workflow
