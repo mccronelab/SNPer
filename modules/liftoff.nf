@@ -6,6 +6,7 @@ process LIFTOFF {
 
     output:
         tuple val(key), path("${target.simpleName}.gff3")
+        
     script:
     """
     liftoff -g ${gff_file} -o ${target.simpleName}.gff3 ${target} ${reference}

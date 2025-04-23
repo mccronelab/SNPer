@@ -7,7 +7,7 @@ process IVAR_PRIMER_VARIANTS {
 
     script:
         """
-        samtools mpileup -aa -A -d 10000 --reference ${consensus} -Q ${params.variant_minQ}  -q ${params.variant_minQ} -F 0  ${bam} \\
+        samtools mpileup -aa -A -d 10000 --reference ${consensus} -Q ${params.variant_minQ}  -q ${params.variant_min_mapQ} -F 0  ${bam} \\
         | ivar variants -p ${consensus.simpleName}_primer_variants -t ${params.variant_freq_threshold}
 
         bedtools bamtobed -i ${bam} > ${bam.simpleName}_primers.bed
