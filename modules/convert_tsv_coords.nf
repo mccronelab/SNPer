@@ -8,7 +8,7 @@ process CONVERT_TSV_COORDS {
     time { 4.h * task.attempt }
 
     input:
-        tuple val(key), path(consensus), path(reference), val(variant_tsv)
+        tuple val(key), path(consensus), path(reference), path(variant_tsv)
 
     output:
         tuple val(key), path("${variant_tsv.simpleName}.ref_coords.tsv")
