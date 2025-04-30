@@ -78,12 +78,12 @@ nextflow run ./ -profile test
 
 _Requires docker_
 
-## Parameters (last update: v0.3.0-Alpha)
+## Parameters 
 
 -   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
 - `reference_fasta`: A path to the reference genome for the replicon of interest.
 - `reference_gff`: Path to GFF file describing ORFs on reference genome.
-- `primer_bedfile`: Path to .bed file containig ARCTIC primers.
+- `primer_bed`: Path to .bed file containig ARCTIC primers.
 - `primer_fasta`: Path to file with FASTA sequences for each primer.
 - `primer_pairs`: Path to TSV file that lists each pair of left and right primers.
 - `output_dir`: Path where output will be stored.
