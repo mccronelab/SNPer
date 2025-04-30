@@ -1,5 +1,5 @@
 process CONVERT_TSV_COORDS {
-    publishDir "${params.output_dir}/reference_coordinate_variants/", mode: 'copy'
+    publishDir "${params.output_dir}/variants/", mode: 'copy'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 
     cpus {1 * task.attempt}

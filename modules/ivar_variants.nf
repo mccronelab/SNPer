@@ -1,5 +1,4 @@
 process IVAR_VARIANTS {
-    publishDir "${params.output_dir}/variants/", mode: 'copy'
     // retry if error message indicates a failure due to resource limits
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 
