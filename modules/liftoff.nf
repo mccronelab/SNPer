@@ -2,10 +2,10 @@ process LIFTOFF {
     publishDir "${params.output_dir}/gff3/", mode: 'copy'
 
     input:
-        tuple val(key), path(reference), path(target), path(gff_file)
+        tuple val(meta), path(reference), path(target), path(gff_file)
 
     output:
-        tuple val(key), path("${target.simpleName}.gff3")
+        tuple val(meta), path("${target.simpleName}.gff3")
         
     script:
     """

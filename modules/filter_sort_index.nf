@@ -4,10 +4,10 @@ process FILTER_SORT_INDEX {
     time 12.h
 
     input:
-        tuple val(key), path(sam_file)
+        tuple val(meta), path(sam_file)
 
     output:
-        tuple val(key), path("*.sorted.bam"), path("*.bai")
+        tuple val(meta), path("*.sorted.bam"), path("*.bai")
 
     script:
     // samtools view -F 4: Exclude unmapped reads from output

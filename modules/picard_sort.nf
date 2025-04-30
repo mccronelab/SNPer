@@ -6,10 +6,10 @@ process PICARD_SORT {
     time { 4.h * task.attempt }
 
     input:
-        tuple val(key), path(trimmed_bam)
+        tuple val(meta), path(trimmed_bam)
 
     output:
-        tuple val(key), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
+        tuple val(meta), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
     script:
     """

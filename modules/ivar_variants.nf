@@ -7,10 +7,10 @@ process IVAR_VARIANTS {
     time { 4.h * task.attempt }
 
     input:
-        tuple val(key), path(bam), path(consensus), path(gff)
+        tuple val(meta), path(bam), path(consensus), path(gff)
 
     output:
-        tuple val(key), path("*tsv")
+        tuple val(meta), path("*tsv")
         
     script:
     """
