@@ -8,7 +8,7 @@ include { FILTER_SORT_INDEX as FSI_VAR  } from "../modules/filter_sort_index"
 include {AMPLICON_CLIP} from "../modules/amplicon_clip"
 include { PICARD_SORT as PS_CON  } from "../modules/picard_sort"
 include { PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
-include { GET_COVERAGE  } from "../modules/get_coverage"
+include { GET_CONSENSUS_COVERAGE; GET_VARIANT_READ_DEPTH  } from "../modules/get_coverage"
 include { MERGE_MPILEUP_CONSENSUS } from "../modules/merge_mpileup_consensus"
 
 workflow CONSENSUS_GEN {
@@ -40,7 +40,9 @@ workflow CONSENSUS_GEN {
 
         // filter out empty consensus sequences
         consensus_sequence = consensus_sequence.filter { _sample, consensus -> consensus.size() >= 1000 }
-
+        | GET_CONSENSUS_COVERAGE
+        | filter { sample, consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff}
+        | map {sample ,consensus, _coverage -> [sample, consensus]}
 
         variant_bam =  bam.map{meta, bam, bai -> tuple(meta.sample, meta, bam)}
           .combine(consensus_sequence, by:0) // sample, meta, bam, consensus
@@ -49,7 +51,7 @@ workflow CONSENSUS_GEN {
           | FSI_VAR // meta, sorted bam, index
         
 
-        GET_COVERAGE(variant_bam)
+        GET_VARIANT_READ_DEPTH(variant_bam)
 
         // BWA_MEM() doesn't output the consensus, so we rejoin it
         variant_bam_consensus = variant_bam.map{meta, bam, bai -> tuple(meta.sample, meta, bam, bai)}
