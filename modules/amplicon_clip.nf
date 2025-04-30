@@ -9,13 +9,14 @@ process AMPLICON_CLIP {
     output:
         tuple val(meta), path("*.primertrim.bam")
 
+    def clipped = params.remove_unclipped_reads? '--clipped': ''
     script:
     """
     samtools ampliconclip \
         -b ${primer_bed} \
         --hard-clip \
         --strand \
-        --clipped \
+        ${clipped} \
         -f ${sorted_bam.simpleName}.clipped.log \
         --primer-counts ${sorted_bam.simpleName}.primers.txt \
         -u \
