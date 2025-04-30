@@ -1,5 +1,6 @@
 
 process MERGE_MPILEUP_CONSENSUS {
+    label 'process_high'
     publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 

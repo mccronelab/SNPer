@@ -1,4 +1,5 @@
 process IVAR_TRIM {
+    label 'process_high'
     cpus 1
     memory 2G
     time 12.h

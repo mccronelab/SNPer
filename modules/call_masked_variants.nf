@@ -1,4 +1,5 @@
 process CALL_MASKED_VARIANTS {
+    label 'process_high'
     publishDir "${params.output_dir}/called_variant_tsvs/", mode: 'copy'
 
     input:

@@ -1,4 +1,5 @@
 process BWA_MEM {
+    label 'process_high'
     errorStrategy 'retry'
     maxRetries 3
 
@@ -22,6 +23,7 @@ process BWA_MEM {
 }
 
 process BWA_REMAP {
+    label 'process_high'
     errorStrategy 'retry'
     maxRetries 3
 //https://lh3.github.io/2021/07/06/remapping-an-aligned-bam

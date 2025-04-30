@@ -1,4 +1,5 @@
 process SAMTOOLS_SORT_AND_INDEX {
+    label 'process_low'
     cpus 1
     memory 20G
     time 12.h

@@ -2,6 +2,7 @@ process AMPLICON_CLIP {
     cpus 1
     memory 2G
     time 12.h
+    label 'process_medium'
 
     input:
         tuple val(meta), path(sorted_bam), path(bam_index), path(primer_bed), path(reference)

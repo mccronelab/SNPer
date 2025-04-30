@@ -1,4 +1,5 @@
 process LIFTOFF {
+    label 'process_medium'
     publishDir "${params.output_dir}/gff3/", mode: 'copy'
 
     input:

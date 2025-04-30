@@ -1,4 +1,5 @@
 process IVAR_VARIANTS {
+    label 'process_high'
     // retry if error message indicates a failure due to resource limits
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 

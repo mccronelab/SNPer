@@ -1,4 +1,5 @@
 process IVAR_PRIMER_VARIANTS {
+    label 'process_high'
     input:
         tuple val(key), path(bam), path(consensus)
 

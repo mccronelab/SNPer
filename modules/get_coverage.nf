@@ -1,4 +1,5 @@
 process GET_VARIANT_READ_DEPTH {
+    label 'process_high'
     publishDir "${params.output_dir}/replicate_coverage", mode: 'copy'
 
     cpus 1
@@ -18,6 +19,7 @@ process GET_VARIANT_READ_DEPTH {
 }
 
 process GET_CONSENSUS_COVERAGE {
+    label 'process_low'
     input:
         tuple val(meta), path(consensus)
     output:

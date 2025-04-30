@@ -1,4 +1,5 @@
 process CALL_PRIMER_VARIANTS {
+    label 'process_high'
     input:
         tuple val(key_1), path(primer_bam), path(primer_bed)
         tuple val(key_2), path(consensus_file)

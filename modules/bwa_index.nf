@@ -1,5 +1,5 @@
 process BWA_MEM {
-
+    label 'process_low'
     input:
         path(reference)
 

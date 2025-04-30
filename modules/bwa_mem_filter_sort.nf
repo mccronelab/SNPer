@@ -1,4 +1,5 @@
 process BWA_MEM_FILTER_SORT {
+    label 'process_high'
     input:
         tuple val(key), path(consensus_seq), path(consensus_bwt)
         path primer_fasta

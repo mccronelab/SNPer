@@ -1,4 +1,5 @@
 process FILTER_SORT_INDEX {
+    label 'process_low'
     cpus 1
     memory 2G
     time 12.h

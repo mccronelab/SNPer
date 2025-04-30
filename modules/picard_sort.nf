@@ -1,4 +1,5 @@
 process PICARD_SORT {
+    label 'process_low'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 
     cpus 1

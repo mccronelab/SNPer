@@ -1,4 +1,5 @@
 process MASK_PRIMERS {
+    label 'process_high'
     input:
         tuple val(key), path(primer_bed), path(primer_variants_tsv), path(primer_pair_tsv)
 
