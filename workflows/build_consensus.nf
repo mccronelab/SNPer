@@ -20,7 +20,10 @@ workflow CONSENSUS_GEN {
         reference = file(params.reference_fasta)
 
         // each fastqc channel tuple contains a meta, replicate, [path(read1), path(read2)]
-        // FASTQC(samples)
+        if(!params.skip_fastqc){
+          FASTQC(samples)
+        }
+        
 
         bam = samples.map { meta, reads -> [meta, reads, reference] } 
           | BWA_MEM  // (meta, path(*sam))
