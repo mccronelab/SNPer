@@ -42,7 +42,7 @@ process BWA_REMAP {
     script:
         """
         bwa index ${reference}
-        samtools collate -Oun128 ${bam}\
+        samtools collate -Oun128 ${bam} -T ./collate.TEMP\
         | samtools fastq - \
         |bwa mem -p -o ${meta.replicate_id}.sam ${reference}  -
         """
