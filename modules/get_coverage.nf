@@ -9,10 +9,10 @@ process GET_COVERAGE {
         tuple val(key), path(bam), path(bam_index)
 
     output:
-        path "*.csv"
+        path "*.tsv"
 
     script:
         """
-        samtools depth -a -d 100000 ${bam} -Q ${params.variant_min_mapQ} > ${bam.baseName}_coverage.csv
+        samtools depth -a -d 100000 ${bam} -Q ${params.variant_min_mapQ} > ${bam.baseName}_coverage.tsv
         """
 }
