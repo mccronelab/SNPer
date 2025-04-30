@@ -46,16 +46,18 @@ def convert_coordinates(tsv_path: str, output_path: str, target_to_ref: Dict[int
     with open(tsv_path, "r", encoding="utf8") as variants_tsv:
         with open(output_path, "w", encoding="utf8") as reference_coords_tsv:
             # we expect there to be a header line in iVar TSV output
-            header = variants_tsv.readline()
+            header = variants_tsv.readline().strip()
+            # add reference pos
+            header = header + "\tREF_POS\n"
             reference_coords_tsv.write(header)
 
             for line in variants_tsv:
                 # tsv are tab-separated
-                split_line = line.split("\t")
-                # get target coordinate, replace, and write
-                split_line[1] = str(target_to_ref[int(split_line[1])])
+                split_line = line.strip().split("\t")
+                # get target coordinate and write
+                split_line.append(str(target_to_ref[int(split_line[1])]))
 
-                updated_line = "\t".join(split_line)
+                updated_line = "\t".join(split_line) +"\n"
                 reference_coords_tsv.write(updated_line)
 
 
