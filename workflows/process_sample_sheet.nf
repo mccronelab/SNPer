@@ -16,8 +16,8 @@ def make_fastq_ch(LinkedHashMap row){
     def meta = [:]
     meta.sample = row.sample.trim()
     meta.replicate_id = row.replicate_id.trim()
-    
-    meta_fastq = [ meta, [file(row.fastq1.trim()), file(row.fastq2.trim())] ]
+
+    def meta_fastq = [ meta, [file(row.fastq1.trim()), file(row.fastq2.trim())] ]
 
     return meta_fastq
 
