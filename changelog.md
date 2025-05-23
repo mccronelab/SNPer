@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.0.3-Beta
+- Add BAQ to variant calling to address false positives.
+- Set 'convert_tsv_coords.nf' to retry on task failure.
+- Update default SNPer parameter scheme based on benchmarking results.
+
 ## v0.1.0.2-Beta
 - Set test profile to faster test with files on GitHub.
     - Add MN908947.3 GFF3 annotation file.
