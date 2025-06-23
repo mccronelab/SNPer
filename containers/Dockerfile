@@ -18,7 +18,12 @@ RUN apt-get update && \
     build-essential \
     libparasail-dev \
     minimap2 \
-    mafft
+    mafft \
+    autoconf \
+    automake \
+    libtool libtool-bin \
+    pkg-config \
+    libsigsegv-dev # now required to build Parasail
 
 COPY setup_snper-env.sh setup_snper-env.sh
 

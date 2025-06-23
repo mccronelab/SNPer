@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.1.0.4-Beta
+- Update Docker image to fix Liftoff dependencies that have broken since its last push.
+
 ## v0.1.0.3-Beta
 - Add BAQ to variant calling to address false positives.
 - Set 'convert_tsv_coords.nf' to retry on task failure.
