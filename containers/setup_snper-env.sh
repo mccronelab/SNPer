@@ -17,10 +17,3 @@ pip install .
 
 # install cutadapt
 pip install cutadapt
-
-RUN apt-get purge -y --auto-remove \
-        build-essential \
-        python3-dev libpython3.*-dev \
-        libparasail-dev libsigsegv-dev \
-        git && \
-    rm -rf /var/lib/apt/lists/* /root/.cache/pip
