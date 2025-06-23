@@ -14,10 +14,12 @@ workflow {
     // params.primer_fasta = file(params.primer_fasta)
     // params.primer_pairs = file(params.primer_pair_tsv)
     // params.primer_info = file(params.primer_info_tsv)
+    interleaved_default = params.interleaved
+    default_sequencing_tech = params.sequencing_technique
 
     input_ch = Channel.fromPath(params.sample_sheet)
     
-    samples  = PROCESS_SAMPLE_SHEET(input_ch) //[sample:,replicate_id:], [fastq1,fastq2]]
+    samples  = PROCESS_SAMPLE_SHEET(input_ch, interleaved_default, default_sequencing_tech) //metadata, [fastq1,fastq2]]
  
     // tuple (consensus_name, consensus.fasta)
     aligned_reads_and_consensus = CONSENSUS_GEN(samples)
