@@ -1,0 +1,4 @@
+sample,fastq1,fastq2,replicate_id,sequencing_tech,interleaved
+HS10498, ./data/renamed_fastq/HS10498_A_1.fastq.gz, ./data/renamed_fastq/HS10498_A_2.fastq.gz, HS10498_A, amplicon, false
+HS10498, ./data/renamed_fastq/HS10498_B_1.fastq.gz, ./data/renamed_fastq/HS10498_B_2.fastq.gz, HS10498_B, amplicon, false
+MHM1600, ./data/renamed_fastq/MHM1600_B_1.fastq.gz, ./data/renamed_fastq/MHM1600_B_2.fastq.gz, MHM1600_B, amplicon, false

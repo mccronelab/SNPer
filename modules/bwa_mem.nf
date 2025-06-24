@@ -16,6 +16,12 @@ process BWA_MEM {
         tuple val(meta), path("*.sam")
 
     script:
+    if( meta.interleaved == true)
+        """
+        bwa index ${reference}
+        bwa mem -p -o ${meta.replicate_id}.sam ${reference} ${paired_reads}
+        """
+    else
         """
         bwa index ${reference}
         bwa mem -o ${meta.replicate_id}.sam ${reference} ${paired_reads}
@@ -44,6 +50,6 @@ process BWA_REMAP {
         bwa index ${reference}
         samtools collate -Oun128 ${bam} -T ./collate.TEMP\
         | samtools fastq - \
-        |bwa mem -p -o ${meta.replicate_id}.sam ${reference}  -
+        | bwa mem -p -o ${meta.replicate_id}.sam ${reference}  -
         """
 }
