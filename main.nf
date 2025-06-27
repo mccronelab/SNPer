@@ -9,21 +9,19 @@ nextflow.enable.strict = true
 
 
 workflow {
-    // params.reference_gff = file(params.reference_gff)
-    // params.primer_bed = file(params.primer_bedfile)
-    // params.primer_fasta = file(params.primer_fasta)
-    // params.primer_pairs = file(params.primer_pair_tsv)
-    // params.primer_info = file(params.primer_info_tsv)
+    // import values and files from params
     interleaved_default = params.interleaved
     default_sequencing_tech = params.sequencing_technique
+    primer_csv = Channel.fromPath(params.primer_csv)
+    primer_default = params.primer_id_default
 
     input_ch = Channel.fromPath(params.sample_sheet)
     
-    samples  = PROCESS_SAMPLE_SHEET(input_ch, interleaved_default, default_sequencing_tech) //metadata, [fastq1,fastq2]]
+    samples  = PROCESS_SAMPLE_SHEET(input_ch, primer_csv, interleaved_default, 
+        default_sequencing_tech, primer_default) //metadata, [fastq1,fastq2]]
  
     // tuple (consensus_name, consensus.fasta)
     aligned_reads_and_consensus = CONSENSUS_GEN(samples)
 
     CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
-
 }

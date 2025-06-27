@@ -4,17 +4,19 @@ process AMPLICON_CLIP {
     time 12.h
     label 'process_medium'
 
+    def clipped = params.remove_unclipped_reads? '--clipped': ''
+
     input:
-        tuple val(meta), path(sorted_bam), path(bam_index), path(primer_bed), path(reference)
+        tuple val(meta), path(sorted_bam), path(bam_index), path(reference)
 
     output:
         tuple val(meta), path("*.primertrim.bam")
+        
 
-    def clipped = params.remove_unclipped_reads? '--clipped': ''
     script:
     """
     samtools ampliconclip \
-        -b ${primer_bed} \
+        -b ${meta.primer_bedfile} \
         --hard-clip \
         --strand \
         ${clipped} \
