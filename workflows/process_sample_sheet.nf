@@ -12,7 +12,7 @@ workflow PROCESS_SAMPLE_SHEET {
     // returns tuple with [metadata, [reads]]
     // depending on input, may be of form [metadata, 'reads1, reads2'] or
     // [metadata, [reads_interleaved]]
-    samples = parse_sample_sheet(sample_sheet, interleaved, sequencing_type_param, primer_id_default).view()
+    samples = parse_sample_sheet(sample_sheet, interleaved, sequencing_type_param, primer_id_default)
     // returns Channel where each row looks like: [primer_id, primer_file]
     primer_paths = parse_primer_csv(primer_csv)
     

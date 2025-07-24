@@ -2,6 +2,7 @@ include { CONSENSUS_GEN } from "./workflows/build_consensus"
 include { CALL_VARIANTS_IVAR } from './workflows/call_variants_ivar'
 include { TRIM_AND_MASK } from './workflows/trim_and_mask'
 include { PROCESS_SAMPLE_SHEET } from './workflows/process_sample_sheet'
+include { READS_QC } from './workflows/process_reads'
 
 nextflow.enable.dsl=2
 // strict mode: https://www.nextflow.io/docs/latest/reference/feature-flags.html#config-feature-flags
@@ -19,6 +20,10 @@ workflow {
     
     samples  = PROCESS_SAMPLE_SHEET(input_ch, primer_csv, interleaved_default, 
         default_sequencing_tech, primer_default) //metadata, [fastq1,fastq2]]
+
+    if(!params.skip_qc) {
+        samples = READS_QC(samples)
+    }
  
     // tuple (consensus_name, consensus.fasta)
     aligned_reads_and_consensus = CONSENSUS_GEN(samples)

@@ -14,6 +14,7 @@ pip install Bio
 git clone https://github.com/agshumate/Liftoff liftoff 
 cd liftoff
 pip install .
+cd
 
 # install cutadapt
 pip install cutadapt

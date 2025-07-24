@@ -23,11 +23,27 @@ RUN apt-get update && \
     automake \
     libtool libtool-bin \
     pkg-config \
-    libsigsegv-dev # now required to build Parasail
+    libsigsegv-dev \
+    openjdk-21-jdk-headless
+
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH="$JAVA_HOME/bin:$PATH"
 
 COPY setup_snper-env.sh setup_snper-env.sh
 
 RUN chmod +x /setup_snper-env.sh \
     && ./setup_snper-env.sh
 
-ENV PATH="/snper-env/bin:$PATH"
+RUN git clone https://github.com/timflutre/trimmomatic.git && \
+    cd trimmomatic && \
+    make && \
+    make check && \
+    make INSTALL=/usr/local/ install
+
+RUN git clone https://github.com/jsh58/NGmerge.git && \
+    cd NGmerge && \
+    make && \
+    mv NGmerge /usr/local/bin/
+
+ENV PATH="root/bin/:/snper-env/bin:$PATH"
+ENV TRIMMOMATIC_JAR="/usr/local/bin/trimmomatic.jar"
