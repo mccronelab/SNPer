@@ -67,6 +67,12 @@ def parse_sample_sheet(sample_sheet, interleaved_param, sequencing_technique_par
 
         meta.replicate_id = replicate_id
         meta.sequencing_tech = sequencing_technique
+        
+        // verify we handle the sequencing technique
+        def supported_techniques = ["amplicon", "mips", "hybrid-capture"]
+        if (!(sequencing_technique.toLowerCase() in supported_techniques)) {
+            throw new IllegalArgumentException("Value '${sequencing_technique}' not in ${supported_techniques}")
+}
 
         // return depending on number of input files (1 if interleaved, 2 otherwise)
         if(interleaved) {
