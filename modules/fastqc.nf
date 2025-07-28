@@ -1,4 +1,5 @@
 process FASTQC {
+    label 'process_high'
     publishDir "${params.output_dir}/fastqc/", mode: 'copy'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
 
@@ -7,12 +8,11 @@ process FASTQC {
     time { 4.h * task.attempt }
 
     input:
-        // this input pattern matches the output of channel.fromFilePairs()
-        tuple val(key), val(replicate_id), path(paired_reads)
+        tuple val(meta), path(paired_reads)
     
     output:
-        tuple val(key), path("*.html"), emit: html
-        tuple val(key), path("*.zip") , emit: zip
+        tuple val(meta), path("*.html"), emit: html
+        tuple val(meta), path("*.zip") , emit: zip
 
     script:
         // supplying 2 paths here produces 2 output files

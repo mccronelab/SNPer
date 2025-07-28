@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.0-Beta
+- Use `samtools ampliconclip` to remove primer sequences.
+- Samplesheet changes:
+    - Add optional columns: replicate_id, sequencing_technique, primer_id. All can be supplied default values via a params file, which will be applied to all rows where the optional columns are empty.
+    - Add support for parsing interleaved FASTQ files, where there is only 1 FASTQ per row.
+- Add primer_csv, allowing for input samplesheets with multiple primer schemes to be run simultaneously. Primers are linked to each row on the input samplesheet by a primer ID.
+- Add support for sequencing technologies that require read deduplication (MIPs, Hybrid Capture).
+    - Support for Hybrid Capture will come in a future update. Currently, we only support pre-processed MIPs reads with UMIs (UMIs already extracted to read names and trimmed). We plan to add full support for MIPs, and unprocessed MIPs reads, in a future update.
+- Add Trimmomatic, NG-Merge to SNPer Docker image to support more thorough paired read quality control.
+- Add support for pre-trimmed input reads, indicated by a `primer_id` value of 'None' on an input samplesheet.
+
 ## v0.1.0.4-Beta
 - Update Docker image to fix Liftoff dependencies that have broken since its last push.
 

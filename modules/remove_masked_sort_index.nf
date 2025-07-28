@@ -1,4 +1,5 @@
 process REMOVE_MASKED_SORT_INDEX {
+    label 'process_high'
 
     input:
         tuple val(key), path(primer_bed_file), path(mask_txt), path(bam_file), path(index)

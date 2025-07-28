@@ -1,4 +1,5 @@
 process BWA_SAMTOOLS_INDEX {
+    label 'process_low'
     input:
         tuple val(key), path(consensus_seq)
 

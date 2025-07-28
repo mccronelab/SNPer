@@ -1,5 +1,5 @@
-process BWA_MEM {
-
+process BWA_INDEX {
+    label 'process_low'
     input:
         path(reference)
 

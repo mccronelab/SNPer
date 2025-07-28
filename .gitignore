@@ -2,3 +2,4 @@ dev/*
 work/**/*
 .nextflow/**/*
 .nextflow*
+test-out/*
