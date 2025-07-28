@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.1-Beta
+- Remove redundant variables in `nextflow.config` param block.
+
 ## v2.0-Beta
 - Use `samtools ampliconclip` to remove primer sequences.
 - Samplesheet changes:
