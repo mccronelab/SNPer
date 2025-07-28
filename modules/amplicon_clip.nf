@@ -9,7 +9,6 @@ process AMPLICON_CLIP {
 
     output:
         tuple val(meta), path("*.primertrim.bam")
-        
 
     script:
     def clipped = params.remove_unclipped_reads? '--clipped': ''

@@ -8,7 +8,6 @@ process FASTQC {
     time { 4.h * task.attempt }
 
     input:
-        // this input pattern matches the output of channel.fromFilePairs()
         tuple val(meta), path(paired_reads)
     
     output:
