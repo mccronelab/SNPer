@@ -1,4 +1,4 @@
-# SNPer v0.1.0.3-Beta
+# SNPer v2.0.1-Beta
 
 ## Description
 
