@@ -10,7 +10,8 @@ include { DEDUPLICATE_READS as DEDUP_HC } from "../modules/deduplicate_reads"
 include { PICARD_SORT as PS_CON  } from "../modules/picard_sort"
 include { PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
 include { GET_CONSENSUS_COVERAGE; GET_VARIANT_READ_DEPTH  } from "../modules/get_coverage"
-include { MERGE_MPILEUP_CONSENSUS } from "../modules/merge_mpileup_consensus"
+include { MERGE_MPILEUP_CONSENSUS as ROUGH_CONSENSUS } from "../modules/merge_mpileup_consensus"
+include { MERGE_MPILEUP_CONSENSUS as REFINE_CONSENSUS } from "../modules/merge_mpileup_consensus"
 
 workflow CONSENSUS_GEN {
   take:
@@ -72,26 +73,35 @@ workflow CONSENSUS_GEN {
 
     processed_bam = amplicon_bam.concat(mips_bam, hc_bam)
 
-    consensus_sequence = processed_bam.map{ meta, bam, bai -> tuple(meta.sample, bam, bai) }.groupTuple() // [sample, [bams], [bais]]
-      | MERGE_MPILEUP_CONSENSUS // sample, consensus
-
-    // filter out empty consensus sequences
-    consensus_sequence = consensus_sequence.filter { _sample, consensus -> consensus.size() >= 1000 }
+    consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference] }
+      | ROUGH_CONSENSUS // sample, consensus
+      | filter { _sample, consensus -> consensus.size() >= 1000 }
       | GET_CONSENSUS_COVERAGE
       | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
       | map { sample ,consensus, _coverage -> [sample, consensus] }
 
-    variant_bam =  processed_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
+    variant_bam = processed_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
       .combine(consensus_sequence, by:0) // sample, meta, bam, consensus
       .map{ _sample, meta, bam, consensus -> [meta, bam, consensus] }
       | BWA_REMAP // meta, sams
       | FSI_VAR // meta, sorted bam, index
 
+    polished_consensus = variant_bam
+      | map {meta, bam, bai -> [meta.sample, meta, bam, bai] }
+      | combine(consensus_sequence, by:0)
+      | map {_sample, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
+      | REFINE_CONSENSUS
+      // filter out empty consensus sequences
+      | filter { _sample, consensus -> consensus.size() >= 1000 }
+      //| GET_CONSENSUS_COVERAGE
+      //| filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      //| map { sample, consensus, _coverage -> [sample, consensus] }
+
     GET_VARIANT_READ_DEPTH(variant_bam)
 
     // BWA_MEM() doesn't output the consensus, so we rejoin it
     variant_bam_consensus = variant_bam.map{ meta, bam, bai -> tuple(meta.sample, meta, bam, bai) }
-      .combine(consensus_sequence, by:0) // sample, meta, bam, bai, consensus
+      .combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
       .map{ _sample, meta, bam, bai, consensus -> tuple( meta, bam, bai, consensus) }  // meta, sorted bam, index, consensus
 
 
