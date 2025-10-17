@@ -1,8 +1,8 @@
 
 process MERGE_MPILEUP_CONSENSUS {
     label 'process_high'
-    errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
-    publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy', pattern: "*.fa", enable: { meta.realigned == true }
+    // errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
+    publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy', pattern: "*.fa"
 
     cpus 1
     memory { 2G * task.attempt }
@@ -12,7 +12,7 @@ process MERGE_MPILEUP_CONSENSUS {
         tuple val(meta), path(bams), path(bais), path(reference)
 
     output:
-        tuple val(sample), val(meta), path("${sample}.fa")
+        tuple val(sample), path("${sample}.fa")
 
     script:
     sample = meta.sample
