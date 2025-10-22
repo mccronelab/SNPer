@@ -7,12 +7,11 @@
 # Author: Conner Copeland
 # Contact: ccopelan@fredhutch.org
 # Created: 2025-01-31
-# Updated: 2024-01-31
+# Updated: 2025-07-29
 
 import argparse
-import re
 import sys
-from typing import TextIO
+from typing import Union
 
 
 def parse_args(sys_args: str) -> argparse.Namespace:
@@ -49,6 +48,14 @@ def parse_args(sys_args: str) -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "primer_id",
+        type=str,
+        default="",
+        help="String value that will populate the primer_id for all rows. The value " \
+        "should match a key in a primer CSV file supplied to the SNPer workflow."
+    )
+
+    parser.add_argument(
         "output_sheet",
         type=str,
         help="Path to output sample sheet in CSV format"
@@ -63,13 +70,62 @@ def parse_args(sys_args: str) -> argparse.Namespace:
     parser.add_argument(
         "--delimiter",
         type=str,
-        default = "_",
+        default="_",
         help="Character to use to separate the sample ID from the replicate ID in input file names " \
              "(from identifier_list). For example, if a replicate is named 1234_A, this " \
              "should be '_'. If a replicate is named 1234-A, this should be '-'. Default is '_'."
     )
 
+    parser.add_argument(
+        "--protocol",
+        type=str,
+        default="",
+        choices=["amplicon", "mips", "hybrid-capture"],
+        help="If set, creates an optional sequencing_tech columns in the output sample sheet. Any " \
+        "value supplied to this option will populate all columns in the output sample sheet. Value " \
+        "be one of amplicon, mips, or hybrid-capture."
+    )
+
+    parser.add_argument(
+        "--interleaved",
+        action="store_true",
+        help="Set if input reads are interleaved. Default is false."
+    )
+
+    parser.add_argument(
+        "--suppress-header",
+        action="store_true",
+        help="Set to prevent the header line from being printed in the output sample sheet (useful "\
+        "for concatenating multiple samplesheets together). Default is false."
+    )
+
+    parser.add_argument(
+        "--r1-suffix",
+        type=str,
+        default="1",
+        help="What to use as the suffix at the end of a file name to indicate r1. In 123_1.fastq.gz, " \
+        "this would be the character 1 (another common form is R1, as in 123_R1.fastq.gz). Defaults " \
+        "to 1."
+    )
+
+    parser.add_argument(
+        "--r2-suffix",
+        type=str,
+        default="2",
+        help="What to use as the suffix at the end of a file name to indicate r2. In 123_2.fastq.gz, " \
+        "this would be the character 2 (another common form is R2, as in 123_R2.fastq.gz). Defaults " \
+        "to 2."
+    )
+
     return parser.parse_args()
+
+def if_true_concat(condition: Union[str, bool], base_string: str, add_on: str) -> str:
+    return_str = base_string
+
+    if condition:
+        return_str += add_on
+
+    return return_str
 
 
 def _main():
@@ -79,6 +135,12 @@ def _main():
     output_path = args.output_sheet
     has_replicates = args.replicated
     delimiter = args.delimiter
+    primer_id = args.primer_id
+    sequencing_tech = args.protocol
+    interleaved = args.interleaved
+    suppress_header = args.suppress_header
+    r1_suffix = args.r1_suffix
+    r2_suffix = args.r2_suffix
 
     file_ID_list = []
 
@@ -87,20 +149,30 @@ def _main():
             file_ID_list.append(file_ID.strip())
 
     with open(output_path, "w", encoding="utf8") as sampleSheet:
-        sampleSheet.write(f"sample,replicate_id,fastq1,fastq2\n")
+        if(not suppress_header):
+            header = "sample,fastq1,fastq2,primer"
+
+            # add optional columns, if specified
+            header = if_true_concat(has_replicates, header, ",replicate-id")
+            header = if_true_concat(sequencing_tech, header, ",sequencing_tech")
+            header = if_true_concat(interleaved, header, ",interleaved")
+
+            sampleSheet.write(f"{header}\n")
 
         for file_ID in file_ID_list:
+
+            row = f"{file_ID}, {fastq_dir_path}/{file_ID}_{r1_suffix}.fastq.gz, {fastq_dir_path}/{file_ID}_{r2_suffix}.fastq.gz, {primer_id}"
+
             if has_replicates:
                 # in this case, there's a replicate ID we want to split off from sample ID
-                # currently, this will only work for underscores. If need be, use re.split() to support multiple break characters
                 sample_list = file_ID.split(delimiter)[:-1]
                 sample = delimiter.join(sample_list)
-                sampleSheet.write(f"{sample}, {file_ID}, {fastq_dir_path}/{file_ID}_1.fastq.gz, {fastq_dir_path}/{file_ID}_2.fastq.gz\n")
+                row = f"{sample}, {fastq_dir_path}/{file_ID}_{r1_suffix}.fastq.gz, {fastq_dir_path}/{file_ID}_{r2_suffix}.fastq.gz, {primer_id}, {file_ID}"
 
-            else:
-                # in this case, sample ID and file ID are the same
-                sampleSheet.write(f"{file_ID}, {file_ID}, {fastq_dir_path}/{file_ID}_1.fastq.gz, {fastq_dir_path}/{file_ID}_2.fastq.gz\n")
-    
+            row = if_true_concat(sequencing_tech, row, f", {sequencing_tech}")
+            row = if_true_concat(interleaved, row, ", True")
+
+            sampleSheet.write(f"{row}\n")
 
 if __name__ == "__main__":
     _main()
