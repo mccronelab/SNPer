@@ -4,15 +4,15 @@ process TRIMMOMATIC {
         val trimmomatic_jarfile
 
     output:
-        tuple val(meta), path("${paired_reads[0].baseName}.r[1|2].fastq.gz")
+        tuple val(meta), path("${meta.replicate_id}_paired.r[1|2].fastq.gz")
 
     script:
-    def basename = "${paired_reads[0].baseName}"
+    def rep_id = meta.replicate_id
     """
         java -jar ${trimmomatic_jarfile} PE \
         ${paired_reads} \
-        ${basename}.r1.fastq.gz ${basename}.r1_unpaired.fastq.gz \
-        ${basename}.r2.fastq.gz ${basename}.r2_unpaired.fastq.gz \
+        ${rep_id}_paired.r1.fastq.gz ${rep_id}.r1_unpaired.fastq.gz \
+        ${rep_id}_paired.r2.fastq.gz ${rep_id}.r2_unpaired.fastq.gz \
         ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:2:True \
         LEADING:3 TRAILING:3 MINLEN:36
     """
