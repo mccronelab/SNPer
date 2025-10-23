@@ -1,17 +1,14 @@
 // This workflow uses BWA mem, samtools, picard, and iVar to build a consensus genome
 
-include { BWA_MEM; BWA_REMAP  } from "../modules/bwa_mem"
-include { BWA_MEM as BWA_MEM_VAR } from "../modules/bwa_mem"
-include { FILTER_SORT_INDEX as FSI_CON  } from "../modules/filter_sort_index"
-include { FILTER_SORT_INDEX as FSI_VAR  } from "../modules/filter_sort_index"
+include { BWA_MEM; BWA_REMAP as BWA_REMAP_CON; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
+include { FILTER_SORT_INDEX as FSI_CON; FILTER_SORT_INDEX as FSI_VAR;
+  FILTER_SORT_INDEX as FSI_POL  } from "../modules/filter_sort_index"
 include { AMPLICON_CLIP } from "../modules/amplicon_clip"
-include { DEDUPLICATE_READS as DEDUP_MIPS } from "../modules/deduplicate_reads"
-include { DEDUPLICATE_READS as DEDUP_HC } from "../modules/deduplicate_reads"
-include { PICARD_SORT as PS_CON  } from "../modules/picard_sort"
-include { PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
+include { DEDUPLICATE_READS as DEDUP_MIPS;  DEDUPLICATE_READS as DEDUP_HC } from "../modules/deduplicate_reads"
+include { PICARD_SORT as PS_CON; PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
 include { GET_CONSENSUS_COVERAGE; GET_VARIANT_READ_DEPTH  } from "../modules/get_coverage"
-include { MERGE_MPILEUP_CONSENSUS as ROUGH_CONSENSUS } from "../modules/merge_mpileup_consensus"
-include { MERGE_MPILEUP_CONSENSUS as REFINE_CONSENSUS } from "../modules/merge_mpileup_consensus"
+include { MERGE_MPILEUP_CONSENSUS as ROUGH_CONSENSUS; 
+  MERGE_MPILEUP_CONSENSUS as REFINE_CONSENSUS } from "../modules/merge_mpileup_consensus"
 
 workflow CONSENSUS_GEN {
   take:
@@ -75,15 +72,21 @@ workflow CONSENSUS_GEN {
 
     consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference] }
       | ROUGH_CONSENSUS // sample, consensus
-      | filter { _sample, consensus -> consensus.size() >= 1000 }
-      | GET_CONSENSUS_COVERAGE
-      | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
-      | map { sample ,consensus, _coverage -> [sample, consensus] }
+      // filter out consensus with no sequence, which sometimes occurs
+      | filter { _sample, consensus_fa -> consensus_fa
+        if (!consensus_fa.exists() || consensus_fa.size() == 0) {
+          return false
+          }
+        def seq = consensus_fa.splitFasta(record: [seqString: true])
+        if (seq) {
+          return true
+          }
+        }
 
     variant_bam = processed_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
       .combine(consensus_sequence, by:0) // sample, meta, bam, consensus
       .map{ _sample, meta, bam, consensus -> [meta, bam, consensus] }
-      | BWA_REMAP // meta, sams
+      | BWA_REMAP_CON // meta, sams
       | FSI_VAR // meta, sorted bam, index
 
     polished_consensus = variant_bam
@@ -91,20 +94,23 @@ workflow CONSENSUS_GEN {
       | combine(consensus_sequence, by:0)
       | map {_sample, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
       | REFINE_CONSENSUS
-      // filter out empty consensus sequences
-      | filter { _sample, consensus -> consensus.size() >= 1000 }
-      //| GET_CONSENSUS_COVERAGE
-      //| filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
-      //| map { sample, consensus, _coverage -> [sample, consensus] }
+      | GET_CONSENSUS_COVERAGE
+      | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      | map { sample, consensus, _coverage -> [sample, consensus] }
 
-    GET_VARIANT_READ_DEPTH(variant_bam)
+    variant_bam_polished = variant_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
+      | combine(polished_consensus, by:0)
+      | map { _sample, meta, bam, polished_con -> [meta, bam, polished_con] }
+      | BWA_REMAP_POL
+      | FSI_POL
+
+    GET_VARIANT_READ_DEPTH(variant_bam_polished)
 
     // BWA_MEM() doesn't output the consensus, so we rejoin it
-    variant_bam_consensus = variant_bam.map{ meta, bam, bai -> tuple(meta.sample, meta, bam, bai) }
+    variant_bam_polished_consensus = variant_bam_polished.map{ meta, bam, bai -> tuple(meta.sample, meta, bam, bai) }
       .combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
       .map{ _sample, meta, bam, bai, consensus -> tuple( meta, bam, bai, consensus) }  // meta, sorted bam, index, consensus
 
-
   emit:
-    reads_and_consensus =  variant_bam_consensus // (meta, sorted bam, bam index, consensus.fa)
+    reads_and_consensus =  variant_bam_polished_consensus // (meta, sorted bam, bam index, consensus.fa)
 }
