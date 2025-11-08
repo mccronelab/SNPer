@@ -1,4 +1,4 @@
-# SNPer v2.0.1-Beta
+# SNPer v2.0.2-Beta
 
 ## Description
 
@@ -37,29 +37,24 @@ nextflow run main.nf -profile test
 
 ### Sample Sheet Processing
 - Input: Sample Sheet (CSV format)
-- Output: A tuple containing Sample ID, Replicate ID (if no replicates, this is the sample ID), FASTQ_1, FASTQ_2
+- Output: A tuple containing a hash table with metadata values (meta), FASTQ_1, FASTQ_2. Run `python3 python/generate_sample_sheet.py -h` for more information on sample sheet fields.
+
+### FASTQ Processing.
+1. Submit input FASTQ files to `fastqc` for quality report generation.
+2. Submit FASTQ files to `trimmomatic`, taking trimmed and paired output reads for further analysis.
 
 ### Build Consensus Sequence
 - Input: A tuple containing Sample ID, Replicate ID, and FASTQ reads. Reference Sequence, Primer BEDfile
 - Output: BAM files where FASTQ reads are aligned to a consensus genome.
 
-1. Run FASTQC on reads, saving output.
-2. With `BWA mem`, align reads to the reference sequence. Then, filter out unmapped reads and sort the output BAM file.
-3. (Tiled Amplicon Only) Using `iVar trim`, mask primers on reads based on the contents of the primer BEDfile, then sort.
-4. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`.
-5. Map FASTQ reads to the consensus genome, which will enable variant calling later on. Filter out unmapped reads and sort output BAM file.
-6. Get coverage information for reads mapped to the consensus genome.
-
-### Trimming Reads and Masking Primers (Tiled Amplicon Only)
-- Input: BAM files where FASTQ reads are aligned to a consensus genome. Consensus Sequence.
-- Output: Trimmed FASTQ reads aligned to a consensus genome. Reads with primers that do not match the consensus genome are removed.
-
-1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
-2. Filter out empty consensus-aligned BAM files, align primers to consensus genome, trim primers with `ivar trim`, and sort trimmed BAMs.
-3. Reference primers are aligned to the consensus genome.
-4. Using `iVar variants`, primer variants are called. The resulting BAM file is coverted to a BEDfile with `bedtools bamtobed`. Empty BEDfiles (where no primer variants were identified) are removed.
-5. Using `iVar getmasked`, generate a list of primers with mismatches (variants) to the consensus genome.
-6. Using `ivar removereads`, throw away reads with primer mismatches relative to the consensus sequence. Then, sort and index the filtered BAM file with `samtools`.
+1. Align reads to the reference sequence with `bwa mem`, filter out unmapped reads and sort the output BAM file.
+2a. (Tiled Amplicon reads only) Trim primers on aligned reads based on the contents of the primer BEDfile with `samtools ampliconclip`, then sort.
+2b. (MIPs reads only) Deduplicate aligned reads with `samtools markdup`.
+3. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`. Samples that failed to generate a consensus sequence are filtered out of the workflow.
+4. Remap aligned reads to the consensus genome, filter out unmapped reads and sort output BAM file.
+5. Call a 'polished' consensus sequence from remapped aligned reads.
+6. Remap aligned reads to the polished consensus sequence.
+5. Get coverage information based on reads aligned to the consensus genome, filtering out any samples that fail to pass a user-defined coverage threshold (we typically use a 75% coverage threshold).
 
 ### Calling Variants with iVar
 - Input: BAM files paired with BAM indices and their consensus sequence. Reference sequence GFF file. Reference sequence in FASTA format.
@@ -83,15 +78,19 @@ _Requires docker_
 -   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
 - `reference_fasta`: A path to the reference genome for the replicon of interest.
 - `reference_gff`: Path to GFF file describing ORFs on reference genome.
-- `primer_bed`: Path to .bed file containig ARCTIC primers.
-- `primer_fasta`: Path to file with FASTA sequences for each primer.
-- `primer_pairs`: Path to TSV file that lists each pair of left and right primers.
+- `primer_bed`: Path to .bed file containing short read primers.
 - `output_dir`: Path where output will be stored.
 - `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
 - `consensus_min_depth`: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
+- `consensus_coverage_cutoff`: Minimum percentage of the consensus genome which must be non-N characters (0-1, default 0.75).
 - `variant_minQ`: Minimum score for base to be counted in variant calling. Default to 30.
 - `variant_min_mapQ`: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
 - `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
-- `tiled_amplicons`: Boolean variable that indicates whether sequencing data comes from tiled amplicons,
-    which requires additional filtering for primers.
+- `variant_min_depth`: Minimum depth for a position to report variants (default 10).
+- `remove_unclipped_reads`: Boolean flag that controls whether `samtools ampliconclip` discards reads that are not trimmed (default true).
+- `skip_qc`: Boolean flag that skips QC processes. Useful for test runs on large datasets, since FastQC generates large output files.
+- `trimmomatic_jarfile`: Path to Trimmomatic's jarfile. You should only change this parameter if you're NOT running SNPer via its Docker container.
+- `interleaved`: Boolean flag that sets the default value for sample sheet processing. Use this flag if you've omitted this field from the input sample sheeet (default false).
+- `primer_id_default`: Default setting for sample sheet processing, useful if your sample sheet doesn't have this field (and all samples use the same primers). Takes either a string or None.
+- `sequencing_technique`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field. SNPer supports 'amplicon' and 'mips' for this parameter.
