@@ -11,8 +11,7 @@ workflow READS_QC {
         FASTQC(samples)
 
         trimmed_samples = TRIMMOMATIC(samples, file(params.trimmomatic_jarfile))
-        merged_samples = NGMERGE(trimmed_samples)
 
     emit:
-        processed_samples = merged_samples
+        processed_samples = trimmed_samples
 }
