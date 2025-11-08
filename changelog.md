@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.2-Beta
+- Match `samtools mpileup` settings in consensus calling, variant calling processes.
+- Add consensus polishing and remapping to `build_consensus` subworkflow.
+- Rework empty consensus FASTA detection in `build_consensus` subworkflow.
+- Address output naming error in Trimmomatic process.
+- Add reformatted SARS-CoV-2 GFF3 file with simple ORF names in iVar output.
+- Remove NGMerge from read processing subworkflow.
+
 ## v2.0.1-Beta
 - Remove redundant variables in `nextflow.config` param block.
 
