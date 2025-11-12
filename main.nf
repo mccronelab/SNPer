@@ -1,6 +1,5 @@
 include { CONSENSUS_GEN } from "./workflows/build_consensus"
 include { CALL_VARIANTS_IVAR } from './workflows/call_variants_ivar'
-include { TRIM_AND_MASK } from './workflows/trim_and_mask'
 include { PROCESS_SAMPLE_SHEET } from './workflows/process_sample_sheet'
 include { READS_QC } from './workflows/process_reads'
 
