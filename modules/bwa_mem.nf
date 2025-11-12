@@ -33,7 +33,6 @@ process BWA_MEM {
 process BWA_REMAP {
     label 'process_high'
     errorStrategy 'retry'
-    publishDir "${params.output_dir}/realigned_bams/", mode: "copy"
     maxRetries 3
     //https://lh3.github.io/2021/07/06/remapping-an-aligned-bam
     cpus {1 * task.attempt}

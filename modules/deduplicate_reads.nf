@@ -1,5 +1,4 @@
 process DEDUPLICATE_READS {
-    publishDir "${params.output_dir}/consensus_bams/", mode: 'copy', pattern: "*.bam"
     errorStrategy 'retry'
     maxRetries 3
 
