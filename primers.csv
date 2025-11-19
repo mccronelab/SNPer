@@ -1,0 +1,4 @@
+primer_bedfile, primer_id
+data/primers/SARs-CoV-2_v5.3.2_400.primer.bed, ARTIC_v5
+data/primers/nCoV-2019.v3.primer.bed, ARTIC_v3
+"",None
