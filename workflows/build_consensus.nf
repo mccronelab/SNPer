@@ -73,7 +73,7 @@ workflow CONSENSUS_GEN {
     consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference] }
       | ROUGH_CONSENSUS // sample, consensus
       // filter out consensus with no sequence, which sometimes occurs
-      | filter { _sample, consensus_fa -> consensus_fa
+      | filter { _meta, consensus_fa -> consensus_fa
         if (!consensus_fa.exists() || consensus_fa.size() == 0) {
           return false
           }
@@ -83,34 +83,37 @@ workflow CONSENSUS_GEN {
           }
         }
 
-    variant_bam = processed_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
+    variant_bam = processed_bam.map{ meta, bam, _bai -> tuple(meta, bam) }
       .combine(consensus_sequence, by:0) // sample, meta, bam, consensus
-      .map{ _sample, meta, bam, consensus -> [meta, bam, consensus] }
+      // .map{ _sample, meta, bam, consensus -> [meta, bam, consensus] }
       | BWA_REMAP_CON // meta, sams
       | FSI_VAR // meta, sorted bam, index
 
     polished_consensus = variant_bam
-      | map {meta, bam, bai -> [meta.sample, meta, bam, bai] }
+      // | map {meta, bam, bai -> [meta.sample, meta, bam, bai] }
       | combine(consensus_sequence, by:0)
-      | map {_sample, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
+      // | map {_sample, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
       | REFINE_CONSENSUS
       | GET_CONSENSUS_COVERAGE
       | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
       | map { sample, consensus, _coverage -> [sample, consensus] }
 
-    variant_bam_polished = variant_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
-      | combine(polished_consensus, by:0)
-      | map { _sample, meta, bam, polished_con -> [meta, bam, polished_con] }
-      | BWA_REMAP_POL
-      | FSI_POL
+    //variant_bam_polished = variant_bam.map{ meta, bam, _bai -> tuple(meta.sample, meta, bam) }
+    //  | combine(polished_consensus, by:0)
+    //  | map { _sample, meta, bam, polished_con -> [meta, bam, polished_con] }
+     // | BWA_REMAP_POL
+     // | FSI_POL
 
-    GET_VARIANT_READ_DEPTH(variant_bam_polished)
+    GET_VARIANT_READ_DEPTH(variant_bam)
 
     // BWA_MEM() doesn't output the consensus, so we rejoin it
-    variant_bam_polished_consensus = variant_bam_polished.map{ meta, bam, bai -> tuple(meta.sample, meta, bam, bai) }
-      .combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
-      .map{ _sample, meta, bam, bai, consensus -> tuple( meta, bam, bai, consensus) }  // meta, sorted bam, index, consensus
+   // variant_bam_polished_consensus = variant_bam.map{ meta, bam, bai -> tuple(meta.sample, meta, bam, bai) }
+   //   .combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
+    //  .map{ _sample, meta, bam, bai, consensus -> tuple( meta, bam, bai, consensus) }  // meta, sorted bam, index, consensus
 
   emit:
-    reads_and_consensus =  variant_bam_polished_consensus // (meta, sorted bam, bam index, consensus.fa)
+    // reads_and_consensus =  variant_bam_polished_consensus // (meta, sorted bam, bam index, consensus.fa)
+    variants = variant_bam
+    rough_consensus = consensus_sequence
+    polished_consensus = polished_consensus
 }

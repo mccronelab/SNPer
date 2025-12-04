@@ -8,7 +8,7 @@ process IVAR_VARIANTS {
     time { 4.h * task.attempt }
 
     input:
-        tuple val(meta), path(bam), path(consensus), path(gff)
+        tuple val(meta), path(bam), path(rough_consensus, stageAs: 'rough_fa/*'), path(polished_consensus), path(gff)
 
     output:
         tuple val(meta), path("*tsv")
@@ -16,7 +16,7 @@ process IVAR_VARIANTS {
     script:
     """
     samtools sort ${bam} \
-    | samtools mpileup -aa -d 0 -Q 30 -q ${params.variant_min_mapQ}  -f ${consensus} - \
-    | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_minQ} -m ${params.variant_min_depth} -t ${params.variant_freq_threshold} -r ${consensus} -g ${gff}
+    | samtools mpileup -aa -d 0 -Q 30 -q ${params.variant_min_mapQ}  -f ${rough_consensus} - \
+    | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_minQ} -m ${params.variant_min_depth} -t ${params.variant_freq_threshold} -r ${polished_consensus} -g ${gff}
     """
 }

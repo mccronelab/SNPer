@@ -12,7 +12,7 @@ process MERGE_MPILEUP_CONSENSUS {
         tuple val(meta), path(bams), path(bais), path(reference)
 
     output:
-        tuple val(sample), path("${sample}.fa")
+        tuple val(meta), path("${sample}.fa")
 
     script:
     sample = meta.sample
@@ -22,6 +22,6 @@ process MERGE_MPILEUP_CONSENSUS {
     samtools merge - ${bams} \
     | samtools sort - \
     | samtools mpileup -aa -d 0 -Q 30 -q ${params.variant_min_mapQ} -f ${reference} - \
-    | ivar consensus -p ${sample}.fasta -n N -q ${params.consensus_min_qual_score} -t ${params.consensus_threshold} -m ${params.consensus_min_depth}
+    | ivar consensus -p ${sample}.fasta -n N -q ${params.consensus_min_qual_score} -t ${params.consensus_threshold} -m ${params.consensus_min_depth} -i ${sample}
     """
 }
