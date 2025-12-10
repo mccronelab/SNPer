@@ -15,10 +15,10 @@ workflow {
         // import values and files from params
         interleaved_default = params.interleaved
         default_sequencing_tech = params.sequencing_technique
-        primer_csv = Channel.fromPath(params.primer_csv)
+        primer_csv = channel.fromPath(params.primer_csv)
         primer_default = params.primer_id_default
 
-        input_ch = Channel.fromPath(params.sample_sheet)
+        input_ch = channel.fromPath(params.sample_sheet)
         
         samples  = PROCESS_SAMPLE_SHEET(input_ch, primer_csv, interleaved_default, 
             default_sequencing_tech, primer_default) //metadata, [fastq1,fastq2]]
@@ -26,12 +26,10 @@ workflow {
         if(!params.skip_qc) {
             samples = READS_QC(samples)
         }
-    
-        TEST_CONSENSUS(samples)
-        aligned_reads_and_consensus = TEST_CONSENSUS.out.bams_with_consensus
-        polished_consensus = TEST_CONSENSUS.out.polished_consensus
 
-        TEST_VARIANTS(aligned_reads_and_consensus, polished_consensus)
+        aligned_reads_and_consensus = TEST_CONSENSUS(samples)
+
+        TEST_VARIANTS(aligned_reads_and_consensus)
 
         //CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
 

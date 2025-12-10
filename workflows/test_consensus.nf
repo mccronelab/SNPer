@@ -1,10 +1,10 @@
-include { BWA_MEM as BWA_MEM_REF; BWA_MEM as BWA_MEM_ROUGH;
+include { BWA_MEM as BWA_MEM_REF; BWA_MEM as BWA_MEM_ROUGH; BWA_MEM as BWA_MEM_POL;
     BWA_REMAP as BWA_REMAP_CON; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
 include { SORT_INDEX_BAM as SORT_INDEX_ROUGH; SORT_INDEX_BAM as SORT_INDEX_REF
     SORT_INDEX_BAM as SORT_INDEX_POLISH } from "../modules/sort_index_bam"
 include { AMPLICON_CLIP } from "../modules/amplicon_clip"
 include { DEDUPLICATE_READS as DEDUP_MIPS_REF; DEDUPLICATE_READS as DEDUP_MIPS_ROUGH;
-    DEDUPLICATE_READS as DEDUP_HC } from "../modules/deduplicate_reads"
+    DEDUPLICATE_READS as DEDUP_POL } from "../modules/deduplicate_reads"
 include { PICARD_SORT as PS_CON; PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
 include { GET_CONSENSUS_COVERAGE; GET_VARIANT_READ_DEPTH  } from "../modules/get_coverage"
 include { MERGE_MPILEUP_CONSENSUS as ROUGH_CONSENSUS; 
@@ -47,17 +47,24 @@ workflow TEST_CONSENSUS {
             | map { meta, bam, bai, r_consensus -> [meta, bam, bai, r_consensus, "_polished"]}
             | POLISHED_CONSENSUS
 
+        polished_ali_bam = samples
+            | combine(polished_consensus, by:0)
+            | BWA_MEM_POL
+            | DEDUP_POL
+
+        GET_VARIANT_READ_DEPTH(polished_ali_bam)
+
         polished_consensus
             | GET_CONSENSUS_COVERAGE
             | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
             | map { sample, consensus, _coverage -> [sample, consensus] }
 
-        rough_ali_with_r_consensus = rough_ali_bam
-            | combine(rough_consensus, by:0)
+        polished_ali_with_p_consensus = polished_ali_bam
+            | combine(polished_consensus, by:0)
             | map { meta, bam, _bai, r_con -> [meta, bam, r_con]}
 
+
     emit:
-        bams_with_consensus = rough_ali_with_r_consensus
-        polished_consensus = polished_consensus
+        bams_with_consensus = polished_ali_with_p_consensus
 }
 

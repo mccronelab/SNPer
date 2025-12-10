@@ -12,7 +12,7 @@ process CONVERT_TSV_COORDS {
         tuple val(meta), path(consensus), path(reference), path(variant_tsv)
 
     output:
-        tuple val(meta), path("${variant_tsv.simpleName}.ref_coords.tsv"), path("${consensus}")
+        tuple val(meta), path("${variant_tsv.simpleName}.ref_coords.tsv")
 
     script:
         // prevent MAFFT from running into permissions issues on clusters by reassigning $TMPDIR
