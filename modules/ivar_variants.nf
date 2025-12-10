@@ -3,6 +3,7 @@ process IVAR_VARIANTS {
     // retry if error message indicates a failure due to resource limits
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
     publishDir "${params.output_dir}/raw_variants/", mode: 'copy', pattern: "*.tsv"
+    publishDir "${params.output_dir}/var_mpileup/", mode: 'copy', pattern: "*.mpileup"
 
     cpus 1
     memory { 2G * task.attempt }
@@ -12,7 +13,7 @@ process IVAR_VARIANTS {
         tuple val(meta), path(bam), path(consensus), path(gff)
 
     output:
-        tuple val(meta), path("*tsv")
+        tuple val(meta), path("*tsv"), path("*.mpileup")
     
     script:
     def sample = meta.sample

@@ -44,7 +44,7 @@ workflow TEST_CONSENSUS {
 
         polished_consensus = rough_ali_bam
             | combine(rough_consensus, by:0)
-            | map { meta, bam, bai, r_consensus -> [meta, bam, bai, r_consensus, "_polished"]}
+            | map { meta, bam, bai, r_consensus -> [meta, bam, bai, r_consensus, "_polished"] }
             | POLISHED_CONSENSUS
 
         polished_ali_bam = samples
@@ -61,8 +61,7 @@ workflow TEST_CONSENSUS {
 
         polished_ali_with_p_consensus = polished_ali_bam
             | combine(polished_consensus, by:0)
-            | map { meta, bam, _bai, r_con -> [meta, bam, r_con]}
-
+            | map { meta, bam, _bai, r_con -> [meta, bam, r_con] }
 
     emit:
         bams_with_consensus = polished_ali_with_p_consensus

@@ -17,6 +17,7 @@ workflow TEST_VARIANTS {
         raw_variants = bams_with_r_consensus
             | map { meta, bam, r_consensus -> [meta, bam, r_consensus, reference_gff] }
             | IVAR_VARIANTS
+            | map { meta, tsv, _mpileup -> [meta, tsv] }
 
         reference_coordinate_variants = bams_with_r_consensus
             | map {meta, _bam, r_consensus -> [meta, r_consensus, reference_fa] }
