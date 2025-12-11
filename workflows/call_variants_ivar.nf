@@ -12,15 +12,14 @@ workflow CALL_VARIANTS_IVAR {
         variants = channel.empty()
 
         // check file is at least 1Kb in size
-        filtered_bams = bams_with_consensus.filter{ _meta, _bam, _index, consensus -> consensus.size() >= 1000 }
-        consensus_fastas = filtered_bams.map{ meta, _bam, _index, consensus -> tuple(meta, consensus)}.unique{d -> d[0] }
+        consensus_fastas = bams_with_consensus.map{ meta, _bam, _index, consensus -> tuple(meta, consensus)}.unique{d -> d[0] }
 
         // map reference GFF annotations to consensus genome
-        per_consensus_gff = consensus_fastas.map {meta, consensus -> tuple(meta, reference_fasta, consensus, reference_gff) }
+        per_consensus_gff = consensus_fastas.map  {meta, consensus -> tuple(meta, reference_fasta, consensus, reference_gff) }
           | LIFTOFF
 
         // drop index files and call variants
-        filtered_bams.combine(per_consensus_gff, by:0)
+        bams_with_consensus.combine(per_consensus_gff, by:0)
           | map { meta, bam, _bam_index, consensus, gff -> tuple(meta, bam, consensus, gff) }
           | IVAR_VARIANTS
           | set { variants } // [meta, variant_tsv]
