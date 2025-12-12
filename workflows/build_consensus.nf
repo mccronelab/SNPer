@@ -1,7 +1,8 @@
 // This workflow uses BWA mem, samtools, picard, and iVar to build a consensus genome
 
 include { AMPLICON_CLIP } from "../modules/amplicon_clip"
-include { BWA_MEM; BWA_REMAP as BWA_REMAP_ROUGH; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
+include { BWA_MEM as BWA_MEM_REF; BWA_MEM as BWA_MEM_ROUGH; BWA_MEM as BWA_MEM_POL;
+  BWA_REMAP as BWA_REMAP_ROUGH; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
 include { DEDUPLICATE_READS as DEDUP_MIPS;  DEDUPLICATE_READS as DEDUP_HC } from "../modules/deduplicate_reads"
 include { FILTER_SORT_INDEX as FSI_CON; FILTER_SORT_INDEX as FSI_VAR;
   FILTER_SORT_INDEX as FSI_POL  } from "../modules/filter_sort_index"
@@ -21,14 +22,12 @@ workflow CONSENSUS_GEN {
 
     // split into bams that require trimming and pre-trimmed bams
     consensus_bam = samples.map { meta, reads -> [meta, reads, reference] } 
-      | BWA_MEM  // (meta, path(*sam))
+      | BWA_MEM_REF  // (meta, path(*sam))
       | SI_REF // tuple val(meta), path("*.sorted.bam"), path("*.bai")
       | branch { meta, _sortedBam, _bamIndex ->
         preprocessed: meta.primer_id.toLowerCase() == "none"
         unprocessed:  true
       }
-
-    consensus_bam.view()
 
     // split preprocessed data into each sequencing type, so we can add these back to the workflow at the appropriate time
     // discard indexes- we'll get these back later
@@ -74,8 +73,6 @@ workflow CONSENSUS_GEN {
 
     processed_bam = amplicon_bam.concat(mips_bam, hc_bam)
 
-    processed_bam.view()
-
     consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference, "_rough"] }
       | ROUGH_CONSENSUS // sample, consensus
       // filter out consensus with no sequence, which sometimes occurs
@@ -89,9 +86,10 @@ workflow CONSENSUS_GEN {
           }
         }
 
-    variant_bam = processed_bam
+    variant_bam = samples
       | combine(consensus_sequence, by:0) // sample, meta, bam, consensus
-      | BWA_REMAP_ROUGH // meta, sams
+      //| map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | BWA_MEM_ROUGH // meta, sams
       | SI_ROUGH // meta, sorted bam, index
 
     polished_consensus = variant_bam
@@ -102,9 +100,10 @@ workflow CONSENSUS_GEN {
       | filter { _meta, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
       | map { meta, consensus, _coverage -> [meta, consensus] }
 
-    variant_bam_polished = variant_bam
+    variant_bam_polished = samples
       | combine(polished_consensus, by:0)
-      | BWA_REMAP_POL
+      //| map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | BWA_MEM_POL
       | SI_POL
 
     GET_VARIANT_READ_DEPTH(variant_bam_polished)

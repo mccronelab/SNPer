@@ -12,7 +12,7 @@ process MERGE_MPILEUP_CONSENSUS {
         tuple val(meta), path(bams), path(bais), path(reference), val(suffix)
 
     output:
-        tuple val(meta), path("${sample}.fa")
+        tuple val(meta), path("${sample}${suffix}.fa")
 
     script:
     sample = meta.sample
