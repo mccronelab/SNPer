@@ -86,10 +86,10 @@ workflow CONSENSUS_GEN {
           }
         }
 
-    variant_bam = samples
+    variant_bam = processed_bam
       | combine(consensus_sequence, by:0) // sample, meta, bam, consensus
-      //| map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
-      | BWA_MEM_ROUGH // meta, sams
+      | map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | BWA_REMAP_ROUGH // meta, sams
       | SI_ROUGH // meta, sorted bam, index
 
     polished_consensus = variant_bam
@@ -100,10 +100,10 @@ workflow CONSENSUS_GEN {
       | filter { _meta, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
       | map { meta, consensus, _coverage -> [meta, consensus] }
 
-    variant_bam_polished = samples
+    variant_bam_polished = variant_bam
       | combine(polished_consensus, by:0)
-      //| map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
-      | BWA_MEM_POL
+      | map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | BWA_REMAP_POL
       | SI_POL
 
     GET_VARIANT_READ_DEPTH(variant_bam_polished)

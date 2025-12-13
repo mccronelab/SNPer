@@ -48,11 +48,13 @@ process BWA_REMAP {
         tuple val(meta), path("*.remap.bam")
 
     script:
+    def sample = meta.sample
+
         """
         bwa index ${reference}
-        samtools collate -Oun128 ${bam} -T ./collate.TEMP \
-        | samtools fastq - \
-        | bwa mem -p ${reference} - \
+        samtools collate -un128 ${bam} -T ./collate.TEMP -o ${sample}.collated
+        samtools fastq -o ${sample}.fastq ${sample}.collated
+        bwa mem -p ${reference} ${sample}.fastq \
         | samtools view -b - > ${meta.replicate_id}.remap.bam
         """
 }
