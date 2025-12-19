@@ -76,15 +76,10 @@ workflow CONSENSUS_GEN {
     consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference, "_rough"] }
       | ROUGH_CONSENSUS // sample, consensus
       // filter out consensus with no sequence, which sometimes occurs
-      | filter { _meta, consensus_fa -> consensus_fa
-        if (!consensus_fa.exists() || consensus_fa.size() == 0) {
-          return false
-          }
-        def seq = consensus_fa.splitFasta(record: [seqString: true])
-        if (seq) {
-          return true
-          }
-        }
+      | filter { meta, consensus_fa ->
+        consensus_fa.exists() &&
+        consensus_fa.readLines().any { line -> !line.startsWith(">") && line.trim() }
+      }
 
     variant_bam = processed_bam
       | combine(consensus_sequence, by:0) // sample, meta, bam, consensus
