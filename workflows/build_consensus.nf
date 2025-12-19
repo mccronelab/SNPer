@@ -78,6 +78,9 @@ workflow CONSENSUS_GEN {
       // filter out consensus with no sequence, which sometimes occurs
       | filter { meta, consensus_fa ->
         consensus_fa.exists() &&
+        // .trim() evaluates to false on a string that contains only whitespace,
+        // so if there are any lines in the sequence part of the FASTA that are not
+        // only whitespace, the file passes the filter
         consensus_fa.readLines().any { line -> !line.startsWith(">") && line.trim() }
       }
 
