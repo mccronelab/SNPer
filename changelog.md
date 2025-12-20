@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.1.0-Beta
+- Add missing FASTA indexing to `ivar_variants.nf`.
+- Add forced error exitcode if FASTA index is missing in `ivar_variants.nf`.
+- Remove `-aa` flag from all calls to `samtools mpileup`.
+- Add suffixes to consensus FASTA file names to distinguish rough and polished consensus sequences in `merge_mpileup_consensus.nf`.
+- Manually set FASTA header lines in `merge_mpileup_consensus.nf` to make clear whether some output is descended from an alignment to a rough or polished consensus sequence.
+- Update `merge_mpileup_consensus.nf` to output a meta hashlist and consensus path, rather than a sample ID and consensus path, to simplify workflow channel operations in `build_consensus.nf`.
+- Improve clarity of process call naming scheme in `build_consensus.nf`.
+- Fix detection of consensus FASTAs with empty sequence blocks in `build_consensus.nf`.
+- Add new process, `sort_index_bam.nf`, which retains unmapped reads when sorting/indexing BAM files.
+- Remove redundant BAM filtering from `call_ivar_variants.nf`- this should be handled by removing empty FASTA files earlier in the workflow.
+
 ## v2.0.2-Beta
 - Match `samtools mpileup` settings in consensus calling, variant calling processes.
 - Add consensus polishing and remapping to `build_consensus` subworkflow.

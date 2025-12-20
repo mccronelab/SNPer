@@ -15,7 +15,7 @@ workflow CALL_VARIANTS_IVAR {
         consensus_fastas = bams_with_consensus.map{ meta, _bam, _index, consensus -> tuple(meta, consensus)}.unique{d -> d[0] }
 
         // map reference GFF annotations to consensus genome
-        per_consensus_gff = consensus_fastas.map  {meta, consensus -> tuple(meta, reference_fasta, consensus, reference_gff) }
+        per_consensus_gff = consensus_fastas.map { meta, consensus -> tuple(meta, reference_fasta, consensus, reference_gff) }
           | LIFTOFF
 
         // drop index files and call variants
