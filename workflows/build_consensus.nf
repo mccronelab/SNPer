@@ -59,6 +59,7 @@ workflow CONSENSUS_GEN {
       | map { meta, _sortedBam, _bamIndex, _reference -> error "Unexpected sequencing tech type: $meta.sequencing_tech" }
 
     amplicon_bam = amplicon_bam_unp
+      | map { meta, bam, index, ref -> [meta, bam, index, ref, meta.primer_bedfile] }
       | AMPLICON_CLIP  //  tuple val(meta), path("*.primertrim.bam")
       | concat(preprocessed_bam.amplicon) // add back in BAMs derived from pre-trimmed FASTQs
       | PS_CON // tuple val(meta), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")

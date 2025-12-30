@@ -5,7 +5,7 @@ process AMPLICON_CLIP {
     label 'process_medium'
 
     input:
-        tuple val(meta), path(sorted_bam), path(bam_index), path(reference)
+        tuple val(meta), path(sorted_bam), path(bam_index), path(reference), path(primer_bedfile)
 
     output:
         tuple val(meta), path("*.primertrim.bam")
@@ -15,7 +15,7 @@ process AMPLICON_CLIP {
 
     """
     samtools ampliconclip \
-        -b ${meta.primer_bedfile} \
+        -b ${primer_bedfile} \
         --hard-clip \
         --strand \
         ${clipped} \

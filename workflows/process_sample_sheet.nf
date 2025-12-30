@@ -105,6 +105,6 @@ def parse_primer_csv(primer_csv) {
         }
 
         // groovy supports implicit returns
-        [row.primer_id, file(row.primer_bedfile)]
+        [row.primer_id, file("${projectDir}/${row.primer_bedfile}")]
     }
 }
