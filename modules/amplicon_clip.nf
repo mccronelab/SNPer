@@ -3,6 +3,7 @@ process AMPLICON_CLIP {
     memory 2G
     time 12.h
     label 'process_medium'
+    tag "${meta.replicate_id}"
 
     input:
         tuple val(meta), path(sorted_bam), path(bam_index), path(reference), path(primer_bedfile)

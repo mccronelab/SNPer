@@ -25,7 +25,7 @@ workflow {
     }
  
     // tuple (consensus_name, consensus.fasta)
-    aligned_reads_and_consensus = CONSENSUS_GEN(samples)
+    CONSENSUS_GEN(samples)
 
-    CALL_VARIANTS_IVAR(aligned_reads_and_consensus)
+    CALL_VARIANTS_IVAR(CONSENSUS_GEN.out.variant_bams, CONSENSUS_GEN.out.consensus)
 }

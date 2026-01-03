@@ -3,6 +3,7 @@ process SORT_INDEX_BAM {
     cpus 1
     memory 2G
     time 12.h
+    tag "${meta.replicate_id}"
 
     input:
         tuple val(meta), path(bam)

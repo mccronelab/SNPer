@@ -72,45 +72,52 @@ workflow CONSENSUS_GEN {
       | concat(preprocessed_bam.hybrid_capture)
       | DEDUP_HC
 
+    // put all samples back into same channel
     processed_bam = amplicon_bam.concat(mips_bam, hc_bam)
+      | map { meta, bam, bai -> [meta.sample, meta, bam, bai] }
+    
+    // group different replicates of same sample together for consensus calling
+    bams_grouped_by_sample = processed_bam
+      | groupTuple(by:0)
 
-    consensus_sequence = processed_bam.map{ meta, bam, bai -> [meta, bam, bai, reference, "_rough"] }
+    consensus_sequence = bams_grouped_by_sample.map{ sample, meta, bam, bai -> [sample, meta, bam, bai, reference, "_rough"] }
       | ROUGH_CONSENSUS // sample, consensus
       // filter out consensus with no sequence, which sometimes occurs
-      | filter { meta, consensus_fa ->
+      | filter { sample, consensus_fa ->
         consensus_fa.exists() &&
         // .trim() evaluates to false on a string that contains only whitespace,
         // so if there are any lines in the sequence part of the FASTA that are not
         // only whitespace, the file passes the filter
         consensus_fa.readLines().any { line -> !line.startsWith(">") && line.trim() }
       }
-
+    
     variant_bam = processed_bam
-      | combine(consensus_sequence, by:0) // sample, meta, bam, consensus
-      | map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | combine(consensus_sequence, by:0) // sample, meta, bam, bai, consensus
+      | map { _sample, meta, bam, _bai, consensus -> [meta, bam, consensus] }
       | BWA_REMAP_ROUGH // meta, sams
       | SI_ROUGH // meta, sorted bam, index
+      | map { meta, bam, bai -> [meta.sample, meta, bam, bai] }
 
-    polished_consensus = variant_bam
+    variant_bams_grouped_by_sample = variant_bam
+      | groupTuple(by:0)
       | combine(consensus_sequence, by:0)
-      | map { meta, bam, bai, consensus -> [meta, bam, bai, consensus, "_polished"] }
+
+    polished_consensus = variant_bams_grouped_by_sample
+      | map { sample, meta, bam, bai, consensus -> [sample, meta, bam, bai, consensus, "_polished"] }
       | POLISH_CONSENSUS
       | GET_CONSENSUS_COVERAGE
-      | filter { _meta, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
-      | map { meta, consensus, _coverage -> [meta, consensus] }
+      | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      | map { sample, consensus, _coverage -> [sample, consensus] }
 
     variant_bam_polished = variant_bam
-      | combine(polished_consensus, by:0)
-      | map { meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
+      | map { _sample, meta, bam, _bai, consensus -> [meta, bam, consensus] }
       | BWA_REMAP_POL
       | SI_POL
 
     GET_VARIANT_READ_DEPTH(variant_bam_polished)
 
-    // BWA_MEM() doesn't output the consensus, so we rejoin it
-    variant_bam_polished_consensus = variant_bam_polished
-      .combine(polished_consensus, by:0) // meta, bam, bai, consensus
-
   emit:
-    reads_and_consensus =  variant_bam_polished_consensus // (meta, sorted bam, bam index, consensus.fa)
+    variant_bams = variant_bam_polished // [meta, bam, bai]
+    consensus = polished_consensus // [sample, consensus]
 }

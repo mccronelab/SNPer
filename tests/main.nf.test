@@ -35,10 +35,15 @@ nextflow_pipeline {
 
         then {
             assert workflow.success
-            assert snapshot(workflow).match("workflow_state")
-            assert snapshot(workflow,
-            path(params.output_dir).list()
-            ).md5().match("workflow_output")
+            //assert snapshot(workflow).match("workflow_state")
+            // skip FastQC output, which can vary based on zipped files and timestamps
+            assert snapshot(
+                workflow,
+                path("${params.output_dir}/consensus_seqs").list(),
+                path("${params.output_dir}/gff3").list(),
+                path("${params.output_dir}/replicate_coverage").list(),
+                path("${params.output_dir}/variants").list()
+            ).match("workflow_output")
         }
 
     }

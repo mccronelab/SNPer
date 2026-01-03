@@ -11,6 +11,11 @@
 - Fix detection of consensus FASTAs with empty sequence blocks in `build_consensus.nf`.
 - Add new process, `sort_index_bam.nf`, which retains unmapped reads when sorting/indexing BAM files.
 - Remove redundant BAM filtering from `call_ivar_variants.nf`- this should be handled by removing empty FASTA files earlier in the workflow.
+- Add NF-Test continuous integration test case.
+- Address broken replicate merging ahead of consensus calling (both rough and polished).
+- Update outdated workflow syntax in `call_variants_ivar.nf`.
+- Change how relative paths to `primer.csv` are handled in `process_sample_sheet.nf`.
+- Add replicate ID tags to workflow processes to aid in debugging and improve feedback to users.
 
 ## v2.0.2-Beta
 - Match `samtools mpileup` settings in consensus calling, variant calling processes.

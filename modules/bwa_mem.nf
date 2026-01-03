@@ -2,6 +2,7 @@ process BWA_MEM {
     label 'process_high'
     errorStrategy 'retry'
     maxRetries 3
+    tag "${meta.replicate_id}"
 
     cpus {1 * task.attempt}
     // need to account for potentially increasing CPU allocation
@@ -39,6 +40,7 @@ process BWA_REMAP {
     // need to account for potentially increasing CPU allocation
     memory { 2G * task.attempt * task.cpus}
     time { 4.h * task.attempt }
+    tag "${meta.replicate_id}"
 
 
     input:
