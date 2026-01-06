@@ -1,4 +1,4 @@
-# SNPer v2.0.2-Beta
+# SNPer v2.1.0-Beta
 
 ## Description
 
@@ -8,7 +8,7 @@ An in-development, Nextflow-managed viral in-host variant calling workflow. SNPe
 
 ### Docker or Apptainer (Recommended)
 Required Software:
-- Java, any version from 17-23 (to run Nextflow, [available here](https://www.oracle.com/java/technologies/downloads/?er=221886))
+- Java, any version from 17-21 (to run Nextflow, [available here](https://www.oracle.com/java/technologies/downloads/?er=221886))
 - Nextflow (to run the workflow, [available here](https://www.nextflow.io/docs/latest/install.html#install-nextflow))
 - Docker or Apptainer (to run the container. Docker is [available here](https://docs.docker.com/get-started/get-docker/), ask your local HPC staff about Apptainer)
 
@@ -47,11 +47,11 @@ nextflow run main.nf -profile test
 - Input: A tuple containing Sample ID, Replicate ID, and FASTQ reads. Reference Sequence, Primer BEDfile
 - Output: BAM files where FASTQ reads are aligned to a consensus genome.
 
-1. Align reads to the reference sequence with `bwa mem`, filter out unmapped reads and sort the output BAM file.
+1. Align reads to the reference sequence with `bwa mem` and sort/index the output BAM file.
 2a. (Tiled Amplicon reads only) Trim primers on aligned reads based on the contents of the primer BEDfile with `samtools ampliconclip`, then sort.
 2b. (MIPs reads only) Deduplicate aligned reads with `samtools markdup`.
 3. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`. Samples that failed to generate a consensus sequence are filtered out of the workflow.
-4. Remap aligned reads to the consensus genome, filter out unmapped reads and sort output BAM file.
+4. Remap aligned reads to the consensus genome and sort/index output BAM file.
 5. Call a 'polished' consensus sequence from remapped aligned reads.
 6. Remap aligned reads to the polished consensus sequence.
 5. Get coverage information based on reads aligned to the consensus genome, filtering out any samples that fail to pass a user-defined coverage threshold (we typically use a 75% coverage threshold).
@@ -60,15 +60,17 @@ nextflow run main.nf -profile test
 - Input: BAM files paired with BAM indices and their consensus sequence. Reference sequence GFF file. Reference sequence in FASTA format.
 - Output: TSV files containing variants. Two types of TSVs are produced: one with variant positions relative to the consensus genome, and one with variant positions aligned to the reference genome.
 
-1. Filter consensus genome FASTA files based on size. FASTA files smaller than 1kb are presumed to be files where a consensus was not successfully generated and are removed. This prevents further processing of associated reads, avoiding crashes that will occur later.
+1. Filter consensus genome FASTA files based on size.
 2. Submit the reference FASTA, reference GFF, and consensus FASTA to LiftOff. LiftOff aligns the reference and consensus sequences, then transfers GFF annotations where appropriate. This gives us a consensus GFF file.
 3. Call variants relative to the consensus genome with `iVar variants`.
 4. Call `convert_tsv_coords.py`, a relatively simple Python script that aligns the reference and consensus genome with MAFFT, then creates a mapping between positions on each genome based on the alignment. Used to convert consensus variant positions to their equivalent positions on the reference genome.
 
 ## Testing / dev
 
+Requires NF-Test, [installation instructions here](https://www.nf-test.com/installation/). For local execution in the Docker environment, use `--profile docker`.
+
 ```
-nextflow run ./ -profile test
+nf-test test --profile [profile] --ci
 ```
 
 _Requires docker_
