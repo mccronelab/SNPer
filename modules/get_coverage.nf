@@ -21,6 +21,8 @@ process GET_VARIANT_READ_DEPTH {
 
 process GET_CONSENSUS_COVERAGE {
     label 'process_low'
+    tag "${sample}"
+
     input:
         tuple val(sample), path(consensus)
     output:

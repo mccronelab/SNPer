@@ -2,6 +2,7 @@ process CONVERT_TSV_COORDS {
     label 'process_medium'
     publishDir "${params.output_dir}/variants/", mode: 'copy'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
+    tag "${meta.replicate_id}"
 
     cpus {1 * task.attempt}
     // need to account for potentially increasing CPU allocation

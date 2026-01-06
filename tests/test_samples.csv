@@ -1,11 +1,9 @@
 sample,replicate_id,fastq1,fastq2
-100101002,100101002_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/100101002_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/100101002_A_2.fastq.gz
-100101002,100101002_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/100101002_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/100101002_B_2.fastq.gz
 102602009,102602009_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102602009_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102602009_A_2.fastq.gz
 102602009,102602009_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102602009_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102602009_B_2.fastq.gz
-102901009,102901009_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102901009_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102901009_A_2.fastq.gz
-102901009,102901009_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102901009_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/102901009_B_2.fastq.gz
-104701003,104701003_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/104701003_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/104701003_A_2.fastq.gz
-104701003,104701003_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/104701003_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/104701003_B_2.fastq.gz
-107802007,107802007_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802007_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802007_A_2.fastq.gz
-107802007,107802007_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802007_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802007_B_2.fastq.gz
+106801008,106801008_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/106801008_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/106801008_A_2.fastq.gz
+106801008,106801008_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/106801008_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/106801008_B_2.fastq.gz
+107301003,107301003_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107301003_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107301003_A_2.fastq.gz
+107301003,107301003_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107301003_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107301003_B_2.fastq.gz
+107802008,107802008_A,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802008_A_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802008_A_2.fastq.gz
+107802008,107802008_B,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802008_B_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/107802008_B_2.fastq.gz

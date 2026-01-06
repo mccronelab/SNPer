@@ -7,6 +7,7 @@ process IVAR_VARIANTS {
     cpus 1
     memory { 2G * task.attempt }
     time { 4.h * task.attempt }
+    tag "${meta.replicate_id}"
 
     input:
         tuple val(meta), path(bam), path(consensus), path(gff)

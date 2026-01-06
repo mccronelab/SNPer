@@ -3,7 +3,7 @@ process MERGE_MPILEUP_CONSENSUS {
     label 'process_high'
     // errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
     publishDir "${params.output_dir}/consensus_seqs/", mode: 'copy', pattern: "*.fa"
-    tag "${meta.replicate_id}"
+    tag "${sample}"
 
     cpus 1
     memory { 2G * task.attempt }
