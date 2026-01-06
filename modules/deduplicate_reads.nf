@@ -1,6 +1,7 @@
 process DEDUPLICATE_READS {
     errorStrategy 'retry'
     maxRetries 3
+    tag "${meta.replicate_id}"
 
     cpus { 1 * task.attempt }
     // need to account for potentially increasing CPU allocation

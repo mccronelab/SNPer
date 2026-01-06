@@ -1,0 +1,83 @@
+{
+    "workflow_output": {
+        "content": [
+            {
+                "stderr": [
+                    
+                ],
+                "errorReport": "",
+                "exitStatus": 0,
+                "failed": false,
+                "stdout": [
+                    
+                ],
+                "errorMessage": "",
+                "trace": {
+                    "tasksFailed": 0,
+                    "tasksCount": 92,
+                    "tasksSucceeded": 92
+                },
+                "name": "workflow",
+                "success": true
+            },
+            [
+                "100101002_polished.fa:md5,d55ce4c408ac65136c89f42ff7bdb08d",
+                "100101002_rough.fa:md5,94bd7cf2259ac4761d5e06cb6418cda4",
+                "102602009_polished.fa:md5,8a255d8e4a31351bea6144a8ada986fd",
+                "102602009_rough.fa:md5,e9eb6914d8895465266e51c61c7ace9d",
+                "102901009_polished.fa:md5,92c818d9a97d8a3a8a67d7426a798f0c",
+                "102901009_rough.fa:md5,6639c95606992e54093a010adf2605a1",
+                "104701003_polished.fa:md5,3c9eb4667603762d1ddaecd58b213e6b",
+                "104701003_rough.fa:md5,f390a098dc91b1d117498083e2a18b41",
+                "106801008_rough.fa:md5,9df96465c869c275c6fa5eff63069522",
+                "107301003_polished.fa:md5,04cd9a17de2bf9114a2c988514c92157",
+                "107301003_rough.fa:md5,8e82b22d5076752da79e57b6d514b60a",
+                "107802007_polished.fa:md5,6ddbd6e651ca4127856bc74829322046",
+                "107802007_rough.fa:md5,ec2bc04efbf8a448c4ed632a7df4088b",
+                "107802008_polished.fa:md5,30c114c5034c586a9c38041950b5c6c6",
+                "107802008_rough.fa:md5,7c5968cb3e33132d9f3a9432a5642ed8"
+            ],
+            [
+                "100101002_polished.gff3:md5,53c7842543d4335a6b026de721c25bb0",
+                "102602009_polished.gff3:md5,45c26f7def476478c7f2178f4c5129c5",
+                "102901009_polished.gff3:md5,6289ad44ae321e98fa5f8965238281ad",
+                "104701003_polished.gff3:md5,d339cf3aa9789ec9af3476912c222913",
+                "107301003_polished.gff3:md5,ef3539bd842783e3818d935a5e81489a",
+                "107802007_polished.gff3:md5,e0fc87dbc3d59622426e06cbf614cdb0"
+            ],
+            [
+                "100101002_A.remap.sorted_coverage.tsv:md5,453296e913a0db97d9bc9c2eba11d34e",
+                "100101002_B.remap.sorted_coverage.tsv:md5,36aa526e263d676f82a7b1ce5b59bc04",
+                "102602009_A.remap.sorted_coverage.tsv:md5,51d45141a61e30842545a84ce1cc96e1",
+                "102602009_B.remap.sorted_coverage.tsv:md5,3b00384ecb8183c6517f0df50fb35189",
+                "102901009_A.remap.sorted_coverage.tsv:md5,94c9653f3863b7d9c4d18980191e7dcd",
+                "102901009_B.remap.sorted_coverage.tsv:md5,4f45e7d6b2f03db5e403a079875642ec",
+                "104701003_A.remap.sorted_coverage.tsv:md5,70f6a056f6113b46f4814a84c3a82a9b",
+                "104701003_B.remap.sorted_coverage.tsv:md5,3d7ecce0f60f5cedae51886f626d7e50",
+                "107301003_A.remap.sorted_coverage.tsv:md5,e772d87fbaeae032f266c2c1fbd00fac",
+                "107301003_B.remap.sorted_coverage.tsv:md5,3898c9ce63893bc5b02c6f988b5aa4d8",
+                "107802007_A.remap.sorted_coverage.tsv:md5,c6e0450647b94467b5a4b5537f954aef",
+                "107802007_B.remap.sorted_coverage.tsv:md5,f2d6865cc92549bc967119e139ac682b"
+            ],
+            [
+                "100101002_A.ref_coords.tsv:md5,4d81e9e778f10f838575b2e66eecd15c",
+                "100101002_B.ref_coords.tsv:md5,8a97b59d218408ce85c64a0480875c4c",
+                "102602009_A.ref_coords.tsv:md5,f39d675c525ba44d1164e7e9f03107e4",
+                "102602009_B.ref_coords.tsv:md5,b84efc3b5860db6e4f320fe792790028",
+                "102901009_A.ref_coords.tsv:md5,e0deffd103b1ab3aa30fdfddfbb0fb95",
+                "102901009_B.ref_coords.tsv:md5,ae97491d9cacef37b2a00bb4088e6894",
+                "104701003_A.ref_coords.tsv:md5,4228bd7aec5fbea23fe09529790b6aa4",
+                "104701003_B.ref_coords.tsv:md5,b8f903cde6aac804b556b6cbe28f9eaf",
+                "107301003_A.ref_coords.tsv:md5,7b2366a5b69c7b8f6643958dc5ecdc1a",
+                "107301003_B.ref_coords.tsv:md5,3543e8980a49fa695de87275f3471070",
+                "107802007_A.ref_coords.tsv:md5,a3e5ac08266545f68da4e0ddbfcfa160",
+                "107802007_B.ref_coords.tsv:md5,92ebb558b0d1a021738f5cb45c7c2813"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-05T17:00:47.094281"
+    }
+}

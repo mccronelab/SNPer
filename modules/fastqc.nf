@@ -2,6 +2,7 @@ process FASTQC {
     label 'process_high'
     publishDir "${params.output_dir}/fastqc/", mode: 'copy'
     errorStrategy { task.exitStatus in 137..140 ? 'retry' : 'terminate' }
+    tag "${meta.replicate_id}"
 
     cpus 1
     memory { 2G * task.attempt }

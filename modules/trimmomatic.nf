@@ -1,4 +1,10 @@
 process TRIMMOMATIC {
+    tag "${meta.replicate_id}"
+
+    cpus 1
+    memory '2G'
+    time '4h'
+
     input:
         tuple val(meta), path(paired_reads)
         val trimmomatic_jarfile
