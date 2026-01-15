@@ -30,7 +30,7 @@ jobs:
         curl -s https://get.nextflow.io | bash
 
     - name: build-image
-      run: docker build -t snper-ci:latest containers/Dockerfile
+      run: docker build -t snper-ci:latest containers/
 
     - name: get-samplesheet
       env:
