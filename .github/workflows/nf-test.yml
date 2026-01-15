@@ -1,0 +1,43 @@
+name: nf-test
+
+on:
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-java@v5
+      with:
+        java-version: "21"
+        distribution: "temurin"
+
+    - name: install-prereqs
+      run: |
+        curl -fsSL https://get.nf-test.com | bash
+        chmod +x ./nf-test
+        curl -s https://get.nextflow.io | bash
+
+    - name: build-image
+      run: docker build -t snper-ci:latest containers/Dockerfile
+
+    - name: get-samplesheet
+      env:
+        SAMPLES_URL: ${{ secrets.SAMPLES_URL }}
+        ACTIONS_SAMPLESHEET: ${{ secrets.ACTIONS_SAMPLESHEET }}
+      run: |
+        echo "::add-mask::$SAMPLES_URL"
+        echo "$ACTIONS_SAMPLESHEET" > $HOME/secrets/gh_actions_samples.csv
+
+    - name: run-test
+      run: nf-test test tests/gh_actions.main.nf.test --profile docker --ci
