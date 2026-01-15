@@ -12,7 +12,7 @@ on:
       - main
 
 jobs:
-  container-and-workflow-test:
+  integration-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,11 +27,9 @@ jobs:
         curl -fsSL https://get.nf-test.com | bash
         chmod +x ./nf-test
         curl -s https://get.nextflow.io | bash
-        chmod +x ./nextflow
-        pwd >> "$GITHUB_PATH"
 
     - name: build-image
-      run: docker build -t snper-ci:latest containers/
+      run: docker build -t snper-ci:latest containers/Dockerfile
 
     - name: get-samplesheet
       env:
@@ -39,7 +37,7 @@ jobs:
         ACTIONS_SAMPLESHEET: ${{ secrets.ACTIONS_SAMPLESHEET }}
       run: |
         echo "::add-mask::$SAMPLES_URL"
-        echo "$ACTIONS_SAMPLESHEET" > tests/gh_actions_samples.csv
+        echo "$ACTIONS_SAMPLESHEET" > $HOME/secrets/gh_actions_samples.csv
 
     - name: run-test
-      run: nf-test test tests/gh_actions.main.nf.test --profile ci_test --ci
+      run: nf-test test tests/gh_actions.main.nf.test --profile docker --ci
