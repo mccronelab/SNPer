@@ -38,7 +38,7 @@ jobs:
         ACTIONS_SAMPLESHEET: ${{ secrets.ACTIONS_SAMPLESHEET }}
       run: |
         echo "::add-mask::$SAMPLES_URL"
-        echo "$ACTIONS_SAMPLESHEET" > $HOME/secrets/gh_actions_samples.csv
+        echo "$ACTIONS_SAMPLESHEET" > tests/gh_actions_samples.csv
 
     - name: run-test
       run: nf-test test tests/gh_actions.main.nf.test --profile docker --ci
