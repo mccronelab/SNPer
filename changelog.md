@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.1-Beta
+- Restore test case files described in `README.md`.
+
 ## v2.1.0-Beta
 - Add missing FASTA indexing to `ivar_variants.nf`.
 - Add forced error exitcode if FASTA index is missing in `ivar_variants.nf`.
