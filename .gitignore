@@ -1,5 +1,11 @@
 dev/*
-work/**/*
+work/*
 .nextflow/**/*
 .nextflow*
 test-out/*
+.nf-test/
+.snper_env/
+.vscode/
+out/
+tests/test-out/
+tests/work
