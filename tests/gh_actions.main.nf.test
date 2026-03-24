@@ -1,0 +1,50 @@
+nextflow_pipeline {
+
+    name "Github Actions CI Test"
+    script "main.nf"
+
+    test("Run without failures and verify output") {
+
+        when {
+            params {
+                // define parameters here. Example: 
+                // outdir = "tests/results"
+                reference_fasta = "$baseDir/data/sars_reference/MN908947.fasta"
+                reference_gff = "$baseDir/data/sars_reference/SARS_CoV_2.gff3"
+                primer_bed = "$baseDir/data/primers/SARs-CoV-2_v5.3.2_400.primer.bed"
+                sample_sheet = "$baseDir/tests/gh_actions_samples.csv"
+                output_dir = "$baseDir/tests/test-out/"
+                consensus_min_qual_score = 30
+                consensus_threshold = 0
+                consensus_min_depth = 10
+                consensus_coverage_cutoff = 0.75
+                variant_min_mapQ = 30
+                variant_freq_threshold = 0.01
+                variant_min_depth = 10
+                variant_minQ = 30
+                remove_unclipped_reads = true
+                skip_qc = false
+                trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
+                sequencing_technique = 'amplicon'
+                interleaved = false
+                primer_id_default = 'ARTIC_v5'
+                primer_csv = "$baseDir/primers.csv"
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow).match("workflow_state")
+            // skip FastQC output, which can vary based on zipped files and timestamps
+            assert snapshot(
+                workflow,
+                path("${params.output_dir}/consensus_seqs").list(),
+                path("${params.output_dir}/gff3").list(),
+                path("${params.output_dir}/replicate_coverage").list(),
+                path("${params.output_dir}/variants").list()
+            ).match("workflow_output")
+        }
+
+    }
+
+}
