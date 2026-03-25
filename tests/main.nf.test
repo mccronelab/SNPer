@@ -28,7 +28,6 @@ nextflow_pipeline {
                 sequencing_technique = 'amplicon'
                 interleaved = false
                 primer_id_default = 'ARTIC_v5'
-
                 primer_csv = "$baseDir/primers.csv"
             }
         }
