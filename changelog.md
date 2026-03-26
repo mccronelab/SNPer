@@ -1,7 +1,11 @@
 # Changelog
 
-## v2.1.1-Beta
-- Restore test case files described in `README.md`.
+## v2.2.0-Beta
+- Fix MIPS sequence read deduplication in `deduplicate_reads.nf`.
+- Add updated GFF3 file.
+- Update CI test, snapshot to be compatible with new GFF3 file, latest version of `nf-test.`
+- Adjust depth of coverage process definition to match consensus, variant calling.
+- Fix small workflow test case.
 
 ## v2.1.0-Beta
 - Add missing FASTA indexing to `ivar_variants.nf`.
