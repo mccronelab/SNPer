@@ -1,4 +1,4 @@
-# SNPer v2.1.0-Beta
+# SNPer v2.2.0-Beta
 
 ## Description
 
@@ -70,7 +70,7 @@ nextflow run main.nf -profile test
 Requires NF-Test, [installation instructions here](https://www.nf-test.com/installation/). For local execution in the Docker environment, use `--profile docker`.
 
 ```
-nf-test test --profile [profile] --ci
+nf-test test tests/main.nf.test --profile [profile] --ci
 ```
 
 _Requires docker_
