@@ -10,7 +10,7 @@ nextflow_pipeline {
                 // define parameters here. Example: 
                 // outdir = "tests/results"
                 reference_fasta = "$baseDir/data/sars_reference/MN908947.fasta"
-                reference_gff = "$baseDir/data/sars_reference/reformatted_WH1_ORFs.gff3"
+                reference_gff = "$baseDir/data/sars_reference/SARS_CoV_2.gff3"
                 primer_bed = "$baseDir/data/primers/SARs-CoV-2_v5.3.2_400.primer.bed"
                 sample_sheet = "$baseDir/tests/test_samples.csv"
                 output_dir = "$baseDir/tests/test-out/"
@@ -28,7 +28,6 @@ nextflow_pipeline {
                 sequencing_technique = 'amplicon'
                 interleaved = false
                 primer_id_default = 'ARTIC_v5'
-
                 primer_csv = "$baseDir/primers.csv"
             }
         }
