@@ -18,8 +18,10 @@ process DEDUPLICATE_READS {
     // samtools -r markdup will remove duplicate reads entirely
     if(meta.sequencing_tech.toLowerCase() == "mips") 
         """
-        samtools sort -n ${bam} | samtools fixmate -mr - ${bam.baseName}.fixed.bam
-        samtools sort ${bam.baseName}.fixed.bam | samtools markdup --duplicate-count --barcode-name - ${bam.baseName}.dedup.bam
+        samtools collate  -O -u ${bam} -T ./${meta.replicate_id}.TEMP \
+        | samtools fixmate  -m -u - - \
+        | samtools sort  -u - \
+        | samtools markdup --barcode-name -r -f ${meta.replicate_id}.stats.txt - ${bam.baseName}.dedup.bam
         samtools index ${bam.baseName}.dedup.bam
         """
 
