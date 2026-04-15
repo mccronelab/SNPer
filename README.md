@@ -20,17 +20,17 @@ cd SNPer/
 
 To test SNPer, ensure that Docker is running:
 ```
-nextflow run https://github.com/mccronelab/SNPer.git -profile test
+nextflow run main.nf -profile test
 ```
 
 Alternatively, if you have Apptainer, ensure that it is loaded/running:
 ```
-nextflow run https://github.com/mccronelab/SNPer.git -profile test_apptainer
+nextflow run main.nf -profile test_apptainer
 ```
 
-Alternative, you can run the local copy of the main workflow with:
+(Currently not working) Alternatively, you can let Nextflow manage the repository with:
 ```
-nextflow run main.nf -profile test
+nextflow run https://github.com/mccronelab/SNPer.git -profile test
 ```
 
 ## Workflow
