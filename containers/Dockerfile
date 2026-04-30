@@ -1,4 +1,5 @@
 FROM ubuntu:25.04
+ARG TARGETARCH
 
 # install necessary packages, tools. noninteractive stops apt from asking for
 # geographic time zone (stops Docker)
@@ -44,6 +45,9 @@ RUN git clone https://github.com/jsh58/NGmerge.git && \
     cd NGmerge && \
     make && \
     mv NGmerge /usr/local/bin/
+
+FROM ubuntu:24.04
+COPY --from=nextstrain/nextclade:latest /usr/bin/nextclade /usr/local/bin/nextclade
 
 ENV PATH="root/bin/:/snper-env/bin:$PATH"
 ENV TRIMMOMATIC_JAR="/usr/local/bin/trimmomatic.jar"
