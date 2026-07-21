@@ -1,13 +1,13 @@
 process LIFTOFF {
     label 'process_medium'
     publishDir "${params.output_dir}/gff3/", mode: 'copy'
-    tag "${sample}"
+    tag "${sample}_${segment}"
 
     input:
-        tuple val(sample), path(reference), path(target), path(gff_file)
+        tuple val(sample), val(segment), path(reference), path(target), path(gff_file)
 
     output:
-        tuple val(sample), path("${target.simpleName}.gff3")
+        tuple val(sample), val(segment), path("${target.simpleName}.gff3")
         
     script:
     """

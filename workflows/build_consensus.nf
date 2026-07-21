@@ -84,44 +84,48 @@ workflow CONSENSUS_GEN {
       | map { meta, bams, bais -> [meta, [bams].flatten(), [bais].flatten()] } // force lists when N=1
       | transpose() // [meta, segment bam, segment bai]
       | map { meta, bam, bai -> [meta + [segment: bam.parent.name], bam, bai] }
-      | map { meta, bam, bai -> [meta.sample, meta, bam, bai] }
-    
-    // group different replicates of same sample together for consensus calling
-    bams_grouped_by_sample = processed_bam
-      | groupTuple(by:0)
+      | map { meta, bam, bai -> [meta.sample, meta.segment, meta, bam, bai] }
 
-    consensus_sequence = bams_grouped_by_sample.map{ sample, meta, bam, bai -> [sample, meta, bam, bai, reference, "_rough"] }
-      | ROUGH_CONSENSUS // sample, consensus
+    // Group replicates of the same sample together for consensus calling, but
+    // key on (sample, segment) so replicates of DIFFERENT segments aren't merged
+    // back into one consensus. Every join below keys on [0,1] for the same
+    // reason. Single-segment is the N=1 special case: one segment per sample, so
+    // (sample, segment) collapses to the old per-sample grouping.
+    bams_grouped_by_sample = processed_bam
+      | groupTuple(by:[0,1])
+
+    consensus_sequence = bams_grouped_by_sample.map{ sample, segment, meta, bam, bai -> [sample, segment, meta, bam, bai, reference, "_rough"] }
+      | ROUGH_CONSENSUS // sample, segment, consensus
       // filter out consensus with no sequence, which sometimes occurs
-      | filter { sample, consensus_fa ->
+      | filter { _sample, _segment, consensus_fa ->
         consensus_fa.exists() &&
         // .trim() evaluates to false on a string that contains only whitespace,
         // so if there are any lines in the sequence part of the FASTA that are not
         // only whitespace, the file passes the filter
         consensus_fa.readLines().any { line -> !line.startsWith(">") && line.trim() }
       }
-    
+
     variant_bam = processed_bam
-      | combine(consensus_sequence, by:0) // sample, meta, bam, bai, consensus
-      | map { _sample, meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | combine(consensus_sequence, by:[0,1]) // sample, segment, meta, bam, bai, consensus
+      | map { _sample, _segment, meta, bam, _bai, consensus -> [meta, bam, consensus] }
       | BWA_REMAP_ROUGH // meta, sams
       | SI_ROUGH // meta, sorted bam, index
-      | map { meta, bam, bai -> [meta.sample, meta, bam, bai] }
+      | map { meta, bam, bai -> [meta.sample, meta.segment, meta, bam, bai] }
 
     variant_bams_grouped_by_sample = variant_bam
-      | groupTuple(by:0)
-      | combine(consensus_sequence, by:0)
+      | groupTuple(by:[0,1])
+      | combine(consensus_sequence, by:[0,1])
 
     polished_consensus = variant_bams_grouped_by_sample
-      | map { sample, meta, bam, bai, consensus -> [sample, meta, bam, bai, consensus, "_polished"] }
+      | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, meta, bam, bai, consensus, "_polished"] }
       | POLISH_CONSENSUS
       | GET_CONSENSUS_COVERAGE
-      | filter { _sample, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
-      | map { sample, consensus, _coverage -> [sample, consensus] }
+      | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      | map { sample, segment, consensus, _coverage -> [sample, segment, consensus] }
 
     variant_bam_polished = variant_bam
-      | combine(polished_consensus, by:0) // sample, meta, bam, bai, consensus
-      | map { _sample, meta, bam, _bai, consensus -> [meta, bam, consensus] }
+      | combine(polished_consensus, by:[0,1]) // sample, segment, meta, bam, bai, consensus
+      | map { _sample, _segment, meta, bam, _bai, consensus -> [meta, bam, consensus] }
       | BWA_REMAP_POL
       | SI_POL
 
@@ -129,5 +133,5 @@ workflow CONSENSUS_GEN {
 
   emit:
     variant_bams = variant_bam_polished // [meta, bam, bai]
-    consensus = polished_consensus // [sample, consensus]
+    consensus = polished_consensus // [sample, segment, consensus]
 }

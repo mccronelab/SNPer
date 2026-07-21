@@ -21,12 +21,12 @@ process GET_VARIANT_READ_DEPTH {
 
 process GET_CONSENSUS_COVERAGE {
     label 'process_low'
-    tag "${sample}"
+    tag "${sample}_${segment}"
 
     input:
-        tuple val(sample), path(consensus)
+        tuple val(sample), val(segment), path(consensus)
     output:
-        tuple val(sample), path(consensus), stdout
+        tuple val(sample), val(segment), path(consensus), stdout
     script:
     """
     python3 ${projectDir}/bin/calculate_coverage.py ${consensus}
