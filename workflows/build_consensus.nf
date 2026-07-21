@@ -12,6 +12,7 @@ include { MERGE_MPILEUP_CONSENSUS as ROUGH_CONSENSUS;
 include { PICARD_SORT as PS_CON; PICARD_SORT as PS_VAR  } from "../modules/picard_sort"
 include { SORT_INDEX_BAM as SI_REF; SORT_INDEX_BAM as SI_ROUGH; SORT_INDEX_BAM as SI_POL } \
   from "../modules/sort_index_bam"
+include { SPLIT_BAM_BY_SEGMENT } from "../modules/split_bam_by_segment"
 
 workflow CONSENSUS_GEN {
   take:
@@ -72,8 +73,17 @@ workflow CONSENSUS_GEN {
       | concat(preprocessed_bam.hybrid_capture)
       | DEDUP_HC
 
-    // put all samples back into same channel
+    // put all samples back into same channel, then split each per-replicate BAM
+    // into per-segment BAMs. Splitting here (before the consensus grouping and
+    // the remap fork) makes single-segment a special case of the multi-segment
+    // path: N=1 for a single-record reference. Stamp meta.segment from the
+    // parent dir name of each split BAM, building a FRESH map per segment so
+    // map aliasing can't overwrite it across the fan-out.
     processed_bam = amplicon_bam.concat(mips_bam, hc_bam)
+      | SPLIT_BAM_BY_SEGMENT // [meta, [segment bams], [segment bais]]
+      | map { meta, bams, bais -> [meta, [bams].flatten(), [bais].flatten()] } // force lists when N=1
+      | transpose() // [meta, segment bam, segment bai]
+      | map { meta, bam, bai -> [meta + [segment: bam.parent.name], bam, bai] }
       | map { meta, bam, bai -> [meta.sample, meta, bam, bai] }
     
     // group different replicates of same sample together for consensus calling
