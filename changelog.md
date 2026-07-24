@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.3.0-Beta
+- Add support for multi-segment viruses (e.g. influenza) from a single, fixed multi-segment reference. Reads map to the full multi-record reference with one `bwa index`, then the aligned BAM is split by reference name so every downstream step runs per segment. Single-segment references are the N=1 special case of this path — no config flag, no separate codepath.
+- Add `split_bam_by_segment.nf`, which splits each per-replicate BAM into one BAM per mapped reference name and stamps `meta.segment`. Wire it into `build_consensus.nf` after primer trimming / deduplication, before consensus grouping.
+- Re-key replicate grouping and consensus joins in `build_consensus.nf` and `call_variants_ivar.nf` on `(sample, segment)` (`groupTuple`/`combine` `by:[0,1]`), so replicates of different segments are no longer merged back together at consensus, remap, or variant-calling time.
+- Thread the segment into per-segment output names to prevent collisions in shared publish directories: consensus FASTAs in `merge_mpileup_consensus.nf` (`${sample}_${segment}${suffix}`) and remapped BAMs in `bwa_mem.nf` (`${replicate}_${segment}.remap.bam`), which the variant and coverage outputs inherit. Add the segment to `get_coverage.nf` (`GET_CONSENSUS_COVERAGE`) and `liftoff.nf` signatures so the join key survives across them.
+- Extract the per-segment reference record in `convert_tsv_coords.nf` before the coordinate lift-back, since `convert_tsv_coords.py` assumes a single-record reference and would otherwise align the wrong pair against a multi-segment reference.
+- Note: single-segment output names change as a result of the unified path (e.g. `123_polished.fa` becomes `123_MN908947.3_polished.fa`).
+- Rename `data/renamed_fastq/` to `data/fastq/` and `data/sars_reference/` to `data/reference/` to accommodate a multi-segment test set; update all sample sheets, `nextflow.config` profiles, and nf-test/test configs that referenced the old paths.
+
 ## v2.2.0-Beta
 - Fix MIPS sequence read deduplication in `deduplicate_reads.nf`.
 - Add updated GFF3 file.
