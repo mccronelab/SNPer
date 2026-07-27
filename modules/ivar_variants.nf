@@ -20,7 +20,7 @@ process IVAR_VARIANTS {
     {
         samtools faidx ${consensus}
         samtools sort ${bam} \
-        | samtools mpileup -d 0 -Q 30 -q ${params.variant_min_mapQ}  -f ${consensus} - \
+        | samtools mpileup -d 0 -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ}  -f ${consensus} - \
         | ivar variants -p ${bam.simpleName}.variants -q ${params.variant_minQ} -m ${params.variant_min_depth} -t ${params.variant_freq_threshold} -r ${consensus} -g ${gff}
     } 2> var_errors.txt
 

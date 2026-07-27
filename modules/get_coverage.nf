@@ -15,7 +15,7 @@ process GET_VARIANT_READ_DEPTH {
 
     script:
         """
-        samtools depth -a -d 0 ${bam} -Q 30 -q ${params.variant_min_mapQ} > ${bam.baseName}_coverage.tsv
+        samtools depth -a -d 0 ${bam} -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ} > ${bam.baseName}_coverage.tsv
         """
 }
 
