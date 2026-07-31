@@ -49,7 +49,7 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test
 
 1. Align reads to the reference sequence with `bwa mem` and sort/index the output BAM file.
 2a. (Tiled Amplicon reads only) Trim primers on aligned reads based on the contents of the primer BEDfile with `samtools ampliconclip`, then sort.
-2b. (MIPs reads only) Deduplicate aligned reads with `samtools markdup`.
+2b. (`umi` and `positional` reads only) Deduplicate aligned reads with `samtools markdup`.
 3. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`. Samples that failed to generate a consensus sequence are filtered out of the workflow.
 4. Remap aligned reads to the consensus genome and sort/index output BAM file.
 5. Call a 'polished' consensus sequence from remapped aligned reads.
@@ -80,7 +80,7 @@ _Requires docker_
 -   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
 - `reference_fasta`: A path to the reference genome for the replicon of interest.
 - `reference_gff`: Path to GFF file describing ORFs on reference genome.
-- `primer_bed`: Path to .bed file containing short read primers.
+- `primer_csv`: Path to CSV mapping `primer_id` values to primer BED files, with columns `primer_bedfile` and `primer_id`. Each sample's `primer_id` in the sample sheet selects its BED file from this table, so different samples in one run may use different primer schemes. The `primer_id` must match a row exactly, including case; `None` selects an empty BED. Primer BED chrom values must match the reference FASTA headers.
 - `output_dir`: Path where output will be stored.
 - `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
@@ -98,4 +98,4 @@ _Requires docker_
 - `trimmomatic_jarfile`: Path to Trimmomatic's jarfile. You should only change this parameter if you're NOT running SNPer via its Docker container.
 - `interleaved`: Boolean flag that sets the default value for sample sheet processing. Use this flag if you've omitted this field from the input sample sheeet (default false).
 - `primer_id_default`: Default setting for sample sheet processing, useful if your sample sheet doesn't have this field (and all samples use the same primers). Takes either a string or None.
-- `sequencing_technique`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field. SNPer supports 'amplicon' and 'mips' for this parameter.
+- `read_deduplication`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field. Selects how duplicate reads are handled: 'amplicon' (no deduplication; primers are clipped instead), 'umi' (UMI-aware `samtools markdup --barcode-name`, for MIPs and other UMI-tagged libraries), or 'positional' (coordinate-based `samtools markdup`, for hybrid-capture and other untagged libraries). Renamed from `sequencing_technique` in v2.3.0-Beta, along with its values.
