@@ -55,6 +55,6 @@ process BWA_REMAP {
         samtools collate -Oun128 ${bam} -T ./collate.TEMP \
         | samtools fastq - \
         | bwa mem -p ${reference} - \
-        | samtools view -b - > ${meta.replicate_id}_${meta.segment}.remap.bam
+        | samtools view -b - > ${meta.replicate_id}${meta.segment_label}.remap.bam
         """
 }

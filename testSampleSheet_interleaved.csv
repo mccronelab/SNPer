@@ -1,4 +1,4 @@
-sample,fastq1,replicate_id,sequencing_tech,interleaved
+sample,fastq1,replicate_id,read_deduplication,interleaved
 HS10498, ./data/fastq/HS10498_A.interleaved.fastq.gz, HS10498_A, amplicon, true
 HS10498, ./data/fastq/HS10498_B.interleaved.fastq.gz, HS10498_B, amplicon, true
 MHM1600, ./data/fastq/MHM1600_B.interleaved.fastq.gz,,, true

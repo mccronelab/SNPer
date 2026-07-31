@@ -1,7 +1,7 @@
-sample,fastq1,fastq2,primer_id,interleaved,sequencing_tech
-SRR3360148, ./data/fastq/SRR3360148_1.fastq.gz, ./data/fastq/SRR3360148_2.fastq.gz, None, false, hybrid-capture
-SRR3360147, ./data/fastq/SRR3360147_1.fastq.gz, ./data/fastq/SRR3360147_2.fastq.gz, None, false, hybrid-capture
-SRR3360146, ./data/fastq/SRR3360146_1.fastq.gz, ./data/fastq/SRR3360146_2.fastq.gz, None, false, hybrid-capture
-SRR3360145, ./data/fastq/SRR3360145_1.fastq.gz, ./data/fastq/SRR3360145_2.fastq.gz, None, false, hybrid-capture
-SRR3360140, ./data/fastq/SRR3360140_1.fastq.gz, ./data/fastq/SRR3360140_2.fastq.gz, None, false, hybrid-capture
-SRR3360139, ./data/fastq/SRR3360139_1.fastq.gz, ./data/fastq/SRR3360139_2.fastq.gz, None, false, hybrid-capture
+sample,fastq1,fastq2,primer_id,interleaved,read_deduplication
+SRR3360148, ./data/fastq/SRR3360148_1.fastq.gz, ./data/fastq/SRR3360148_2.fastq.gz, None, false, positional
+SRR3360147, ./data/fastq/SRR3360147_1.fastq.gz, ./data/fastq/SRR3360147_2.fastq.gz, None, false, positional
+SRR3360146, ./data/fastq/SRR3360146_1.fastq.gz, ./data/fastq/SRR3360146_2.fastq.gz, None, false, positional
+SRR3360145, ./data/fastq/SRR3360145_1.fastq.gz, ./data/fastq/SRR3360145_2.fastq.gz, None, false, positional
+SRR3360140, ./data/fastq/SRR3360140_1.fastq.gz, ./data/fastq/SRR3360140_2.fastq.gz, None, false, positional
+SRR3360139, ./data/fastq/SRR3360139_1.fastq.gz, ./data/fastq/SRR3360139_2.fastq.gz, None, false, positional

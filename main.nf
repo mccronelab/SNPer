@@ -11,14 +11,14 @@ nextflow.enable.strict = true
 workflow {
     // import values and files from params
     interleaved_default = params.interleaved
-    default_sequencing_tech = params.sequencing_technique
+    default_read_deduplication = params.read_deduplication
     primer_csv = Channel.fromPath(params.primer_csv)
     primer_default = params.primer_id_default
 
     input_ch = Channel.fromPath(params.sample_sheet)
     
     samples  = PROCESS_SAMPLE_SHEET(input_ch, primer_csv, interleaved_default, 
-        default_sequencing_tech, primer_default) //metadata, [fastq1,fastq2]]
+        default_read_deduplication, primer_default) //metadata, [fastq1,fastq2]]
 
     if(!params.skip_qc) {
         samples = READS_QC(samples)
