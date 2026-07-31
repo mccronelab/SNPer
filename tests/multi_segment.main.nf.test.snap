@@ -1,0 +1,78 @@
+{
+    "workflow_output": {
+        "content": [
+            {
+                "success": true,
+                "exitStatus": 0,
+                "errorMessage": "",
+                "errorReport": "",
+                "failed": false,
+                "trace": {
+                    "tasksCount": 94,
+                    "tasksFailed": 0,
+                    "tasksSucceeded": 94
+                },
+                "stdout": [
+                    
+                ],
+                "stderr": [
+                    
+                ],
+                "name": "workflow"
+            },
+            [
+                "SRR3360139_HA_polished.fa:md5,623a5c7be16b3d5256a7433a5809ef29",
+                "SRR3360139_HA_rough.fa:md5,dfdf5ee899ca7b8e28ddf00dbc2a5160",
+                "SRR3360139_M_polished.fa:md5,646b97c42fcdbcb4e0a305a2d2afa7f5",
+                "SRR3360139_M_rough.fa:md5,2825793e001a33f8ae815d0f5cbc2406",
+                "SRR3360139_NP_polished.fa:md5,b8c443d3c85645cfc04a3af578ef2b94",
+                "SRR3360139_NP_rough.fa:md5,48aab2c30398dfe3f384525888463d68",
+                "SRR3360139_NS_polished.fa:md5,b2b0e88db17ac3ef9443a8a8af22feb4",
+                "SRR3360139_NS_rough.fa:md5,5caaca1cb46efd8306a8fb2ea73276a9",
+                "SRR3360139_N_A_polished.fa:md5,d0a1bcc14284d97e405d2020ffe336c2",
+                "SRR3360139_N_A_rough.fa:md5,ebbf4e2eae5104c723b8447b84a7b442",
+                "SRR3360139_PA_polished.fa:md5,580e15cf2b00185aaed6589310946ef3",
+                "SRR3360139_PA_rough.fa:md5,ad11ffdc76c072ad26fed7f5604c1904",
+                "SRR3360139_PB1_polished.fa:md5,1c071c0a5cce5b55e072ffe1bbd446f9",
+                "SRR3360139_PB1_rough.fa:md5,549ee5cda5247179c24d8d55e6fe5874",
+                "SRR3360139_PB2_polished.fa:md5,7e540948134b4e26134793dd1158b1f7",
+                "SRR3360139_PB2_rough.fa:md5,09657d2393a26ca694643b09c3473548"
+            ],
+            [
+                "SRR3360139_HA_polished.gff3:md5,2e43982d7eae23344709e26e4f6ce4c0",
+                "SRR3360139_M_polished.gff3:md5,691a0a9112874e3579a44e1bd8c85b0a",
+                "SRR3360139_NP_polished.gff3:md5,7688aa5a243c51b0338c3d0e728d6ca3",
+                "SRR3360139_NS_polished.gff3:md5,61f7832f6a075789795cffda93d29e88",
+                "SRR3360139_N_A_polished.gff3:md5,d45e7768fe0b9728d78a3d90a5a94bd1",
+                "SRR3360139_PA_polished.gff3:md5,6a56ca8c4a089b2c1c62ddb699c82be4",
+                "SRR3360139_PB1_polished.gff3:md5,961bfec09419b6c17fb3b4de2fe0e110",
+                "SRR3360139_PB2_polished.gff3:md5,f024bd6694620592196860b54768c66a"
+            ],
+            [
+                "SRR3360139_HA.remap.sorted_coverage.tsv:md5,7b75838aa90cdfec82bb29a1324efa9d",
+                "SRR3360139_M.remap.sorted_coverage.tsv:md5,ea296f68f0b21d459d4903fd1871db9f",
+                "SRR3360139_NP.remap.sorted_coverage.tsv:md5,6c176ed0d675f9afdc18d9420bbeb865",
+                "SRR3360139_NS.remap.sorted_coverage.tsv:md5,f4b9456e16ff6215ebff2273a0195352",
+                "SRR3360139_N_A.remap.sorted_coverage.tsv:md5,7ef9121da1d9db0c5a4498f7f0d45629",
+                "SRR3360139_PA.remap.sorted_coverage.tsv:md5,7dd0350fdea776b91b8c65824a542e01",
+                "SRR3360139_PB1.remap.sorted_coverage.tsv:md5,707354028e383a1cec9d49c636d13748",
+                "SRR3360139_PB2.remap.sorted_coverage.tsv:md5,dddd8e62b053b6b19b9bfbacc04afc7c"
+            ],
+            [
+                "SRR3360139_HA.ref_coords.tsv:md5,9d28e76fae4c9a5d41499c444562381a",
+                "SRR3360139_M.ref_coords.tsv:md5,c3c942c82b918fbb008f61c658b80b93",
+                "SRR3360139_NP.ref_coords.tsv:md5,4a49fe219fa9eebc2444e5fab8dd563f",
+                "SRR3360139_NS.ref_coords.tsv:md5,374a8f4a4121fbd8fe5f56b5736509e2",
+                "SRR3360139_N_A.ref_coords.tsv:md5,60af49681c2d04059ad52ae190a7dc03",
+                "SRR3360139_PA.ref_coords.tsv:md5,92461c812c926e36fe5bed3c29741ca6",
+                "SRR3360139_PB1.ref_coords.tsv:md5,4d21ee72cb344107ba90aa65d98aa4ce",
+                "SRR3360139_PB2.ref_coords.tsv:md5,da4752f5a7a15e446a8a47cf1102fc74"
+            ]
+        ],
+        "timestamp": "2026-07-29T21:03:19.143194",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.6"
+        }
+    }
+}

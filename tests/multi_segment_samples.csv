@@ -1,0 +1,2 @@
+sample,fastq1,fastq2,primer_id,interleaved,read_deduplication
+SRR3360139,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/SRR3360139_1.fastq.gz,s3://fh-pi-mccrone-j-eco-public/snper-test/renamed_fastq/SRR3360139_2.fastq.gz,None,false,positional

@@ -25,7 +25,7 @@ nextflow_pipeline {
                 remove_unclipped_reads = true
                 skip_qc = false
                 trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
-                sequencing_technique = 'amplicon'
+                read_deduplication = 'amplicon'
                 interleaved = false
                 primer_id_default = 'ARTIC_v5'
                 primer_csv = "$baseDir/primers.csv"
