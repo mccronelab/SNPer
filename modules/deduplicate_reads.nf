@@ -16,22 +16,25 @@ process DEDUPLICATE_READS {
 
     script:
     // samtools -r markdup will remove duplicate reads entirely
-    if(meta.sequencing_tech.toLowerCase() == "mips") 
+    if(meta.read_deduplication.toLowerCase() == "umi")
         """
-        samtools collate  -O -u ${bam} -T ./${meta.replicate_id}.TEMP \
-        | samtools fixmate  -m -u - - \
-        | samtools sort  -u - \
-        | samtools markdup --barcode-name -r -f ${meta.replicate_id}.stats.txt - ${bam.baseName}.dedup.bam
+        samtools collate -@ ${task.cpus} -O -u ${bam} -T ./${meta.replicate_id}.TEMP \
+        | samtools fixmate -@ ${task.cpus}  -m -u - - \
+        | samtools sort -@ ${task.cpus}  -u - \
+        | samtools markdup -@ ${task.cpus} --barcode-name -r -f ${meta.replicate_id}.stats.txt - ${bam.baseName}.dedup.bam
         samtools index ${bam.baseName}.dedup.bam
         """
 
-    // requires testing
-    else if(meta.sequencing_tech.toLowerCase() == "hybrid-capture")
-        error "Hybrid Capture deduplication not yet implemented."
-    //    """
-    //    samtools markdup -r ${bam} ${bam.baseName}.dedup.bam
-    //    """
+    else if(meta.read_deduplication.toLowerCase() == "positional")
+        """
+        samtools collate -@ ${task.cpus} -O ${bam} \
+        | samtools fixmate -m -@ ${task.cpus} - - \
+        | samtools sort -@ ${task.cpus} - \
+        | samtools markdup -r -@ ${task.cpus} -s -f ${meta.replicate_id}.stats.txt - ${bam.baseName}.dedup.bam
+
+        samtools index ${bam.baseName}.dedup.bam
+        """
 
     else
-        error "Sequencing tech ${meta.sequencing_tech} must be MIPS or hybrid-capture for read deduplication."
+        error "read_deduplication value ${meta.read_deduplication} must be umi or positional for read deduplication."
 }

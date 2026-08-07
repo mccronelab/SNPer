@@ -1,0 +1,64 @@
+nextflow_pipeline {
+
+    name "Test Workflow main.nf -- multi-segment (influenza A / PR8)"
+    script "main.nf"
+
+    // One sample, 8 segments. Proves the split-by-reference path fans out and that
+    // every join keys on (sample, segment); tests/main.nf.test covers the N=1 case.
+    test("Run without failures and verify per-segment output") {
+
+        when {
+            params {
+                reference_fasta = "$baseDir/data/reference/pHW2000_PR8-N_A.fa"
+                reference_gff = "$baseDir/data/reference/pr8_multisegment_test.gff3"
+                primer_bed = ''
+                sample_sheet = "$baseDir/tests/multi_segment_samples.csv"
+                output_dir = "$baseDir/tests/multiseg-test-out/"
+                consensus_min_qual_score = 30
+                consensus_threshold = 0
+                consensus_min_depth = 10
+                consensus_coverage_cutoff = 0.75
+                consensus_min_mapQ = 30
+                consensus_min_baseQ = 30
+                variant_min_mapQ = 30
+                variant_freq_threshold = 0.005
+                variant_min_depth = 10
+                variant_minQ = 30
+                variant_min_baseQ = 30
+                remove_unclipped_reads = true
+                skip_qc = false
+                trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
+                read_deduplication = 'positional'
+                interleaved = false
+                // must match a primer_id in primers.csv exactly; the sheet sets this
+                // per row, so this default is only a fallback
+                primer_id_default = 'None'
+                primer_csv = "$baseDir/primers.csv"
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // 8 segments in, 8 segments out at every stage -- catches a collapsed
+            // join key, which would silently merge segments instead of failing.
+            // consensus_seqs is 16 because rough and polished are both published;
+            // it becomes 8 if publication is ever narrowed to the polished round.
+            assert path("${params.output_dir}/consensus_seqs").list().size() == 16
+            assert path("${params.output_dir}/gff3").list().size() == 8
+            assert path("${params.output_dir}/replicate_coverage").list().size() == 8
+            assert path("${params.output_dir}/variants").list().size() == 8
+
+            // skip FastQC output, which can vary based on zipped files and timestamps
+            assert snapshot(
+                workflow,
+                path("${params.output_dir}/consensus_seqs").list(),
+                path("${params.output_dir}/gff3").list(),
+                path("${params.output_dir}/replicate_coverage").list(),
+                path("${params.output_dir}/variants").list()
+            ).match("workflow_output")
+        }
+
+    }
+
+}

@@ -80,10 +80,10 @@ def parse_args(sys_args: str) -> argparse.Namespace:
         "--protocol",
         type=str,
         default="",
-        choices=["amplicon", "mips", "hybrid-capture"],
-        help="If set, creates an optional sequencing_tech columns in the output sample sheet. Any " \
+        choices=["amplicon", "umi", "positional"],
+        help="If set, creates an optional read_deduplication column in the output sample sheet. Any " \
         "value supplied to this option will populate all columns in the output sample sheet. Value " \
-        "be one of amplicon, mips, or hybrid-capture."
+        "be one of amplicon, umi, or positional."
     )
 
     parser.add_argument(
@@ -136,7 +136,7 @@ def _main():
     has_replicates = args.replicated
     delimiter = args.delimiter
     primer_id = args.primer_id
-    sequencing_tech = args.protocol
+    read_deduplication = args.protocol
     interleaved = args.interleaved
     suppress_header = args.suppress_header
     r1_suffix = args.r1_suffix
@@ -154,7 +154,7 @@ def _main():
 
             # add optional columns, if specified
             header = if_true_concat(has_replicates, header, ",replicate-id")
-            header = if_true_concat(sequencing_tech, header, ",sequencing_tech")
+            header = if_true_concat(read_deduplication, header, ",read_deduplication")
             header = if_true_concat(interleaved, header, ",interleaved")
 
             sampleSheet.write(f"{header}\n")
@@ -169,7 +169,7 @@ def _main():
                 sample = delimiter.join(sample_list)
                 row = f"{sample}, {fastq_dir_path}/{file_ID}_{r1_suffix}.fastq.gz, {fastq_dir_path}/{file_ID}_{r2_suffix}.fastq.gz, {primer_id}, {file_ID}"
 
-            row = if_true_concat(sequencing_tech, row, f", {sequencing_tech}")
+            row = if_true_concat(read_deduplication, row, f", {read_deduplication}")
             row = if_true_concat(interleaved, row, ", True")
 
             sampleSheet.write(f"{row}\n")

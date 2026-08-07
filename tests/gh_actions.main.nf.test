@@ -9,8 +9,8 @@ nextflow_pipeline {
             params {
                 // define parameters here. Example: 
                 // outdir = "tests/results"
-                reference_fasta = "$baseDir/data/sars_reference/MN908947.fasta"
-                reference_gff = "$baseDir/data/sars_reference/SARS_CoV_2.gff3"
+                reference_fasta = "$baseDir/data/reference/MN908947.fasta"
+                reference_gff = "$baseDir/data/reference/SARS_CoV_2.gff3"
                 primer_bed = "$baseDir/data/primers/SARs-CoV-2_v5.3.2_400.primer.bed"
                 sample_sheet = "$baseDir/tests/gh_actions_samples.csv"
                 output_dir = "$baseDir/tests/test-out/"
@@ -25,7 +25,7 @@ nextflow_pipeline {
                 remove_unclipped_reads = true
                 skip_qc = false
                 trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
-                sequencing_technique = 'amplicon'
+                read_deduplication = 'amplicon'
                 interleaved = false
                 primer_id_default = 'ARTIC_v5'
                 primer_csv = "$baseDir/primers.csv"

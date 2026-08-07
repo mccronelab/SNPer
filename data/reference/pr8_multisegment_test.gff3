@@ -1,0 +1,61 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build ViralMultiSegProj15521
+#!genome-build-accession NCBI_Assembly:GCF_000865725.1
+##sequence-region PB2 1 2341
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+PB2	RefSeq	region	1	2341	.	+	.	ID=NC_002023.1:1..2341;Dbxref=taxon:211044;Name=1;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=1;serotype=H1N1;strain=A/Puerto Rico/8/1934
+PB2	RefSeq	gene	28	2307	.	+	.	ID=gene-FLUAVs1gp1;Dbxref=GeneID:956536;Name=PB2;gbkey=Gene;gene=PB2;gene_biotype=protein_coding;locus_tag=FLUAVs1gp1
+PB2	RefSeq	CDS	28	2307	.	+	0	ID=cds-NP_040987.1;Parent=gene-FLUAVs1gp1;Dbxref=GOA:P03428,UniProtKB/Swiss-Prot:P03428,GenBank:NP_040987.1,GeneID:956536;Name=NP_040987.1;gbkey=CDS;gene=PB2;locus_tag=FLUAVs1gp1;product=polymerase PB2;protein_id=NP_040987.1
+##sequence-region PB1 1 2341
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+PB1	RefSeq	region	1	2341	.	+	.	ID=NC_002021.1:1..2341;Dbxref=taxon:211044;Name=2;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=2;serogroup=H1N1;strain=A/Puerto Rico/8/1934
+PB1	RefSeq	gene	25	2298	.	+	.	ID=gene-FLUAVs2gp1;Dbxref=GeneID:956534;Name=PB1;gbkey=Gene;gene=PB1;gene_biotype=protein_coding;locus_tag=FLUAVs2gp1
+PB1	RefSeq	CDS	25	2298	.	+	0	ID=cds-NP_040985.1;Parent=gene-FLUAVs2gp1;Dbxref=GenBank:NP_040985.1,GeneID:956534;Name=NP_040985.1;gbkey=CDS;gene=PB1;locus_tag=FLUAVs2gp1;product=polymerase PB1;protein_id=NP_040985.1
+PB1	RefSeq	gene	119	382	.	+	.	ID=gene-FLUAVs2gp2;Dbxref=GeneID:3802042;Name=PB1-F2;gbkey=Gene;gene=PB1-F2;gene_biotype=protein_coding;locus_tag=FLUAVs2gp2
+PB1	RefSeq	CDS	119	382	.	+	0	ID=cds-YP_418248.1;Parent=gene-FLUAVs2gp2;Dbxref=GenBank:YP_418248.1,GeneID:3802042;Name=YP_418248.1;gbkey=CDS;gene=PB1-F2;locus_tag=FLUAVs2gp2;product=PB1-F2 protein;protein_id=YP_418248.1
+##sequence-region PA 1 2233
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+PA	RefSeq	region	1	2233	.	+	.	ID=NC_002022.1:1..2233;Dbxref=taxon:211044;Name=3;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=3;serotype=H1N1;strain=A/Puerto Rico/8/1934
+PA	RefSeq	gene	25	2175	.	+	.	ID=gene-FLUAVs3gp1;Dbxref=GeneID:956535;Name=PA;gbkey=Gene;gene=PA;gene_biotype=protein_coding;locus_tag=FLUAVs3gp1
+PA	RefSeq	CDS	25	2175	.	+	0	ID=cds-NP_040986.1;Parent=gene-FLUAVs3gp1;Dbxref=GOA:P03433,UniProtKB/Swiss-Prot:P03433,GenBank:NP_040986.1,GeneID:956535;Name=NP_040986.1;gbkey=CDS;gene=PA;locus_tag=FLUAVs3gp1;product=polymerase PA;protein_id=NP_040986.1
+PA	RefSeq	gene	25	784	.	+	.	ID=gene-FLUAVs3gp2;Dbxref=GeneID:13229134;Name=PA-X;gbkey=Gene;gene=PA-X;gene_biotype=protein_coding;locus_tag=FLUAVs3gp2
+PA	RefSeq	CDS	25	597	.	+	0	ID=cds-YP_006495785.1;Parent=gene-FLUAVs3gp2;Dbxref=GenBank:YP_006495785.1,GeneID:13229134;Name=YP_006495785.1;exception=ribosomal slippage;gbkey=CDS;gene=PA-X;locus_tag=FLUAVs3gp2;product=PA-X protein;protein_id=YP_006495785.1
+PA	RefSeq	CDS	599	784	.	+	0	ID=cds-YP_006495785.1;Parent=gene-FLUAVs3gp2;Dbxref=GenBank:YP_006495785.1,GeneID:13229134;Name=YP_006495785.1;exception=ribosomal slippage;gbkey=CDS;gene=PA-X;locus_tag=FLUAVs3gp2;product=PA-X protein;protein_id=YP_006495785.1
+##sequence-region HA 1 1778
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+HA	RefSeq	region	1	1778	.	+	.	ID=NC_002017.1:1..1778;Dbxref=taxon:211044;Name=4;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=4;serotype=H1N1;strain=A/Puerto Rico/8/1934
+HA	RefSeq	gene	33	1733	.	+	.	ID=gene-FLUAVs4gp1;Dbxref=GeneID:956529;Name=HA;gbkey=Gene;gene=HA;gene_biotype=protein_coding;locus_tag=FLUAVs4gp1
+HA	RefSeq	CDS	33	1733	.	+	0	ID=cds-NP_040980.1;Parent=gene-FLUAVs4gp1;Dbxref=GOA:P03452,UniProtKB/Swiss-Prot:P03452,GenBank:NP_040980.1,GeneID:956529;Name=NP_040980.1;gbkey=CDS;gene=HA;locus_tag=FLUAVs4gp1;product=haemagglutinin;protein_id=NP_040980.1
+HA	RefSeq	signal_peptide_region_of_CDS	33	83	.	+	.	ID=id-NP_040980.1:1..17;Parent=gene-FLUAVs4gp1;gbkey=Prot
+HA	RefSeq	mature_protein_region_of_CDS	84	1064	.	+	.	ID=id-NP_040980.1:18..344;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA1;protein_id=YP_163735.1
+HA	RefSeq	mature_protein_region_of_CDS	1065	1730	.	+	.	ID=id-NP_040980.1:345..566;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA2;protein_id=YP_163736.1
+##sequence-region NP 1 1565
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+NP	RefSeq	region	1	1565	.	+	.	ID=NC_002019.1:1..1565;Dbxref=taxon:211044;Name=5;gbkey=Src;genome=genomic;mol_type=viral cRNA;segment=5;strain=A/Puerto Rico/8/1934(H1N1)
+NP	RefSeq	gene	46	1542	.	+	.	ID=gene-FLUAVs5gp1;Dbxref=GeneID:956531;Name=NP;gbkey=Gene;gene=NP;gene_biotype=protein_coding;locus_tag=FLUAVs5gp1
+NP	RefSeq	CDS	46	1542	.	+	0	ID=cds-NP_040982.1;Parent=gene-FLUAVs5gp1;Dbxref=GenBank:NP_040982.1,GeneID:956531;Name=NP_040982.1;gbkey=CDS;gene=NP;locus_tag=FLUAVs5gp1;product=nucleoprotein;protein_id=NP_040982.1
+NP	RefSeq	sequence_uncertainty	589	589	.	+	.	ID=id-FLUAVs5gp1;Dbxref=GeneID:956531;Note=g in 2 clones%2C a in 1 clone;gbkey=unsure;gene=NP;locus_tag=FLUAVs5gp1
+##sequence-region N_A 1 1413
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+N_A	RefSeq	region	1	1413	.	+	.	ID=NC_002018.1:1..1413;Dbxref=taxon:211044;Name=6;gbkey=Src;genome=genomic;mol_type=viral cRNA;segment=6;strain=A/Puerto Rico/8/1934(H1N1)
+N_A	RefSeq	gene	21	1385	.	+	.	ID=gene-FLUAVs6gp1;Dbxref=GeneID:956530;Name=NA;gbkey=Gene;gene=NA;gene_biotype=protein_coding;locus_tag=FLUAVs6gp1
+N_A	RefSeq	CDS	21	1385	.	+	0	ID=cds-NP_040981.1;Parent=gene-FLUAVs6gp1;Dbxref=GenBank:NP_040981.1,GeneID:956530;Name=NP_040981.1;gbkey=CDS;gene=NA;locus_tag=FLUAVs6gp1;product=neuraminidase;protein_id=NP_040981.1
+##sequence-region M 1 1027
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+M	RefSeq	region	1	1027	.	+	.	ID=NC_002016.1:1..1027;Dbxref=taxon:211044;Name=7;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=7;serotype=H1N1;strain=A/Puerto Rico/8/1934
+M	RefSeq	gene	26	1007	.	+	.	ID=gene-FLUAVs7gp2;Dbxref=GeneID:956528;Name=M2;gbkey=Gene;gene=M2;gene_biotype=protein_coding;locus_tag=FLUAVs7gp2
+M	RefSeq	CDS	26	51	.	+	0	ID=cds-NP_040979.2;Parent=gene-FLUAVs7gp2;Dbxref=GOA:P06821,UniProtKB/Swiss-Prot:P06821,GenBank:NP_040979.2,GeneID:956528;Name=NP_040979.2;gbkey=CDS;gene=M2;locus_tag=FLUAVs7gp2;product=matrix protein 2;protein_id=NP_040979.2
+M	RefSeq	CDS	740	1007	.	+	1	ID=cds-NP_040979.2;Parent=gene-FLUAVs7gp2;Dbxref=GOA:P06821,UniProtKB/Swiss-Prot:P06821,GenBank:NP_040979.2,GeneID:956528;Name=NP_040979.2;gbkey=CDS;gene=M2;locus_tag=FLUAVs7gp2;product=matrix protein 2;protein_id=NP_040979.2
+M	RefSeq	gene	26	784	.	+	.	ID=gene-FLUAVs7gp1;Dbxref=GeneID:956527;Name=M1;gbkey=Gene;gene=M1;gene_biotype=protein_coding;locus_tag=FLUAVs7gp1
+M	RefSeq	CDS	26	784	.	+	0	ID=cds-NP_040978.1;Parent=gene-FLUAVs7gp1;Dbxref=GOA:P03485,UniProtKB/Swiss-Prot:P03485,GenBank:NP_040978.1,GeneID:956527;Name=NP_040978.1;gbkey=CDS;gene=M1;locus_tag=FLUAVs7gp1;product=matrix protein 1;protein_id=NP_040978.1
+##sequence-region NS 1 890
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
+NS	RefSeq	region	1	890	.	+	.	ID=NC_002020.1:1..890;Dbxref=taxon:211044;Name=8;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=8;serotype=H1N1;strain=A/Puerto Rico/8/1934
+NS	RefSeq	gene	27	864	.	+	.	ID=gene-FLUAVs8gp1;Dbxref=GeneID:956532;Name=NEP;gbkey=Gene;gene=NEP;gene_biotype=protein_coding;gene_synonym=NS2;locus_tag=FLUAVs8gp1
+NS	RefSeq	CDS	27	56	.	+	0	ID=cds-NP_040983.1;Parent=gene-FLUAVs8gp1;Dbxref=GenBank:NP_040983.1,GeneID:956532;Name=NP_040983.1;gbkey=CDS;gene=NEP;locus_tag=FLUAVs8gp1;product=nonstructural protein 2;protein_id=NP_040983.1
+NS	RefSeq	CDS	529	864	.	+	0	ID=cds-NP_040983.1;Parent=gene-FLUAVs8gp1;Dbxref=GenBank:NP_040983.1,GeneID:956532;Name=NP_040983.1;gbkey=CDS;gene=NEP;locus_tag=FLUAVs8gp1;product=nonstructural protein 2;protein_id=NP_040983.1
+NS	RefSeq	gene	27	719	.	+	.	ID=gene-FLUAVs8gp2;Dbxref=GeneID:956533;Name=NS1;gbkey=Gene;gene=NS1;gene_biotype=protein_coding;locus_tag=FLUAVs8gp2
+NS	RefSeq	CDS	27	719	.	+	0	ID=cds-NP_040984.1;Parent=gene-FLUAVs8gp2;Dbxref=GenBank:NP_040984.1,GeneID:956533;Name=NP_040984.1;gbkey=CDS;gene=NS1;locus_tag=FLUAVs8gp2;product=nonstructural protein 1;protein_id=NP_040984.1
+###

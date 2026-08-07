@@ -8,9 +8,9 @@
                 "errorReport": "",
                 "failed": false,
                 "trace": {
-                    "tasksCount": 92,
+                    "tasksCount": 100,
                     "tasksFailed": 0,
-                    "tasksSucceeded": 92
+                    "tasksSucceeded": 100
                 },
                 "stdout": [
                     
@@ -21,35 +21,35 @@
                 "name": "workflow"
             },
             [
-                "102602009_polished.fa:md5,8a255d8e4a31351bea6144a8ada986fd",
-                "102602009_rough.fa:md5,e9eb6914d8895465266e51c61c7ace9d",
+                "102602009_polished.fa:md5,d0b618a53da267459d43b390f3d74101",
+                "102602009_rough.fa:md5,bf7e113f946e0fa75aaa61c858efbf92",
                 "106801008_rough.fa:md5,9df96465c869c275c6fa5eff63069522",
-                "107301003_polished.fa:md5,04cd9a17de2bf9114a2c988514c92157",
-                "107301003_rough.fa:md5,8e82b22d5076752da79e57b6d514b60a",
-                "107802008_polished.fa:md5,30c114c5034c586a9c38041950b5c6c6",
-                "107802008_rough.fa:md5,7c5968cb3e33132d9f3a9432a5642ed8"
+                "107301003_polished.fa:md5,94bf6d29722a4ccb003d4e6fe47e3fae",
+                "107301003_rough.fa:md5,5d562909b0c604f0fdcf6000b5c43dc5",
+                "107802008_polished.fa:md5,31a9ab4aa95518b479fb543b5bd36d51",
+                "107802008_rough.fa:md5,9d2a275b1fbffec38d4703e5d8b6a4e4"
             ],
             [
-                "102602009_polished.gff3:md5,1e252c4404a642cd0467d98996414831",
-                "107301003_polished.gff3:md5,6cd4bb57800e0e8e99bb415be42f79df"
+                "102602009_polished.gff3:md5,7bdd880f2375e056a705ff18e76a95d9",
+                "107301003_polished.gff3:md5,62718ed899ab4853dc729082d54b03d5"
             ],
             [
-                "102602009_A.remap.sorted_coverage.tsv:md5,90ad8d4b5cc7cd773b7d8631ecc3d10e",
-                "102602009_B.remap.sorted_coverage.tsv:md5,dbe0f866c8c665f429eee039acf49750",
-                "107301003_A.remap.sorted_coverage.tsv:md5,d7389724c5ca88545c09dd5198cb4958",
-                "107301003_B.remap.sorted_coverage.tsv:md5,cd42625fe2fc0ac7e11072630055acb3"
+                "102602009_A.remap.sorted_coverage.tsv:md5,0febfac704b3af1a83ea1e3788afec09",
+                "102602009_B.remap.sorted_coverage.tsv:md5,7a1552861b23058b2950b784e8b9abda",
+                "107301003_A.remap.sorted_coverage.tsv:md5,d5c6598aaa8017bfa99e5fc2964f45e6",
+                "107301003_B.remap.sorted_coverage.tsv:md5,8035e93d1e5bf80d349ed6a9fed6379a"
             ],
             [
-                "102602009_A.ref_coords.tsv:md5,adfc0a3b92eae33c33d1f0fa69a15a0f",
-                "102602009_B.ref_coords.tsv:md5,0547cf648f61da35e127b553e514a0b3",
-                "107301003_A.ref_coords.tsv:md5,7e94ba0c88fb04a35ff17df7d685021e",
+                "102602009_A.ref_coords.tsv:md5,cf6939ca2c642e24c457e49e927134d3",
+                "102602009_B.ref_coords.tsv:md5,dc5744105823f0776210f8ecc9d547bf",
+                "107301003_A.ref_coords.tsv:md5,a7dbb39de8f2a66aa0f06496f1ee10c2",
                 "107301003_B.ref_coords.tsv:md5,3543e8980a49fa695de87275f3471070"
             ]
         ],
-        "timestamp": "2026-03-24T16:56:09.945173",
+        "timestamp": "2026-07-31T14:58:20.259617",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "25.10.4"
+            "nextflow": "26.04.6"
         }
     }
 }

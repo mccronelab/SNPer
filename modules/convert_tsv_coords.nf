@@ -13,12 +13,22 @@ process CONVERT_TSV_COORDS {
         tuple val(meta), path(consensus), path(reference), path(variant_tsv)
 
     output:
-        tuple val(meta), path("${variant_tsv.simpleName}.ref_coords.tsv")
+        tuple val(meta), path("${meta.replicate_id}${meta.segment_label}.ref_coords.tsv")
 
     script:
         // prevent MAFFT from running into permissions issues on clusters by reassigning $TMPDIR
+        //
+        // convert_tsv_coords.py assumes a single-record reference: it MAFFT-aligns
+        // reference record[0] against consensus record[1]. A multi-segment reference
+        // would put two *reference* segments in those slots and lift against the wrong
+        // one. The consensus is already single-record (post BAM split), so extract just
+        // this segment's reference record and feed that. meta.segment == the reference
+        // record ID by construction (the split keys on reference name), so faidx by name
+        // is exact.
         """
         export TMPDIR="\$(pwd)/tmp/"
-        python3 ${projectDir}/bin/convert_tsv_coords.py ${reference} ${consensus} ${variant_tsv} ${variant_tsv.simpleName}.ref_coords.tsv
+        samtools faidx ${reference}
+        samtools faidx ${reference} "${meta.segment}" > segment_reference.fa
+        python3 ${projectDir}/bin/convert_tsv_coords.py segment_reference.fa ${consensus} ${variant_tsv} ${meta.replicate_id}${meta.segment_label}.ref_coords.tsv
         """
 }

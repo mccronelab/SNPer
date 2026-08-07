@@ -4,7 +4,7 @@ workflow PROCESS_SAMPLE_SHEET {
         sample_sheet //path sample sheet
         primer_csv //path to primer CSV
         interleaved //value that should be boolean
-        sequencing_type_param //string value that should be one of 'amplicon', 'mips', 'hybrid_capture'
+        read_deduplication_param //string value that should be one of 'amplicon', 'umi', 'positional'
         primer_id_default // string that should match a primer ID in primer_csv
 
     main:
@@ -12,7 +12,7 @@ workflow PROCESS_SAMPLE_SHEET {
     // returns tuple with [metadata, [reads]]
     // depending on input, may be of form [metadata, 'reads1, reads2'] or
     // [metadata, [reads_interleaved]]
-    samples = parse_sample_sheet(sample_sheet, interleaved, sequencing_type_param, primer_id_default)
+    samples = parse_sample_sheet(sample_sheet, interleaved, read_deduplication_param, primer_id_default)
     // returns Channel where each row looks like: [primer_id, primer_file]
     primer_paths = parse_primer_csv(primer_csv)
     
@@ -31,7 +31,7 @@ workflow PROCESS_SAMPLE_SHEET {
         samples_with_primer
 }
 
-def parse_sample_sheet(sample_sheet, interleaved_param, sequencing_technique_param,
+def parse_sample_sheet(sample_sheet, interleaved_param, read_deduplication_param,
     primer_id_default) {
 
     sample_sheet
@@ -62,16 +62,27 @@ def parse_sample_sheet(sample_sheet, interleaved_param, sequencing_technique_par
         def replicate_id = row.containsKey('replicate_id') && row.replicate_id ?
             row.replicate_id : sample_id
 
-        def sequencing_technique = row.containsKey('sequencing_tech') && row.sequencing_tech ?
-            row.sequencing_tech : sequencing_technique_param
+        // 'sequencing_tech' was renamed to 'read_deduplication'. Fail loudly rather
+        // than let an old sheet fall through to the param default.
+        if (row.containsKey('sequencing_tech')) {
+            error "Samplesheet column 'sequencing_tech' has been renamed to 'read_deduplication'; rename it in: ${params.sample_sheet}"
+        }
+
+        def read_deduplication = row.containsKey('read_deduplication') && row.read_deduplication ?
+            row.read_deduplication : read_deduplication_param
 
         meta.replicate_id = replicate_id
-        meta.sequencing_tech = sequencing_technique
-        
-        // verify we handle the sequencing technique
-        def supported_techniques = ["amplicon", "mips", "hybrid-capture"]
-        if (!(sequencing_technique.toLowerCase() in supported_techniques)) {
-            throw new IllegalArgumentException("Value '${sequencing_technique}' not in ${supported_techniques}")
+        meta.read_deduplication = read_deduplication
+
+        // verify we handle the read deduplication method
+        def renamed_methods = ["mips": "umi", "hybrid-capture": "positional"]
+        if (read_deduplication.toLowerCase() in renamed_methods.keySet()) {
+            error "read_deduplication value '${read_deduplication}' has been renamed to '${renamed_methods[read_deduplication.toLowerCase()]}'"
+        }
+
+        def supported_methods = ["amplicon", "umi", "positional"]
+        if (!(read_deduplication.toLowerCase() in supported_methods)) {
+            throw new IllegalArgumentException("Value '${read_deduplication}' not in ${supported_methods}")
 }
 
         // return depending on number of input files (1 if interleaved, 2 otherwise)

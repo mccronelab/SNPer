@@ -8,4 +8,32 @@ test-out/*
 .vscode/
 out/
 tests/test-out/
+tests/multiseg-test-out/
 tests/work
+
+# Written at CI run time from the ACTIONS_SAMPLESHEET secret; its URLs are
+# masked in the workflow logs, so it must never be committed
+tests/gh_actions_samples.csv
+
+# Pipeline output dirs (multiseg-out/ deliberately NOT ignored — it is the
+# multi-segment test output currently under review, and only a few MB)
+sarstest-out/
+results/
+
+# Large public FASTQ downloads (re-fetchable from SRA; test fixtures under
+# data/fastq/ that are already tracked are unaffected by this rule)
+data/fastq/SRR*.fastq.gz
+
+# Reference downloads / build artifacts
+data/reference/pr8.zip
+data/reference/ncbi_dataset/
+*.gff3_db
+
+# Intermediate and debug artifacts
+*.mpileup
+*.tap
+.nf-test.log
+tests/.nf-test.log
+
+# macOS
+.DS_Store
