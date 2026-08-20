@@ -1,4 +1,4 @@
-FROM ubuntu:25.04
+FROM ubuntu:26.04
 
 # install necessary packages, tools. noninteractive stops apt from asking for
 # geographic time zone (stops Docker)
@@ -9,6 +9,7 @@ RUN apt-get update && \
     picard-tools \
     bwa \
     fastqc \
+    fastp \
     bedtools \
     git \
     python3 \
@@ -26,8 +27,8 @@ RUN apt-get update && \
     libsigsegv-dev \
     openjdk-21-jdk-headless
 
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
+# PicardCommandLine is a wrapper script that resolves `java` from PATH, so no
+# JAVA_HOME is needed.
 
 COPY setup_snper-env.sh setup_snper-env.sh
 
@@ -45,5 +46,5 @@ RUN git clone https://github.com/jsh58/NGmerge.git && \
     make && \
     mv NGmerge /usr/local/bin/
 
-ENV PATH="root/bin/:/snper-env/bin:$PATH"
+ENV PATH="/root/bin/:/snper-env/bin:$PATH"
 ENV TRIMMOMATIC_JAR="/usr/local/bin/trimmomatic.jar"
