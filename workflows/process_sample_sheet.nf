@@ -31,6 +31,23 @@ workflow PROCESS_SAMPLE_SHEET {
         samples_with_primer
 }
 
+// Resolve a path read out of a CSV. A relative path resolves against the CSV's
+// own parent directory rather than launchDir, so a sheet is portable: it can be
+// moved, or run from any directory, and `nextflow run <github-url>` works — there
+// launchDir is wherever the user happened to be standing, while projectDir is the
+// pulled asset clone, and neither is where the sheet's data lives. Absolute paths
+// and remote URIs (s3://, https://, …) are already unambiguous and pass through
+// untouched.
+def resolve_against_csv(csv_path, raw_path) {
+    def path_str = raw_path.toString().trim()
+
+    if (path_str.startsWith('/') || path_str ==~ /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/.*$/) {
+        return file(path_str)
+    }
+
+    return file("${file(csv_path).parent}/${path_str}")
+}
+
 def parse_sample_sheet(sample_sheet, interleaved_param, read_deduplication_param,
     primer_id_default) {
 
@@ -52,7 +69,7 @@ def parse_sample_sheet(sample_sheet, interleaved_param, read_deduplication_param
         }
 
         def sample_id = row.sample
-        def fastq1 = file(row.fastq1)
+        def fastq1 = resolve_against_csv(params.sample_sheet, row.fastq1)
 
         meta.sample = sample_id
         meta.interleaved = interleaved
@@ -94,7 +111,7 @@ def parse_sample_sheet(sample_sheet, interleaved_param, read_deduplication_param
                 error "Samplesheet missing required 'fastq2' column or empty value in row: ${row}"
             }
 
-            def fastq2 = file(row.fastq2.trim())
+            def fastq2 = resolve_against_csv(params.sample_sheet, row.fastq2)
 
             return tuple(meta, [fastq1, fastq2])
         }
@@ -115,7 +132,11 @@ def parse_primer_csv(primer_csv) {
             error "Primer CSV missing required 'primer_id' column or empty value in row: ${row}"
         }
 
-        // groovy supports implicit returns
-        [row.primer_id, file("${projectDir}/${row.primer_bedfile}")]
+        // groovy supports implicit returns.
+        // Anchored on the primer CSV's own directory for the same reason as the
+        // sample sheet. This is a no-op for the default `${projectDir}/primers.csv`
+        // — its parent *is* projectDir — but it stops a user-supplied primer CSV
+        // elsewhere on disk from having projectDir glued onto its paths.
+        [row.primer_id, resolve_against_csv(params.primer_csv, row.primer_bedfile)]
     }
 }

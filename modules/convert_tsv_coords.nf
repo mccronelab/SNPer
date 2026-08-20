@@ -29,6 +29,6 @@ process CONVERT_TSV_COORDS {
         export TMPDIR="\$(pwd)/tmp/"
         samtools faidx ${reference}
         samtools faidx ${reference} "${meta.segment}" > segment_reference.fa
-        python3 ${projectDir}/bin/convert_tsv_coords.py segment_reference.fa ${consensus} ${variant_tsv} ${meta.replicate_id}${meta.segment_label}.ref_coords.tsv
+        convert_tsv_coords.py segment_reference.fa ${consensus} ${variant_tsv} ${meta.replicate_id}${meta.segment_label}.ref_coords.tsv
         """
 }

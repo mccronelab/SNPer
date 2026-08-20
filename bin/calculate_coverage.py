@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 # calculate_coverage.py
 # Description: We accept a fasta file with one sequence and write the proportion of Ns found in the file to stdout.
 # Samples files with more than 1 sample will fail

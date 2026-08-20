@@ -29,7 +29,7 @@ process GET_CONSENSUS_COVERAGE {
         tuple val(sample), val(segment), path(consensus), stdout
     script:
     """
-    python3 ${projectDir}/bin/calculate_coverage.py ${consensus}
+    calculate_coverage.py ${consensus}
     """
     
 }
