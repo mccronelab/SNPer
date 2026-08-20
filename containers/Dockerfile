@@ -35,16 +35,9 @@ COPY setup_snper-env.sh setup_snper-env.sh
 RUN chmod +x /setup_snper-env.sh \
     && ./setup_snper-env.sh
 
-RUN git clone https://github.com/timflutre/trimmomatic.git && \
-    cd trimmomatic && \
-    make && \
-    make check && \
-    make INSTALL=/usr/local/ install
-
 RUN git clone https://github.com/jsh58/NGmerge.git && \
     cd NGmerge && \
     make && \
     mv NGmerge /usr/local/bin/
 
 ENV PATH="/root/bin/:/snper-env/bin:$PATH"
-ENV TRIMMOMATIC_JAR="/usr/local/bin/trimmomatic.jar"

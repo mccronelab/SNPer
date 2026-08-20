@@ -16,7 +16,6 @@ variant_minQ: 30
 variant_min_baseQ: 30
 remove_unclipped_reads: true
 skip_qc: false
-trimmomatic_jarfile: '/usr/local/bin/trimmomatic.jar'
 read_deduplication: 'positional'
 interleaved: false
 primer_id_default: 'none'

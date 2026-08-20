@@ -27,7 +27,6 @@ nextflow_pipeline {
                 variant_min_baseQ = 30
                 remove_unclipped_reads = true
                 skip_qc = false
-                trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
                 read_deduplication = 'positional'
                 interleaved = false
                 // must match a primer_id in primers.csv exactly; the sheet sets this

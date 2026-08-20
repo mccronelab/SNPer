@@ -24,7 +24,6 @@ nextflow_pipeline {
                 variant_minQ = 30
                 remove_unclipped_reads = true
                 skip_qc = false
-                trimmomatic_jarfile = '/usr/local/bin/trimmomatic.jar'
                 read_deduplication = 'amplicon'
                 interleaved = false
                 primer_id_default = 'ARTIC_v5'
