@@ -42,4 +42,4 @@ jobs:
         echo "$ACTIONS_SAMPLESHEET" > tests/gh_actions_samples.csv
 
     - name: run-test
-      run: nf-test test tests/gh_actions.main.nf.test --profile ci_test --ci
+      run: nf-test test tests/gh_actions.main.nf.test tests/fastp.nf.test --profile ci_test --ci

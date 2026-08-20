@@ -1,6 +1,15 @@
 # Changelog
 
 ## v2.3.0-Beta
+- Replace Trimmomatic with `fastp`. **Behaviour change: variant and coverage output shifts, because adapter clipping now runs for the first time** — Trimmomatic's `ILLUMINACLIP` adapter file was never staged, so the step was skipped while the task still exited 0. On the influenza test sample, 4,638 reads / 37,245 bases are now adapter-trimmed.
+- Quality filtering follows fastp's defaults (`-q 15`, `-u 40`, `-n 5`); `MINLEN:36` becomes the `fastp_min_length` param. Cost on the influenza test sample: 4,322 of 2,404,726 reads dropped (0.18%). The variant and coverage TSVs change; consensus FASTAs and Liftoff GFF3s do not.
+- Fix interleaved input, which was broken whenever `skip_qc` was false.
+- Add `skip_fastqc`, which skips FastQC while keeping trimming. fastp's JSON/HTML reports are published to `fastp/`.
+- Remove the `trimmomatic_jarfile` param. Params files that still set it are unaffected — the key is ignored.
+- Add `tests/fastp.nf.test`, and repoint `testSampleSheet_interleaved.csv` at a committed fixture (it referenced three FASTQs that were never in the repo).
+- Resolve sample-sheet FASTQ paths and primer-CSV BED paths relative to the CSV that names them; absolute paths and remote URIs are unaffected. Add a `manifest{}` block with `defaultBranch = 'main'`, required for `nextflow run <github-url>`. Test-profile `output_dir` now uses `${launchDir}`, and `apptainer.autoMounts` is set.
+- Invoke `bin/calculate_coverage.py` and `bin/convert_tsv_coords.py` through Nextflow's bin-on-PATH mechanism rather than interpolating `${projectDir}`.
+- Move the container base to Ubuntu 26.04 LTS (25.04 is EOL) and drop the arch-specific `JAVA_HOME`, which broke arm64 builds. No output change.
 - Add support for multi-segment viruses (e.g. influenza) from a single, fixed multi-segment reference. Reads map to the full multi-record reference with one `bwa index`, then the aligned BAM is split by reference name so every downstream step runs per segment. Single-segment references are the N=1 special case of this path — no config flag, no separate codepath.
 - Add `split_bam_by_segment.nf`, which splits each per-replicate BAM into one BAM per mapped reference name and stamps `meta.segment`. Wire it into `build_consensus.nf` after primer trimming / deduplication, before consensus grouping.
 - Retain unplaced reads (`RNAME '*'`) in every per-segment BAM emitted by `split_bam_by_segment.nf`, so `BWA_REMAP` — which rebuilds FASTQ from that BAM — can attempt to place them against the sample's own consensus. They are inert in `samtools mpileup` and `samtools depth`, so consensus and coverage output are unchanged; each unplaced read is duplicated into all N segment BAMs (+2.7% records on the influenza test set, none at N=1).

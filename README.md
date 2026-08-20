@@ -40,8 +40,8 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test
 - Output: A tuple containing a hash table with metadata values (meta), FASTQ_1, FASTQ_2. Run `python3 python/generate_sample_sheet.py -h` for more information on sample sheet fields.
 
 ### FASTQ Processing.
-1. Submit input FASTQ files to `fastqc` for quality report generation.
-2. Submit FASTQ files to `trimmomatic`, taking trimmed and paired output reads for further analysis.
+1. Submit input FASTQ files to `fastqc` for quality report generation (skippable via `--skip_fastqc`).
+2. Submit FASTQ files to `fastp` for adapter removal and quality trimming, taking the paired output reads for further analysis. `fastp` also writes its own per-replicate JSON/HTML QC report to `fastp/`.
 
 ### Build Consensus Sequence
 - Input: A tuple containing Sample ID, Replicate ID, and FASTQ reads. Reference Sequence, Primer BEDfile
@@ -94,8 +94,9 @@ _Requires docker_
 - `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
 - `variant_min_depth`: Minimum depth for a position to report variants (default 10).
 - `remove_unclipped_reads`: Boolean flag that controls whether `samtools ampliconclip` discards reads that are not trimmed (default true).
-- `skip_qc`: Boolean flag that skips QC processes. Useful for test runs on large datasets, since FastQC generates large output files.
-- `trimmomatic_jarfile`: Path to Trimmomatic's jarfile. You should only change this parameter if you're NOT running SNPer via its Docker container.
+- `skip_qc`: Boolean flag that skips the whole read-QC subworkflow — both FastQC and `fastp`. Note this also skips adapter and quality trimming, not just report generation.
+- `skip_fastqc`: Boolean flag that skips only FastQC, keeping `fastp` trimming. Useful for large datasets, since FastQC generates large output files, and `fastp` already reports the same read-level statistics (default false).
+- `fastp_min_length`: Reads shorter than this after trimming are discarded (`fastp --length_required`, default 36).
 - `interleaved`: Boolean flag that sets the default value for sample sheet processing. Use this flag if you've omitted this field from the input sample sheeet (default false).
 - `primer_id_default`: Default setting for sample sheet processing, useful if your sample sheet doesn't have this field (and all samples use the same primers). Takes either a string or None.
 - `read_deduplication`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field. Selects how duplicate reads are handled: 'amplicon' (no deduplication; primers are clipped instead), 'umi' (UMI-aware `samtools markdup --barcode-name`, for MIPs and other UMI-tagged libraries), or 'positional' (coordinate-based `samtools markdup`, for hybrid-capture and other untagged libraries). Renamed from `sequencing_technique` in v2.3.0-Beta, along with its values.
