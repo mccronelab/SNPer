@@ -89,8 +89,8 @@ _Requires docker_
 - `consensus_min_baseQ`: Minimum base quality for a base to enter the `samtools mpileup` used for consensus generation. Defaults to 30. Distinct from `consensus_min_qual_score`, which is passed to `ivar consensus` itself.
 - `consensus_min_mapQ`: Minimum mapping quality to be used in `samtools mpileup` during consensus generation. Defaults to 20.
 - `variant_minQ`: Minimum score for base to be counted in variant calling. Default to 30.
-- `variant_min_baseQ`: Minimum base quality for a base to enter the `samtools mpileup` used for variant calling, and the `samtools depth` used for replicate coverage. Defaults to 30. Distinct from `variant_minQ`, which is passed to `ivar variants` itself.
-- `variant_min_mapQ`: Minimum quality score to be used in `samtools mpileup` during variant calling. Defaults to 20.
+- `variant_min_baseQ`: Minimum base quality for a base to pass the `samtools mpileup` used for variant calling and replicate coverage. Defaults to 30. Distinct from `variant_minQ`, which is passed to `ivar variants` itself.
+- `variant_min_mapQ`: Minimum mapping quality for a read to pass the `samtools mpileup` used for variant calling and replicate coverage. Defaults to 20.
 - `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
 - `variant_min_depth`: Minimum depth for a position to report variants (default 10).
 - `remove_unclipped_reads`: Boolean flag that controls whether `samtools ampliconclip` discards reads that are not trimmed (default true).

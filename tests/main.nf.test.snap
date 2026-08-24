@@ -21,28 +21,28 @@
                 "name": "workflow"
             },
             [
-                "102602009_polished.fa:md5,d0b618a53da267459d43b390f3d74101",
-                "102602009_rough.fa:md5,bf7e113f946e0fa75aaa61c858efbf92",
+                "102602009_polished.fa:md5,11c416edc1bb4d243eafed6dbffd67b0",
+                "102602009_rough.fa:md5,c71655bf80d6b9de15061c12f1d393f0",
                 "106801008_rough.fa:md5,9df96465c869c275c6fa5eff63069522",
-                "107301003_polished.fa:md5,94bf6d29722a4ccb003d4e6fe47e3fae",
-                "107301003_rough.fa:md5,5d562909b0c604f0fdcf6000b5c43dc5",
+                "107301003_polished.fa:md5,355caa80d23b98c5c16934fb45d0c1fa",
+                "107301003_rough.fa:md5,3188a101d23e56a1c131ab5358cd8567",
                 "107802008_polished.fa:md5,31a9ab4aa95518b479fb543b5bd36d51",
                 "107802008_rough.fa:md5,9d2a275b1fbffec38d4703e5d8b6a4e4"
             ],
             [
-                "102602009_polished.gff3:md5,7bdd880f2375e056a705ff18e76a95d9",
-                "107301003_polished.gff3:md5,62718ed899ab4853dc729082d54b03d5"
+                "102602009_polished.gff3:md5,e09f6b6e90646b668c725be376957433",
+                "107301003_polished.gff3:md5,6906b5ceb863235624099fee5d31b8b2"
             ],
             [
-                "102602009_A.remap.sorted_coverage.tsv:md5,0febfac704b3af1a83ea1e3788afec09",
-                "102602009_B.remap.sorted_coverage.tsv:md5,7a1552861b23058b2950b784e8b9abda",
-                "107301003_A.remap.sorted_coverage.tsv:md5,d5c6598aaa8017bfa99e5fc2964f45e6",
-                "107301003_B.remap.sorted_coverage.tsv:md5,8035e93d1e5bf80d349ed6a9fed6379a"
+                "102602009_A.remap.sorted_coverage.tsv:md5,0593f79d0d5715195ae93cd1dc30f733",
+                "102602009_B.remap.sorted_coverage.tsv:md5,7c9e37a8514069c7cf01ef57113fdacd",
+                "107301003_A.remap.sorted_coverage.tsv:md5,e3aa15f197ff2be0bc88382cd79bdd3e",
+                "107301003_B.remap.sorted_coverage.tsv:md5,227b351b6c20f0cdbe8400f9e49c6816"
             ],
             [
-                "102602009_A.ref_coords.tsv:md5,cf6939ca2c642e24c457e49e927134d3",
-                "102602009_B.ref_coords.tsv:md5,dc5744105823f0776210f8ecc9d547bf",
-                "107301003_A.ref_coords.tsv:md5,a7dbb39de8f2a66aa0f06496f1ee10c2",
+                "102602009_A.ref_coords.tsv:md5,e2ed51e9d7344a7568816733817eb156",
+                "102602009_B.ref_coords.tsv:md5,ae18f1d94bbf65243206781deed3a71a",
+                "107301003_A.ref_coords.tsv:md5,e03e0aa1fda35cce022769214218215d",
                 "107301003_B.ref_coords.tsv:md5,3543e8980a49fa695de87275f3471070"
             ]
         ],

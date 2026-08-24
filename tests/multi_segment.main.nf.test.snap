@@ -49,14 +49,14 @@
                 "SRR3360139_PB2_polished.gff3:md5,f024bd6694620592196860b54768c66a"
             ],
             [
-                "SRR3360139_HA.remap.sorted_coverage.tsv:md5,4bf5f9e19da3fea1e108eaac95db38a0",
-                "SRR3360139_M.remap.sorted_coverage.tsv:md5,0432b8813c3c0b67442fc2bc9009f424",
-                "SRR3360139_NP.remap.sorted_coverage.tsv:md5,4a99be49049ac453aeda588fe9634e88",
-                "SRR3360139_NS.remap.sorted_coverage.tsv:md5,8ba5131e3646e58ae8f37b47a599683e",
-                "SRR3360139_N_A.remap.sorted_coverage.tsv:md5,740c756a0a4935c839aaf6400cfe4677",
-                "SRR3360139_PA.remap.sorted_coverage.tsv:md5,34b6a02f64794929ca02eedac11a86be",
-                "SRR3360139_PB1.remap.sorted_coverage.tsv:md5,276b95c9ad7d886e0b19d3e3a4adf6ec",
-                "SRR3360139_PB2.remap.sorted_coverage.tsv:md5,080ac6fdafb41b3022dc0fca6a39b116"
+                "SRR3360139_HA.remap.sorted_coverage.tsv:md5,a1dfc316cf286b420dacb905072b7908",
+                "SRR3360139_M.remap.sorted_coverage.tsv:md5,0a34014fc2a3d0bcd16c102f0f033f07",
+                "SRR3360139_NP.remap.sorted_coverage.tsv:md5,27be06602098c04192a52ae8f81747fb",
+                "SRR3360139_NS.remap.sorted_coverage.tsv:md5,4f9c2ab3abcda475dddcefadc38a202a",
+                "SRR3360139_N_A.remap.sorted_coverage.tsv:md5,09a130bec3ab4beae771d537d0c45e08",
+                "SRR3360139_PA.remap.sorted_coverage.tsv:md5,8c4409cb8ed28df6722ca4231cf23ee6",
+                "SRR3360139_PB1.remap.sorted_coverage.tsv:md5,10d1f9b1cec9276d0996bed9a5dd76a1",
+                "SRR3360139_PB2.remap.sorted_coverage.tsv:md5,9d832d7baaca70d558d1f326c3da3aa0"
             ],
             [
                 "SRR3360139_HA.ref_coords.tsv:md5,cf8745ecc24773cb77cb63e3e2d17643",

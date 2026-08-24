@@ -139,7 +139,12 @@ workflow CONSENSUS_GEN {
       | BWA_REMAP_POL
       | SI_POL
 
-    GET_VARIANT_READ_DEPTH(variant_bam_polished)
+    // Re-join the polished consensus, dropped by the remap, for depth reporting.
+    variant_bam_polished
+      | map { meta, bam, bai -> [meta.sample, meta.segment, meta, bam, bai] }
+      | combine(polished_consensus, by:[0,1])
+      | map { _sample, _segment, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
+      | GET_VARIANT_READ_DEPTH
 
   emit:
     variant_bams = variant_bam_polished // [meta, bam, bai]
