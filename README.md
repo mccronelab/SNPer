@@ -28,7 +28,7 @@ Alternatively, if you have Apptainer, ensure that it is loaded/running:
 nextflow run main.nf -profile test_apptainer
 ```
 
-(Currently not working) Alternatively, you can let Nextflow manage the repository with:
+Alternatively, you can let Nextflow manage the repository with:
 ```
 nextflow run https://github.com/mccronelab/SNPer.git -profile test
 ```
