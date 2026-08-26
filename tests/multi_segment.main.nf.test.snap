@@ -39,14 +39,14 @@
                 "SRR3360139_PB2_rough.fa:md5,09657d2393a26ca694643b09c3473548"
             ],
             [
-                "SRR3360139_HA_polished.gff3:md5,2e43982d7eae23344709e26e4f6ce4c0",
-                "SRR3360139_M_polished.gff3:md5,691a0a9112874e3579a44e1bd8c85b0a",
-                "SRR3360139_NP_polished.gff3:md5,7688aa5a243c51b0338c3d0e728d6ca3",
-                "SRR3360139_NS_polished.gff3:md5,61f7832f6a075789795cffda93d29e88",
-                "SRR3360139_N_A_polished.gff3:md5,d45e7768fe0b9728d78a3d90a5a94bd1",
-                "SRR3360139_PA_polished.gff3:md5,6a56ca8c4a089b2c1c62ddb699c82be4",
-                "SRR3360139_PB1_polished.gff3:md5,961bfec09419b6c17fb3b4de2fe0e110",
-                "SRR3360139_PB2_polished.gff3:md5,f024bd6694620592196860b54768c66a"
+                "SRR3360139_HA_polished.gff3:md5,0c880eb41dbf041fe72e95cc60185f6f",
+                "SRR3360139_M_polished.gff3:md5,7123968c6ca9bf6bb27cdc92d9381416",
+                "SRR3360139_NP_polished.gff3:md5,0fca022bf2c3970c615d5217f320cd2d",
+                "SRR3360139_NS_polished.gff3:md5,8dc2446e0855d7fa435c6b32f81737d1",
+                "SRR3360139_N_A_polished.gff3:md5,3fd0028e2fdaccf81f4f1ea5558e3e8b",
+                "SRR3360139_PA_polished.gff3:md5,582305bfc012e685632d4c30afcdcd4b",
+                "SRR3360139_PB1_polished.gff3:md5,062e450feb13464669323b5a15d3f6f6",
+                "SRR3360139_PB2_polished.gff3:md5,dec3eebe3efb301b7a3cfd6eafc5bc65"
             ],
             [
                 "SRR3360139_HA.remap.sorted_coverage.tsv:md5,a1dfc316cf286b420dacb905072b7908",
@@ -69,7 +69,7 @@
                 "SRR3360139_PB2.ref_coords.tsv:md5,632095dc65e0b0f234f677f27f617a76"
             ]
         ],
-        "timestamp": "2026-07-29T21:03:19.143194",
+        "timestamp": "2026-08-26T11:13:53.082452",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
