@@ -43,9 +43,18 @@ workflow CALL_VARIANTS_IVAR {
           | IVAR_VARIANTS // [meta, variants_tsv]
           | map { meta, variants_tsv -> [meta.sample, meta.segment, meta, variants_tsv] }
 
-        reference_coordinate_variants = consensus.map { sample, segment, consensus_fa -> [sample, segment, consensus_fa, reference_fasta] }
-          | combine(variants, by:[0,1]) // [sample, segment, consensus, reference, meta, variant_tsv]
-          | map { _sample, _segment, consensus_fa, reference_fa, meta, variant_tsv -> [meta, consensus_fa, reference_fa, variant_tsv] }
+        // Lift variant coordinates back onto the reference off the alignment NEXTCLADE
+        // already produced, rather than aligning a second time. Both of its outputs are one
+        // item per segment, so they join on segment and fan back out across that segment's
+        // samples.
+        segment_alignment = nextclade.msa
+          | join(nextclade.nextclade_tsv, by:0, failOnMismatch: true, failOnDuplicate: true)
+
+        reference_coordinate_variants = consensus
+          | combine(variants, by:[0,1]) // [sample, segment, consensus, meta, variant_tsv]
+          | map { _sample, segment, consensus_fa, meta, variant_tsv -> [segment, meta, consensus_fa, variant_tsv] }
+          | combine(segment_alignment, by:0) // [segment, meta, consensus, variant_tsv, msa, nextclade_tsv]
+          | map { _segment, meta, consensus_fa, variant_tsv, msa, nextclade_tsv -> [meta, consensus_fa, variant_tsv, msa, nextclade_tsv] }
           | CONVERT_TSV_COORDS
 
     // emit:

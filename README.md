@@ -61,9 +61,9 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test
 - Output: TSV files containing variants. Two types of TSVs are produced: one with variant positions relative to the consensus genome, and one with variant positions aligned to the reference genome.
 
 1. Filter consensus genome FASTA files based on size.
-2. Submit the reference FASTA, reference GFF, and consensus FASTA to LiftOff. LiftOff aligns the reference and consensus sequences, then transfers GFF annotations where appropriate. This gives us a consensus GFF file.
+2. Submit the reference FASTA, reference GFF, and every segment consensus FASTA to Nextclade. Nextclade aligns each consensus against the reference and transfers the GFF annotations onto it, producing one combined annotation GFF plus the alignment. `split_nextclade_gff.py` splits that annotation into a consensus GFF file per sample.
 3. Call variants relative to the consensus genome with `iVar variants`.
-4. Call `convert_tsv_coords.py`, a relatively simple Python script that aligns the reference and consensus genome with MAFFT, then creates a mapping between positions on each genome based on the alignment. Used to convert consensus variant positions to their equivalent positions on the reference genome.
+4. Call `convert_tsv_coords.py`, a Python script that reads Nextclade's alignment to create a mapping between positions on the consensus and the reference. Used to convert consensus variant positions to their equivalent positions on the reference genome.
 
 ## Testing / dev
 
