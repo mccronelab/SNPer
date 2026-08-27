@@ -197,6 +197,11 @@ def convert_coordinates(
     look up equivalent coordinates on the reference genome. Writes to a new output TSV with
     positions in reference genome coordinates.
 
+    Adds two columns. REF_POS is the reference coordinate. REF_POS_INSERTED marks the rows
+    where that coordinate is inherited rather than the variant's own, because the base sits
+    inside an insertion relative to the reference; those rows share a REF_POS with the base
+    preceding the insertion, so without the flag the collision is invisible.
+
     Args:
         tsv_path (str): Tab-separated file describing variants on target genome. Expects the
             second field to be the location of the SNP on a chromosome.
@@ -204,7 +209,7 @@ def convert_coordinates(
         consensus_to_reference (Dict[int,int]): Target genome coordinate keys and equivalent
             reference genome coordinate values, allowing us to map from target to reference.
         inserted_positions (Set[int]): Target coordinates with no reference position of their
-            own, reported once at the end.
+            own, flagged per row and reported once at the end.
         query_id (str): Record ID of the consensus, used in messages.
     """
     variants = 0
@@ -214,7 +219,7 @@ def convert_coordinates(
         with open(output_path, "w", encoding="utf8") as reference_coords_tsv:
             # we expect there to be a header line in iVar TSV output
             header = variants_tsv.readline().strip()
-            header = header + "\tREF_POS\n"
+            header = header + "\tREF_POS\tREF_POS_INSERTED\n"
             reference_coords_tsv.write(header)
 
             for line in variants_tsv:
@@ -230,11 +235,13 @@ def convert_coordinates(
                         f"variant at POS {target_position} lies past the end of consensus "
                         f"'{query_id}' ({len(consensus_to_reference)} bases)"
                     )
-                if target_position in inserted_positions:
+                is_inserted = target_position in inserted_positions
+                if is_inserted:
                     inside_insertions.append(target_position)
 
-                # get target coordinate and write
+                # get target coordinate and write; TRUE/FALSE matches iVar's PASS column
                 split_line.append(str(consensus_to_reference[target_position]))
+                split_line.append("TRUE" if is_inserted else "FALSE")
 
                 updated_line = "\t".join(split_line) + "\n"
                 reference_coords_tsv.write(updated_line)

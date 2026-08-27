@@ -60,6 +60,13 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test
 - Input: BAM files paired with BAM indices and their consensus sequence. Reference sequence GFF file. Reference sequence in FASTA format.
 - Output: TSV files containing variants. Two types of TSVs are produced: one with variant positions relative to the consensus genome, and one with variant positions aligned to the reference genome.
 
+The reference-coordinate TSV carries iVar's columns plus two added by SNPer:
+
+| Column | Meaning |
+| --- | --- |
+| `REF_POS` | The variant's position relative to the reference genome, determined by a Nextclade alignment against the reference sequence. |
+| `REF_POS_INSERTED` | `TRUE` when the variant sits on a base inserted relative to the reference. Such a base has no reference position of its own, so its `REF_POS` is inherited from the base preceding the insertion and is shared with it; this column is what tells the two apart. |
+
 1. Filter consensus genome FASTA files based on size.
 2. Submit the reference FASTA, reference GFF, and every segment consensus FASTA to Nextclade. Nextclade aligns each consensus against the reference and transfers the GFF annotations onto it, producing one combined annotation GFF plus the alignment. `split_nextclade_gff.py` splits that annotation into a consensus GFF file per sample.
 3. Call variants relative to the consensus genome with `iVar variants`.

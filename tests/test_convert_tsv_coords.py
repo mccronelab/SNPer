@@ -84,8 +84,14 @@ def run_cli(tmp_path, aligned, nextclade_tsv, consensus, variants, reference_id=
 def read_ref_pos(output):
     """Returns [(POS, REF_POS)] from a converted TSV."""
     rows = output.read_text().strip().split("\n")
-    assert rows[0].endswith("\tREF_POS")
-    return [(int(r.split("\t")[1]), int(r.split("\t")[-1])) for r in rows[1:]]
+    assert rows[0].endswith("\tREF_POS\tREF_POS_INSERTED")
+    return [(int(r.split("\t")[1]), int(r.split("\t")[-2])) for r in rows[1:]]
+
+
+def read_inserted_flags(output):
+    """Returns [(POS, REF_POS_INSERTED)] from a converted TSV."""
+    rows = output.read_text().strip().split("\n")
+    return [(int(r.split("\t")[1]), r.split("\t")[-1]) for r in rows[1:]]
 
 
 # ---- build_mapping ----
@@ -247,8 +253,24 @@ def test_end_to_end_variant_inside_an_insertion_warns(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert read_ref_pos(output) == [(4, 4), (5, 4), (6, 4), (8, 5)]
+    # the anchor and the base after the insertion are not themselves inserted
+    assert read_inserted_flags(output) == [(4, "FALSE"), (5, "TRUE"), (6, "TRUE"), (8, "FALSE")]
     assert "2 of 4 variants" in result.stderr
     assert "5, 6" in result.stderr
+
+
+def test_end_to_end_flag_distinguishes_colliding_ref_pos(tmp_path):
+    """Two rows share a REF_POS; only the flag says which one owns it."""
+    aligned = write_alignment(tmp_path, REFERENCE)
+    nextclade_tsv = write_nextclade_tsv(tmp_path, "4:TTT")
+    consensus = write_consensus(tmp_path, REFERENCE[:4] + "TTT" + REFERENCE[4:])
+    variants = write_variants(tmp_path, [4, 5])
+
+    result, output = run_cli(tmp_path, aligned, nextclade_tsv, consensus, variants)
+
+    assert result.returncode == 0, result.stderr
+    assert [ref_pos for _, ref_pos in read_ref_pos(output)] == [4, 4]
+    assert read_inserted_flags(output) == [(4, "FALSE"), (5, "TRUE")]
 
 
 def test_end_to_end_no_warning_when_no_variant_is_inside_an_insertion(tmp_path):
@@ -272,8 +294,8 @@ def test_end_to_end_preserves_every_original_column(tmp_path):
     _, output = run_cli(tmp_path, aligned, nextclade_tsv, consensus, variants)
 
     header, row = output.read_text().strip().split("\n")
-    assert header.split("\t") == ["REGION", "POS", "REF", "ALT", "REF_POS"]
-    assert row.split("\t") == [QUERY_ID, "7", "A", "G", "7"]
+    assert header.split("\t") == ["REGION", "POS", "REF", "ALT", "REF_POS", "REF_POS_INSERTED"]
+    assert row.split("\t") == [QUERY_ID, "7", "A", "G", "7", "FALSE"]
 
 
 def test_end_to_end_empty_variant_tsv_still_writes_a_header(tmp_path):
@@ -285,7 +307,7 @@ def test_end_to_end_empty_variant_tsv_still_writes_a_header(tmp_path):
     result, output = run_cli(tmp_path, aligned, nextclade_tsv, consensus, variants)
 
     assert result.returncode == 0, result.stderr
-    assert output.read_text() == "REGION\tPOS\tREF\tALT\tREF_POS\n"
+    assert output.read_text() == "REGION\tPOS\tREF\tALT\tREF_POS\tREF_POS_INSERTED\n"
 
 
 def test_end_to_end_rejects_a_position_past_the_consensus(tmp_path):
