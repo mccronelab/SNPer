@@ -1,6 +1,6 @@
 include { CONVERT_TSV_COORDS } from '../modules/convert_tsv_coords'
 include { IVAR_VARIANTS } from '../modules/ivar_variants'
-include { LIFTOFF } from '../modules/liftoff'
+include { NEXTCLADE } from '../modules/nextclade'
 
 workflow CALL_VARIANTS_IVAR {
     take:
@@ -11,10 +11,28 @@ workflow CALL_VARIANTS_IVAR {
         reference_gff = file(params.reference_gff)
         reference_fasta = file(params.reference_fasta)
 
-        // map reference GFF annotations to consensus genome. Keyed on
-        // (sample, segment) throughout so a sample's segments don't cross-join.
-        per_consensus_gff = consensus.map { sample, segment, consensus_fa -> [sample, segment, reference_fasta, consensus_fa, reference_gff] }
-          | LIFTOFF
+        // Map reference GFF annotations to consensus genome. `--input-ref` takes one
+        // record, so this batches a segment's consensus sequences across samples into a
+        // single run -- 8 for influenza, 1 for SARS-CoV-2. Sorted by name so the
+        // published MSA's row order doesn't depend on the order upstream tasks finish in.
+        nextclade = consensus
+          | map { _sample, segment, consensus_fa -> [segment, consensus_fa] }
+          | groupTuple(by:0, sort: { it.name })
+          | map { segment, consensus_fas -> [segment, consensus_fas, reference_fasta, reference_gff] }
+          | NEXTCLADE
+
+        // Re-key the per-segment GFF batch back onto (sample, segment). A consensus and
+        // its GFF are both named for the consensus record ID, so they join on basename;
+        // failOnMismatch turns any drift into an error rather than a dropped sample.
+        gff_by_record = nextclade.segment_gffs
+          | flatMap { _segment, gffs ->
+                (gffs instanceof Collection ? gffs : [gffs]).collect { gff -> [gff.baseName, gff] }
+            }
+
+        per_consensus_gff = consensus
+          | map { sample, segment, consensus_fa -> [consensus_fa.baseName, sample, segment] }
+          | join(gff_by_record, by:0, failOnMismatch: true, failOnDuplicate: true)
+          | map { _record_id, sample, segment, gff -> [sample, segment, gff] }
 
         // drop index files and call variants
         variants = variant_bams
