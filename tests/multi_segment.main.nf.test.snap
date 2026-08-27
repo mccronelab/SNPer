@@ -59,17 +59,17 @@
                 "SRR3360139_PB2.remap.sorted_coverage.tsv:md5,9d832d7baaca70d558d1f326c3da3aa0"
             ],
             [
-                "SRR3360139_HA.ref_coords.tsv:md5,cf8745ecc24773cb77cb63e3e2d17643",
-                "SRR3360139_M.ref_coords.tsv:md5,23bd351d0f2078ef7a1b33f134298d2d",
-                "SRR3360139_NP.ref_coords.tsv:md5,d79cc411823affa4dc7ebfcb4cd01251",
-                "SRR3360139_NS.ref_coords.tsv:md5,0f98bd8a313bca3a06ed283fa255e159",
-                "SRR3360139_N_A.ref_coords.tsv:md5,e3aad634949c216ded08755464c5242f",
-                "SRR3360139_PA.ref_coords.tsv:md5,edd5d1caf77617e2a2ff068d12388eca",
-                "SRR3360139_PB1.ref_coords.tsv:md5,5d558a6dc5664244badc9f9d692d80e8",
-                "SRR3360139_PB2.ref_coords.tsv:md5,632095dc65e0b0f234f677f27f617a76"
+                "SRR3360139_HA.ref_coords.tsv:md5,6cf062e93571a275c3039aadebb5d8e6",
+                "SRR3360139_M.ref_coords.tsv:md5,fb54a1ba78857729c8bc238285ee1c45",
+                "SRR3360139_NP.ref_coords.tsv:md5,9cea44bb476992d9025cd203a33a8a7f",
+                "SRR3360139_NS.ref_coords.tsv:md5,085a25939e6ccf4083f6cc4549079ba6",
+                "SRR3360139_N_A.ref_coords.tsv:md5,1fafe3fc04c2b7407b5fe50c7eef0d8e",
+                "SRR3360139_PA.ref_coords.tsv:md5,4449bd5a19a97ee09eb9aed11ab1bb27",
+                "SRR3360139_PB1.ref_coords.tsv:md5,9434c18005724265f4ef35aab663e226",
+                "SRR3360139_PB2.ref_coords.tsv:md5,917fad68e2a77035771b97b6c44fc390"
             ]
         ],
-        "timestamp": "2026-08-27T10:10:02.98277",
+        "timestamp": "2026-08-27T16:43:35.962472",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
