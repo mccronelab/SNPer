@@ -84,7 +84,7 @@
                 "fastp_min_length": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Discard reads shorter than this after trimming.",
+                    "description": "Discard reads shorter than this after trimming (fastp --length_required).",
                     "default": 36
                 },
                 "interleaved": {
@@ -96,7 +96,8 @@
                     "type": "string",
                     "enum": ["amplicon", "umi", "positional"],
                     "description": "Deduplication strategy for sample-sheet rows that do not set one.",
-                    "default": "positional"
+                    "default": "positional",
+                    "help_text": "'amplicon' does not deduplicate at all — it clips primers with samtools ampliconclip instead, and is the only value that reads primer_bedfile. 'umi' is UMI-aware samtools markdup --barcode-name, for MIPs and other tagged libraries. 'positional' is coordinate-based samtools markdup, for hybrid-capture and other untagged libraries. Renamed from sequencing_technique in v2.3.0-Beta along with its values; an old name is a hard error, not a silent fallback."
                 }
             }
         },
@@ -109,7 +110,8 @@
                     "type": "integer",
                     "minimum": 0,
                     "description": "ivar consensus -q: minimum base quality to count a base.",
-                    "default": 0
+                    "default": 0,
+                    "help_text": "Distinct from consensus_min_baseQ, which affects samtools mpileup that generates ivar consensus input."
                 },
                 "consensus_threshold": {
                     "type": "number",
@@ -167,19 +169,22 @@
                     "type": "integer",
                     "minimum": 0,
                     "description": "ivar variants -q: minimum base quality to count a base.",
-                    "default": 30
+                    "default": 30,
+                    "help_text": "Distinct from variant_min_baseQ, which affects samtools mpileup that generates ivar variants input."
                 },
                 "variant_min_baseQ": {
                     "type": "integer",
                     "minimum": 0,
                     "description": "samtools mpileup -Q (base quality) for the variant pileup.",
-                    "default": 30
+                    "default": 30,
+                    "help_text": "Applies to the published replicate_coverage/ depths as well."
                 },
                 "variant_min_mapQ": {
                     "type": "integer",
                     "minimum": 0,
                     "description": "samtools mpileup -q (map quality) for the variant pileup.",
-                    "default": 20
+                    "default": 20,
+                    "help_text": "Applies to the published replicate_coverage/ depths as well."
                 }
             }
         }

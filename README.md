@@ -95,15 +95,15 @@ Parameters are validated against `nextflow_schema.json` before any task is submi
 
 `nextflow run main.nf --help` prints every parameter with its type, default and description; `--help_param <name>` prints the full entry for a single parameter.
 
--   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
-- `reference_fasta`: A path to the reference genome for the replicon of interest.
-- `reference_gff`: Path to GFF file describing ORFs on reference genome.
+-   `sample_sheet`: Path to CSV format sample sheet. `sample` and `fastq1` are required, as is `fastq2` unless the row is interleaved. `sample` is used to relate data from separate replicates of the same sample. The optional columns `replicate_id`, `primer_id`, `interleaved` and `read_deduplication` override the corresponding params per row; `replicate_id` defaults to the sample ID. Relative FASTQ paths resolve against the sheet's own directory, not the launch directory.
+- `reference_fasta`: A path to the reference genome for the replicon of interest. May hold one record per segment. Its record IDs are the segment names, and must match the `reference_gff` seqids and the primer BED chrom values exactly — the aligned BAM is split by reference name, so a mismatch affects annotation, primer trimming and the coordinate lift.
+- `reference_gff`: Path to GFF file describing ORFs on reference genome, transferred onto each consensus by `nextclade run`. Seqids must match the `reference_fasta` record IDs.
 - `primer_csv`: Path to CSV mapping `primer_id` values to primer BED files, with columns `primer_bedfile` and `primer_id`. Each sample's `primer_id` in the sample sheet selects its BED file from this table, so different samples in one run may use different primer schemes. The `primer_id` must match a row exactly, including case; `None` selects an empty BED. Primer BED chrom values must match the reference FASTA headers.
 - `output_dir`: Path where output will be stored.
 - `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
 - `consensus_min_depth`: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
-- `consensus_coverage_cutoff`: Minimum percentage of the consensus genome which must be non-N characters (0-1, default 0.75).
+- `consensus_coverage_cutoff`: Minimum fraction of the consensus genome which must be non-N characters (0-1, default 0.75). Applied per segment, so one poorly covered segment drops only itself.
 - `consensus_min_baseQ`: Minimum base quality for a base to enter the `samtools mpileup` used for consensus generation. Defaults to 30. Distinct from `consensus_min_qual_score`, which is passed to `ivar consensus` itself.
 - `consensus_min_mapQ`: Minimum mapping quality to be used in `samtools mpileup` during consensus generation. Defaults to 20.
 - `variant_minQ`: Minimum score for base to be counted in variant calling. Default to 30.
