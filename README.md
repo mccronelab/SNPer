@@ -33,6 +33,13 @@ Alternatively, you can let Nextflow manage the repository with:
 nextflow run https://github.com/mccronelab/SNPer.git -profile test
 ```
 
+A list of parameters and their defaults is available with:
+```
+nextflow run main.nf --help
+// for more information on a specific parameter, run
+nextflow run main.nf --help_param <param>
+```
+
 ## Workflow
 
 ### Sample Sheet Processing
@@ -85,6 +92,8 @@ _Requires docker_
 ## Parameters 
 
 Parameters are validated against `nextflow_schema.json` before any task is submitted. An unrecognised key — a typo in a `-params-file`, or a parameter removed in an earlier release — stops the run rather than being silently ignored, as do missing required paths and out-of-range values. `sample_sheet`, `reference_fasta`, `reference_gff` and `output_dir` are required; everything else has a default.
+
+`nextflow run main.nf --help` prints every parameter with its type, default and description; `--help_param <name>` prints the full entry for a single parameter.
 
 -   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
 - `reference_fasta`: A path to the reference genome for the replicon of interest.
