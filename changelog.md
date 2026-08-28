@@ -23,6 +23,7 @@
 - Drop MAFFT and Liftoff, along with Liftoff's `minimap2` and `libparasail-dev` dependencies, from the container image. No process invokes them any more. No output change.
 - Publish only the polished consensus, and drop the `_polished` suffix from its filename and FASTA header. **Output change: `consensus_seqs/` no longer holds `*_rough.fa`, and `123_polished.fa` becomes `123.fa` (`123_HA_polished.fa` becomes `123_HA.fa`).** The record ID carries into the `msa/` query rows, the `gff3/` filenames and the `REGION` column of `variants/*.ref_coords.tsv`, which lose the suffix with it. No sequence, coordinate or annotation changes.
 - Add `--help`, which prints every parameter with its type, default and description from the schema; `--help_param <name>` prints one parameter's full entry.
+- Remove `modules/cutadapt.nf`, which no workflow included. Adapter trimming is fastp's.
 - Rename `data/reference/pr8_multisegment_test.gff3` to `pr8_renamed_ha_corrected.gff3` and correct its HA annotation against EF467821.1. Its seqids are the segment names the reference FASTA uses rather than NCBI accessions. See file header for details. **Behaviour change: `ivar variants` no longer annotates HA positions 1731-1733 as a missense D→A — they are 3'UTR.** All eight published GFF3s change, due to output headers; only HA's annotation content differs. Params files pointing at the old path must be updated.
 
 ## v2.3.0-Beta
