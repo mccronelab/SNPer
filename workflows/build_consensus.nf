@@ -14,8 +14,8 @@ include { SORT_INDEX_BAM as SI_REF; SORT_INDEX_BAM as SI_ROUGH; SORT_INDEX_BAM a
   from "../modules/sort_index_bam"
 include { SPLIT_BAM_BY_SEGMENT } from "../modules/split_bam_by_segment"
 
-// Name outputs with a segment token only for a multi-record reference; N=1 keeps
-// the historical single-segment names (123_polished.fa).
+// Name outputs with a segment token only for a multi-record reference; N=1 drops it
+// (123.fa rather than 123_MN908947.3.fa).
 def segmentLabel(segment, n_segments) {
     n_segments > 1 ? "_${segment}" : ""
 }
@@ -104,7 +104,9 @@ workflow CONSENSUS_GEN {
     bams_grouped_by_sample = processed_bam
       | groupTuple(by:[0,1]) // sample, segment
 
-    consensus_sequence = bams_grouped_by_sample.map{ sample, segment, meta, bam, bai -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, reference, "_rough"] }
+    // The rough consensus is an internal remap target: suffixed to keep it distinct
+    // from the polished sequence, and not published.
+    consensus_sequence = bams_grouped_by_sample.map{ sample, segment, meta, bam, bai -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, reference, "_rough", false] }
       | ROUGH_CONSENSUS // sample, segment, consensus
       // filter out consensus with no sequence, which sometimes occurs
       | filter { _sample, _segment, consensus_fa ->
@@ -127,7 +129,10 @@ workflow CONSENSUS_GEN {
       | combine(consensus_sequence, by:[0,1])
 
     polished_consensus = variant_bams_grouped_by_sample
-      | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, consensus, "_polished"] }
+      // No suffix: this is the published sequence, so it carries the plain
+      // sample/segment name in both the filename and the FASTA header. That name
+      // flows on to the nextclade query rows and the per-sample GFF3s.
+      | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, consensus, "", true] }
       | POLISH_CONSENSUS
       | GET_CONSENSUS_COVERAGE
       | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }

@@ -52,7 +52,7 @@ nextflow run https://github.com/mccronelab/SNPer.git -profile test
 2b. (`umi` and `positional` reads only) Deduplicate aligned reads with `samtools markdup`.
 3. Group reads based on sample ID. Merge reads, including replicates of the same sample, and call a consensus sequence with `iVar consensus`. Samples that failed to generate a consensus sequence are filtered out of the workflow.
 4. Remap aligned reads to the consensus genome and sort/index output BAM file.
-5. Call a 'polished' consensus sequence from remapped aligned reads.
+5. Call a 'polished' consensus sequence from remapped aligned reads. This is published to `consensus_seqs/`, named for its sample and segment. The first-pass 'rough' consensus is not published.
 6. Remap aligned reads to the polished consensus sequence.
 5. Get coverage information based on reads aligned to the consensus genome, filtering out any samples that fail to pass a user-defined coverage threshold (we typically use a 75% coverage threshold).
 

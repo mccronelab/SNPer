@@ -35,7 +35,7 @@ def read_query_ids(consensus_paths: List[str]) -> Dict[str, str]:
     Maps each consensus FASTA's record ID to its path.
 
     The record ID is read from the file rather than parsed from the filename:
-    `<sample>_<segment>_polished` cannot be split on "_" unambiguously (segment `N_A`,
+    `<sample>_<segment>` cannot be split on "_" unambiguously (segment `N_A`,
     sample `HS10498_A`). merge_mpileup_consensus.nf passes the same string to `ivar
     consensus -p` and `-i`, so the record ID and the file's basename agree by construction.
     """
