@@ -84,6 +84,8 @@ _Requires docker_
 
 ## Parameters 
 
+Parameters are validated against `nextflow_schema.json` before any task is submitted. An unrecognised key — a typo in a `-params-file`, or a parameter removed in an earlier release — stops the run rather than being silently ignored, as do missing required paths and out-of-range values. `sample_sheet`, `reference_fasta`, `reference_gff` and `output_dir` are required; everything else has a default.
+
 -   `sample_sheet`: Path to CSV format sample sheet. The sample sheet has 4 fields: sample ID, replicate ID, and 2 paired-end read FASTQ files. Sample ID is used to relate data from separate replicates of the same sample.
 - `reference_fasta`: A path to the reference genome for the replicon of interest.
 - `reference_gff`: Path to GFF file describing ORFs on reference genome.
@@ -98,7 +100,7 @@ _Requires docker_
 - `variant_minQ`: Minimum score for base to be counted in variant calling. Default to 30.
 - `variant_min_baseQ`: Minimum base quality for a base to pass the `samtools mpileup` used for variant calling and replicate coverage. Defaults to 30. Distinct from `variant_minQ`, which is passed to `ivar variants` itself.
 - `variant_min_mapQ`: Minimum mapping quality for a read to pass the `samtools mpileup` used for variant calling and replicate coverage. Defaults to 20.
-- `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.02.
+- `variant_freq_threshold`: Minimum variant frequency to pass `ivar variants`. Defaults to 0.01.
 - `variant_min_depth`: Minimum depth for a position to report variants (default 10).
 - `remove_unclipped_reads`: Boolean flag that controls whether `samtools ampliconclip` discards reads that are not trimmed (default true).
 - `skip_qc`: Boolean flag that skips the whole read-QC subworkflow — both FastQC and `fastp`. Note this also skips adapter and quality trimming, not just report generation.
@@ -106,4 +108,4 @@ _Requires docker_
 - `fastp_min_length`: Reads shorter than this after trimming are discarded (`fastp --length_required`, default 36).
 - `interleaved`: Boolean flag that sets the default value for sample sheet processing. Use this flag if you've omitted this field from the input sample sheeet (default false).
 - `primer_id_default`: Default setting for sample sheet processing, useful if your sample sheet doesn't have this field (and all samples use the same primers). Takes either a string or None.
-- `read_deduplication`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field. Selects how duplicate reads are handled: 'amplicon' (no deduplication; primers are clipped instead), 'umi' (UMI-aware `samtools markdup --barcode-name`, for MIPs and other UMI-tagged libraries), or 'positional' (coordinate-based `samtools markdup`, for hybrid-capture and other untagged libraries). Renamed from `sequencing_technique` in v2.3.0-Beta, along with its values.
+- `read_deduplication`: Default value for sample sheet processing, useful if the input sample sheet doesn't include this field (default 'positional'). Selects how duplicate reads are handled: 'amplicon' (no deduplication; primers are clipped instead), 'umi' (UMI-aware `samtools markdup --barcode-name`, for MIPs and other UMI-tagged libraries), or 'positional' (coordinate-based `samtools markdup`, for hybrid-capture and other untagged libraries). Renamed from `sequencing_technique` in v2.3.0-Beta, along with its values.

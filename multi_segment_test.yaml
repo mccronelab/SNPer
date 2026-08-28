@@ -1,6 +1,5 @@
 reference_fasta: './data/reference/pHW2000_PR8-N_A.fa'
 reference_gff: './data/reference/pr8_renamed_ha_corrected.gff3'
-primer_bed: ''
 sample_sheet: './testSampleSheet_multi_segment.csv'
 output_dir: './multiseg-out/'
 consensus_min_qual_score: 30

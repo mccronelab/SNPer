@@ -11,7 +11,6 @@ nextflow_pipeline {
             params {
                 reference_fasta = "$baseDir/data/reference/pHW2000_PR8-N_A.fa"
                 reference_gff = "$baseDir/data/reference/pr8_renamed_ha_corrected.gff3"
-                primer_bed = ''
                 sample_sheet = "$baseDir/tests/multi_segment_samples.csv"
                 output_dir = "$baseDir/tests/multiseg-test-out/"
                 consensus_min_qual_score = 30

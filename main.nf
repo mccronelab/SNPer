@@ -2,6 +2,7 @@ include { CONSENSUS_GEN } from "./workflows/build_consensus"
 include { CALL_VARIANTS_IVAR } from './workflows/call_variants_ivar'
 include { PROCESS_SAMPLE_SHEET } from './workflows/process_sample_sheet'
 include { READS_QC } from './workflows/process_reads'
+include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
 
 nextflow.enable.dsl=2
 // strict mode: https://www.nextflow.io/docs/latest/reference/feature-flags.html#config-feature-flags
@@ -9,6 +10,11 @@ nextflow.enable.strict = true
 
 
 workflow {
+    // Rejects unknown keys, missing required paths and out-of-range values before any
+    // task is submitted, rather than hours into a run.
+    validateParameters()
+    log.info paramsSummaryLog(workflow)
+
     // import values and files from params
     interleaved_default = params.interleaved
     default_read_deduplication = params.read_deduplication

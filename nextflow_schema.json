@@ -1,0 +1,194 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/mccronelab/SNPer/main/nextflow_schema.json",
+    "title": "mccronelab/SNPer pipeline parameters",
+    "description": "Viral in-host (iSNV) variant-calling workflow",
+    "type": "object",
+    "$defs": {
+        "input_output": {
+            "title": "Input and output",
+            "type": "object",
+            "description": "Sample sheet, reference, and where results are published.",
+            "required": ["sample_sheet", "reference_fasta", "reference_gff", "output_dir"],
+            "properties": {
+                "sample_sheet": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "description": "CSV of samples to process.",
+                    "help_text": "Requires 'sample' and 'fastq1' columns; 'fastq2' is required unless the run is interleaved. Optional columns 'replicate_id', 'primer_id', 'interleaved' and 'read_deduplication' override the corresponding params per row. Relative FASTQ paths resolve against this file's own directory."
+                },
+                "reference_fasta": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Reference genome FASTA. May hold one record per segment.",
+                    "help_text": "Record IDs are the segment names, and must match the GFF3 seqids, the primer BED chrom column, and each other exactly. The aligned BAM is split by reference name, so a mismatch silently misroutes annotation, primer trimming and the coordinate lift."
+                },
+                "reference_gff": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Reference annotation GFF3, transferred onto each consensus by Nextclade.",
+                    "help_text": "Seqids must match the reference FASTA record IDs."
+                },
+                "output_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Directory to publish results into."
+                }
+            }
+        },
+        "primers": {
+            "title": "Primers",
+            "type": "object",
+            "description": "Primer BED lookup and clipping behaviour.",
+            "properties": {
+                "primer_csv": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "description": "CSV mapping each primer_id to its BED file.",
+                    "default": "${projectDir}/primers.csv",
+                    "help_text": "Requires 'primer_id' and 'primer_bedfile' columns. Relative BED paths resolve against this file's own directory. A row with an empty primer_bedfile means 'no primers' (implying that inputs have already had primer sequences trimmed)."
+                },
+                "primer_id_default": {
+                    "type": "string",
+                    "description": "primer_id to use for sample-sheet rows that do not set one.",
+                    "help_text": "Must match a primer_id in primer_csv, case included; a value with no matching row drops those samples from the run. Intended as a convenience that handles common primer schemes."
+                },
+                "remove_unclipped_reads": {
+                    "type": "boolean",
+                    "description": "Discard reads that samtools ampliconclip did not clip.",
+                    "default": true
+                }
+            }
+        },
+        "read_processing": {
+            "title": "Read processing",
+            "type": "object",
+            "description": "QC, trimming and deduplication.",
+            "properties": {
+                "skip_qc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC and fastp entirely.",
+                    "default": false
+                },
+                "skip_fastqc": {
+                    "type": "boolean",
+                    "description": "Skip FastQC while still running fastp.",
+                    "default": false
+                },
+                "fastp_min_length": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Discard reads shorter than this after trimming.",
+                    "default": 36
+                },
+                "interleaved": {
+                    "type": "boolean",
+                    "description": "Treat fastq1 as an interleaved pair when the sample sheet has no 'interleaved' column.",
+                    "default": false
+                },
+                "read_deduplication": {
+                    "type": "string",
+                    "enum": ["amplicon", "umi", "positional"],
+                    "description": "Deduplication strategy for sample-sheet rows that do not set one.",
+                    "default": "positional"
+                }
+            }
+        },
+        "consensus": {
+            "title": "Consensus calling",
+            "type": "object",
+            "description": "Thresholds for mpileup / ivar consensus and the coverage filter.",
+            "properties": {
+                "consensus_min_qual_score": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ivar consensus -q: minimum base quality to count a base.",
+                    "default": 0
+                },
+                "consensus_threshold": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "ivar consensus -t: allele frequency needed to call a base.",
+                    "default": 0
+                },
+                "consensus_min_depth": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ivar consensus -m: minimum depth to call a base rather than N.",
+                    "default": 10
+                },
+                "consensus_coverage_cutoff": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Minimum fraction of non-N bases for a consensus to continue to variant calling. Applied per segment, so one poorly covered segment drops only itself.",
+                    "default": 0.75
+                },
+                "consensus_min_baseQ": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "samtools mpileup -Q (base quality) for the consensus pileup.",
+                    "default": 30
+                },
+                "consensus_min_mapQ": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "samtools mpileup -q (map quality) for the consensus pileup.",
+                    "default": 20
+                }
+            }
+        },
+        "variant_calling": {
+            "title": "Variant calling",
+            "type": "object",
+            "description": "Thresholds for mpileup / ivar variants.",
+            "properties": {
+                "variant_freq_threshold": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "ivar variants -t: minimum allele frequency to report a variant.",
+                    "default": 0.01
+                },
+                "variant_min_depth": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ivar variants -m: minimum depth to report a variant.",
+                    "default": 10
+                },
+                "variant_minQ": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ivar variants -q: minimum base quality to count a base.",
+                    "default": 30
+                },
+                "variant_min_baseQ": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "samtools mpileup -Q (base quality) for the variant pileup.",
+                    "default": 30
+                },
+                "variant_min_mapQ": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "samtools mpileup -q (map quality) for the variant pileup.",
+                    "default": 20
+                }
+            }
+        }
+    },
+    "allOf": [
+        { "$ref": "#/$defs/input_output" },
+        { "$ref": "#/$defs/primers" },
+        { "$ref": "#/$defs/read_processing" },
+        { "$ref": "#/$defs/consensus" },
+        { "$ref": "#/$defs/variant_calling" }
+    ]
+}
