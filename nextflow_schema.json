@@ -52,7 +52,7 @@
                     "mimetype": "text/csv",
                     "description": "CSV mapping each primer_id to its BED file.",
                     "default": "${projectDir}/primers.csv",
-                    "help_text": "Requires 'primer_id' and 'primer_bedfile' columns. Relative BED paths resolve against this file's own directory. A row with an empty primer_bedfile means 'no primers' (implying that inputs have already had primer sequences trimmed)."
+                    "help_text": "Requires 'primer_id' and 'primer_bedfile' columns. Relative BED paths resolve against this file's own directory. Every row needs a non-empty primer_bedfile; the 'None' row holds a quoted empty string as a placeholder, and its path is read only when read_deduplication is 'amplicon'."
                 },
                 "primer_id_default": {
                     "type": "string",
