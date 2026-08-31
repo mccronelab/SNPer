@@ -187,6 +187,18 @@
                     "help_text": "Applies to the published replicate_coverage/ depths as well."
                 }
             }
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "properties": {
+                "container_image": {
+                    "type": "string",
+                    "description": "Image every process runs in.",
+                    "default": "quay.io/mccronelab/snper:latest",
+                    "help_text": "Override this rather than -process.container, which the profiles' withName selector outranks. Ignored unless a container profile (docker, apptainer, test, ...) is active."
+                }
+            }
         }
     },
     "allOf": [
@@ -194,6 +206,7 @@
         { "$ref": "#/$defs/primers" },
         { "$ref": "#/$defs/read_processing" },
         { "$ref": "#/$defs/consensus" },
-        { "$ref": "#/$defs/variant_calling" }
+        { "$ref": "#/$defs/variant_calling" },
+        { "$ref": "#/$defs/generic_options" }
     ]
 }

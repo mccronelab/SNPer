@@ -10,6 +10,13 @@ nextflow.enable.strict = true
 
 
 workflow {
+    // nf-schema prints --help from an observer, but its session.cancel() only blocks task
+    // submission — this body still runs and stages work (nf-schema#218). Exit before it
+    // does; containsKey because strict mode rejects params.help on an ordinary run.
+    if (params.containsKey('help') || params.containsKey('helpFull')) {
+        exit 0
+    }
+
     // Rejects unknown keys, missing required paths and out-of-range values before any
     // task is submitted, rather than hours into a run.
     validateParameters()

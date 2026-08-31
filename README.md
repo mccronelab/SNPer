@@ -37,7 +37,7 @@ A list of parameters and their defaults is available with:
 ```
 nextflow run main.nf --help
 // for more information on a specific parameter, run
-nextflow run main.nf --help_param <param>
+nextflow run main.nf --help <param>
 ```
 
 ## Workflow
@@ -93,13 +93,14 @@ _Requires docker_
 
 Parameters are validated against `nextflow_schema.json` before any task is submitted. An unrecognised key — a typo in a `-params-file`, or a parameter removed in an earlier release — stops the run rather than being silently ignored, as do missing required paths and out-of-range values. `sample_sheet`, `reference_fasta`, `reference_gff` and `output_dir` are required; everything else has a default.
 
-`nextflow run main.nf --help` prints every parameter with its type, default and description; `--help_param <name>` prints the full entry for a single parameter.
+`nextflow run main.nf --help` prints every parameter with its type, default and description; `--help <name>` prints the full entry for a single parameter.
 
 -   `sample_sheet`: Path to CSV format sample sheet. `sample` and `fastq1` are required, as is `fastq2` unless the row is interleaved. `sample` is used to relate data from separate replicates of the same sample. The optional columns `replicate_id`, `primer_id`, `interleaved` and `read_deduplication` override the corresponding params per row; `replicate_id` defaults to the sample ID. Relative FASTQ paths resolve against the sheet's own directory, not the launch directory.
 - `reference_fasta`: A path to the reference genome for the replicon of interest. May hold one record per segment. Its record IDs are the segment names, and must match the `reference_gff` seqids and the primer BED chrom values exactly — the aligned BAM is split by reference name, so a mismatch affects annotation, primer trimming and the coordinate lift.
 - `reference_gff`: Path to GFF file describing ORFs on reference genome, transferred onto each consensus by `nextclade run`. Seqids must match the `reference_fasta` record IDs.
 - `primer_csv`: Path to CSV mapping `primer_id` values to primer BED files, with columns `primer_bedfile` and `primer_id`. Each sample's `primer_id` in the sample sheet selects its BED file from this table, so different samples in one run may use different primer schemes. The `primer_id` must match a row exactly, including case; `None` selects an empty BED. Primer BED chrom values must match the reference FASTA headers.
 - `output_dir`: Path where output will be stored.
+- `container_image`: Image every process runs in (default `quay.io/mccronelab/snper:latest`), used only when a container profile such as `docker` or `apptainer` is active. Override it with `--container_image <image>` — `-process.container` has no effect, because the profiles set the image through a `withName` selector that outranks a global assignment.
 - `consensus_min_qual_score`: Minimum score for base to be counted in consensus sequence generation. Default to 0, which somehow relates to indels.
 - `consensus_threshold`: Minimum frequency threshold to call consensus (0-1, default 0).
 - `consensus_min_depth`: Minimum depth to call consensus. `iVar consensus` recommends a default value of 10.
