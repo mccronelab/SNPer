@@ -21,32 +21,28 @@
                 "name": "workflow"
             },
             [
-                "102602009_polished.fa:md5,11c416edc1bb4d243eafed6dbffd67b0",
-                "102602009_rough.fa:md5,c71655bf80d6b9de15061c12f1d393f0",
-                "106801008_rough.fa:md5,9df96465c869c275c6fa5eff63069522",
-                "107301003_polished.fa:md5,355caa80d23b98c5c16934fb45d0c1fa",
-                "107301003_rough.fa:md5,3188a101d23e56a1c131ab5358cd8567",
-                "107802008_polished.fa:md5,31a9ab4aa95518b479fb543b5bd36d51",
-                "107802008_rough.fa:md5,9d2a275b1fbffec38d4703e5d8b6a4e4"
+                "102602009.fa:md5,6b9da41b4bbd15a06093f57ee241d3c3",
+                "107301003.fa:md5,04e47e0784876d2e62b06da5f41f8af9",
+                "107802008.fa:md5,c55c484327463a5d8f9ce36a98526c0c"
             ],
             [
-                "102602009_polished.gff3:md5,2cf2db7839da1246f1f85225e257bf97",
-                "107301003_polished.gff3:md5,fab92415d9ce6972809b39f60706b3a2"
+                "102602009.gff3:md5,b2737810741f77bd51ca90d4e966f530",
+                "107301003.gff3:md5,7cccc880d7ae1852bc9e8bf99a97f370"
             ],
             [
-                "102602009_A.remap.sorted_coverage.tsv:md5,0593f79d0d5715195ae93cd1dc30f733",
-                "102602009_B.remap.sorted_coverage.tsv:md5,7c9e37a8514069c7cf01ef57113fdacd",
-                "107301003_A.remap.sorted_coverage.tsv:md5,e3aa15f197ff2be0bc88382cd79bdd3e",
-                "107301003_B.remap.sorted_coverage.tsv:md5,227b351b6c20f0cdbe8400f9e49c6816"
+                "102602009_A.remap.sorted_coverage.tsv:md5,9aff82506f49e3c0bf7da2c877666226",
+                "102602009_B.remap.sorted_coverage.tsv:md5,b25775c1baa0603faf623c5c132b8619",
+                "107301003_A.remap.sorted_coverage.tsv:md5,74b4e10e602421c1a42a9dec178a0ce4",
+                "107301003_B.remap.sorted_coverage.tsv:md5,e9944f089c699add6f987b168bc18846"
             ],
             [
-                "102602009_A.ref_coords.tsv:md5,3dd72c2fa3a0c0b4011d005709f9d040",
-                "102602009_B.ref_coords.tsv:md5,4ab8970e552ef4a3d4ad44388d95e4f0",
-                "107301003_A.ref_coords.tsv:md5,dbbf567d65b70d2eb113319b258d5b7b",
+                "102602009_A.ref_coords.tsv:md5,33ba51492dc5745b53ed0a25be577845",
+                "102602009_B.ref_coords.tsv:md5,3328d3e5e50224613d46e568bcb795fe",
+                "107301003_A.ref_coords.tsv:md5,93c3a8c769ace9bee465280f3c71d831",
                 "107301003_B.ref_coords.tsv:md5,ac97f336c43fc46bf0c061e87b8bf4ec"
             ]
         ],
-        "timestamp": "2026-08-27T16:24:23.105423",
+        "timestamp": "2026-08-31T17:24:30.088923",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

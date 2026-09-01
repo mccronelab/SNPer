@@ -12,7 +12,7 @@ nextflow_pipeline {
                 reference_fasta = "$baseDir/data/reference/MN908947.fasta"
                 reference_gff = "$baseDir/data/reference/SARS_CoV_2.gff3"
                 sample_sheet = "$baseDir/tests/gh_actions_samples.csv"
-                output_dir = "$baseDir/tests/test-out/"
+                output_dir = "$outputDir"
                 consensus_min_qual_score = 30
                 consensus_threshold = 0
                 consensus_min_depth = 10
