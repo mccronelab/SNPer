@@ -159,7 +159,9 @@ workflow CONSENSUS_GEN {
       | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, consensus, "", true] }
       | POLISH_CONSENSUS
       | GET_CONSENSUS_COVERAGE
-      | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      // Coerce the cutoff: a --consensus_coverage_cutoff given on the command line
+      // arrives as a String, which Groovy refuses to compare against a Float.
+      | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage) >= (params.consensus_coverage_cutoff as Float) }
       | map { sample, segment, consensus, _coverage -> [sample, segment, consensus] }
 
     variant_bam_polished = variant_bam
