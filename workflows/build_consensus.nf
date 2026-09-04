@@ -69,15 +69,17 @@ workflow CONSENSUS_GEN {
     amplicon_bam = amplicon_bam_unp
       | map { meta, bam, index, ref -> [meta, bam, index, ref, meta.primer_bedfile] }
       | AMPLICON_CLIP  //  tuple val(meta), path("*.primertrim.bam")
-      | concat(preprocessed_bam.amplicon) // add back in BAMs derived from pre-trimmed FASTQs
+      | mix(preprocessed_bam.amplicon) // add back in BAMs derived from pre-trimmed FASTQs
       | PS_CON // tuple val(meta), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
     umi_bam = umi_bam_unp // we'll add UMI trimming process later, so preserve this structure for now
-      | concat(preprocessed_bam.umi)
+      | map { meta, bam, _index, _ref -> [meta, bam] } // DEDUP takes (meta, bam); the branch added an index and reference for AMPLICON_CLIP
+      | mix(preprocessed_bam.umi)
       | DEDUP_UMI
 
-    positional_bam = positional_bam_unp // we'll add hybrid-capture read trimming later, so preserve this structure for now
-      | concat(preprocessed_bam.positional)
+    positional_bam = positional_bam_unp
+      | map { meta, bam, _index, _ref -> [meta, bam] }
+      | mix(preprocessed_bam.positional)
       | DEDUP_POS
 
     // put all samples back into same channel, then split each per-replicate BAM
@@ -86,7 +88,7 @@ workflow CONSENSUS_GEN {
     // path: N=1 for a single-record reference. Stamp meta.segment from the
     // parent dir name of each split BAM, building a FRESH map per segment so
     // map aliasing can't overwrite it across the fan-out.
-    trimmed_bam = amplicon_bam.concat(umi_bam, positional_bam)
+    trimmed_bam = amplicon_bam.mix(umi_bam, positional_bam)
 
     // Removes samples with less mapped reads than --min_mapped_reads. If your primer
     // scheme does not match your samples, ampliconclip will drop almost
