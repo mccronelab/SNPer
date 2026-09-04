@@ -7,14 +7,8 @@ source snper-env/bin/activate
 
 pip install --upgrade pip
 pip install setuptools
-# install Bio for convert_tsv_coords.py
+# install Bio for the bin/ scripts
 pip install Bio
-
-# install liftoff
-git clone https://github.com/agshumate/Liftoff liftoff 
-cd liftoff
-pip install .
-cd
 
 # install cutadapt
 pip install cutadapt

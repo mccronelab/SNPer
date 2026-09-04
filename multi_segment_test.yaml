@@ -1,6 +1,5 @@
 reference_fasta: './data/reference/pHW2000_PR8-N_A.fa'
-reference_gff: './data/reference/pr8_multisegment_test.gff3'
-primer_bed: ''
+reference_gff: './data/reference/pr8_renamed_ha_corrected.gff3'
 sample_sheet: './testSampleSheet_multi_segment.csv'
 output_dir: './multiseg-out/'
 consensus_min_qual_score: 30
@@ -16,7 +15,6 @@ variant_minQ: 30
 variant_min_baseQ: 30
 remove_unclipped_reads: true
 skip_qc: false
-trimmomatic_jarfile: '/usr/local/bin/trimmomatic.jar'
 read_deduplication: 'positional'
 interleaved: false
 primer_id_default: 'none'

@@ -8,9 +8,9 @@
                 "errorReport": "",
                 "failed": false,
                 "trace": {
-                    "tasksCount": 100,
+                    "tasksCount": 96,
                     "tasksFailed": 0,
-                    "tasksSucceeded": 100
+                    "tasksSucceeded": 96
                 },
                 "stdout": [
                     
@@ -21,32 +21,26 @@
                 "name": "workflow"
             },
             [
-                "102602009_polished.fa:md5,d0b618a53da267459d43b390f3d74101",
-                "102602009_rough.fa:md5,bf7e113f946e0fa75aaa61c858efbf92",
-                "106801008_rough.fa:md5,9df96465c869c275c6fa5eff63069522",
-                "107301003_polished.fa:md5,94bf6d29722a4ccb003d4e6fe47e3fae",
-                "107301003_rough.fa:md5,5d562909b0c604f0fdcf6000b5c43dc5",
-                "107802008_polished.fa:md5,31a9ab4aa95518b479fb543b5bd36d51",
-                "107802008_rough.fa:md5,9d2a275b1fbffec38d4703e5d8b6a4e4"
+                "102602009.fa:md5,6b9da41b4bbd15a06093f57ee241d3c3",
+                "107301003.fa:md5,04e47e0784876d2e62b06da5f41f8af9",
+                "107802008.fa:md5,c55c484327463a5d8f9ce36a98526c0c"
             ],
             [
-                "102602009_polished.gff3:md5,7bdd880f2375e056a705ff18e76a95d9",
-                "107301003_polished.gff3:md5,62718ed899ab4853dc729082d54b03d5"
+                "102602009.gff3:md5,b2737810741f77bd51ca90d4e966f530",
+                "107301003.gff3:md5,7cccc880d7ae1852bc9e8bf99a97f370"
             ],
             [
-                "102602009_A.remap.sorted_coverage.tsv:md5,0febfac704b3af1a83ea1e3788afec09",
-                "102602009_B.remap.sorted_coverage.tsv:md5,7a1552861b23058b2950b784e8b9abda",
-                "107301003_A.remap.sorted_coverage.tsv:md5,d5c6598aaa8017bfa99e5fc2964f45e6",
-                "107301003_B.remap.sorted_coverage.tsv:md5,8035e93d1e5bf80d349ed6a9fed6379a"
+                "102602009_A.remap.sorted_coverage.tsv:md5,9aff82506f49e3c0bf7da2c877666226",
+                "102602009_B.remap.sorted_coverage.tsv:md5,b25775c1baa0603faf623c5c132b8619",
+                "107301003_A.remap.sorted_coverage.tsv:md5,74b4e10e602421c1a42a9dec178a0ce4"
             ],
             [
-                "102602009_A.ref_coords.tsv:md5,cf6939ca2c642e24c457e49e927134d3",
-                "102602009_B.ref_coords.tsv:md5,dc5744105823f0776210f8ecc9d547bf",
-                "107301003_A.ref_coords.tsv:md5,a7dbb39de8f2a66aa0f06496f1ee10c2",
-                "107301003_B.ref_coords.tsv:md5,3543e8980a49fa695de87275f3471070"
+                "102602009_A.ref_coords.tsv:md5,33ba51492dc5745b53ed0a25be577845",
+                "102602009_B.ref_coords.tsv:md5,3328d3e5e50224613d46e568bcb795fe",
+                "107301003_A.ref_coords.tsv:md5,93c3a8c769ace9bee465280f3c71d831"
             ]
         ],
-        "timestamp": "2026-07-31T14:58:20.259617",
+        "timestamp": "2026-09-04T14:08:40.898571",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
