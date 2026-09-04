@@ -3,6 +3,7 @@
 include { AMPLICON_CLIP } from "../modules/amplicon_clip"
 include { BWA_MEM as BWA_MEM_REF; BWA_MEM as BWA_MEM_ROUGH; BWA_MEM as BWA_MEM_POL;
   BWA_REMAP as BWA_REMAP_ROUGH; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
+include { COUNT_MAPPED_READS } from "../modules/count_mapped_reads"
 include { DEDUPLICATE_READS as DEDUP_UMI;  DEDUPLICATE_READS as DEDUP_POS } from "../modules/deduplicate_reads"
 include { FILTER_SORT_INDEX as FSI_CON; FILTER_SORT_INDEX as FSI_VAR;
   FILTER_SORT_INDEX as FSI_POL  } from "../modules/filter_sort_index"
@@ -48,8 +49,7 @@ workflow CONSENSUS_GEN {
         }
 
     // further split into different types of bam for differential processing. Add reference for amplicon_clip.nf
-    unprocessed_bam = consensus_bam.unprocessed.map { meta, sortedBam, bamIndex -> [meta, sortedBam, bamIndex, reference] } 
-      | filter { _meta, sortedBam, _bamIndex, _reference-> sortedBam.size() >= 1000 } //filter out empty BAMs
+    unprocessed_bam = consensus_bam.unprocessed.map { meta, sortedBam, bamIndex -> [meta, sortedBam, bamIndex, reference] }
       | branch { meta, _sortedBam, _bamIndex, _reference ->
         amplicon:       meta.read_deduplication.toLowerCase() == "amplicon"
         umi:            meta.read_deduplication.toLowerCase() == "umi"
@@ -86,7 +86,31 @@ workflow CONSENSUS_GEN {
     // path: N=1 for a single-record reference. Stamp meta.segment from the
     // parent dir name of each split BAM, building a FRESH map per segment so
     // map aliasing can't overwrite it across the fan-out.
-    processed_bam = amplicon_bam.concat(umi_bam, positional_bam)
+    trimmed_bam = amplicon_bam.concat(umi_bam, positional_bam)
+
+    // Removes samples with less mapped reads than --min_mapped_reads. If your primer
+    // scheme does not match your samples, ampliconclip will drop almost
+    // all reads, which can cause this filter to fail samples with deep coverage
+    gated_bam = trimmed_bam
+      | COUNT_MAPPED_READS // [meta, mapped read count]
+      | map { meta, mapped -> [meta, mapped.trim() as Integer] }
+      | join(trimmed_bam) // [meta, mapped, bam, bai]
+      | branch { _meta, mapped, _bam, _bai ->
+        keep:    mapped > (params.min_mapped_reads as Integer)
+        dropped: true
+      }
+
+    gated_bam.dropped.subscribe { meta, mapped, _bam, _bai ->
+      log.warn "Dropping ${meta.replicate_id}: ${mapped} mapped reads, at or below min_mapped_reads (${params.min_mapped_reads})."
+    }
+
+    gated_bam.dropped
+      .map { meta, mapped, _bam, _bai -> "${meta.sample}\t${meta.replicate_id}\t${mapped}\n" }
+      .collectFile(name: 'dropped_samples.tsv', storeDir: params.output_dir, sort: true,
+                   seed: "sample\treplicate_id\tmapped_reads\n")
+
+    processed_bam = gated_bam.keep
+      | map { meta, _mapped, bam, bai -> [meta, bam, bai] }
       | SPLIT_BAM_BY_SEGMENT // [meta, [segment bams], [segment bais]]
       | map { meta, bams, bais -> [meta, [bams].flatten(), [bais].flatten()] } // force lists when N=1
       | transpose() // [meta, segment bam, segment bai]

@@ -92,6 +92,13 @@
                     "description": "Treat fastq1 as an interleaved pair when the sample sheet has no 'interleaved' column.",
                     "default": false
                 },
+                "min_mapped_reads": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Drop a replicate whose BAM has this many or fewer mapped reads after primer clipping and deduplication.",
+                    "default": 1000,
+                    "help_text": "Counted once per replicate, after clipping and deduplication and before the BAM is split by segment, so it measures the reads that would actually reach consensus calling. Dropped replicates are named in a warning during the run and listed in dropped_samples.tsv in the output directory; the rest of the run continues. Under default behavior, 'amplicon' deduplication only retains trimmed reads- a primer scheme that does not match the samples empties the BAM entirely."
+                },
                 "read_deduplication": {
                     "type": "string",
                     "enum": ["amplicon", "umi", "positional"],

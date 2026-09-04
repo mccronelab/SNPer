@@ -1,6 +1,8 @@
 # Changelog
 
 ## v2.4.0-Beta
+- Add `count_mapped_reads.nf` and a `min_mapped_reads` param (default 1000), giving the pipeline one explicit point where a replicate leaves the run. `build_consensus.nf` counts mapped reads once per replicate after clipping and deduplication, drops those at or below the threshold with a named warning, and lists them in `dropped_samples.tsv` in the output directory. **Behaviour change: a replicate with too few mapped reads is now dropped rather than failing the run.** Previously such a replicate reached `SPLIT_BAM_BY_SEGMENT`, which emitted no files and crashed the workflow. Counted after clipping rather than after alignment.
+- Remove the `sortedBam.size() >= 1000` filter in `build_consensus.nf`, which silently dropped small BAMs on byte size and only on the `unprocessed` branch. `min_mapped_reads` supersedes it: it measures mapped reads rather than file size, covers the pre-trimmed branch too, and reports what it drops.
 - Replace Trimmomatic with `fastp`. **Behaviour change: variant and coverage output shifts, because adapter clipping now runs for the first time** — Trimmomatic's `ILLUMINACLIP` adapter file was never staged, so the step was skipped while the task still exited 0. On the influenza test sample, 4,638 reads / 37,245 bases are now adapter-trimmed.
 - Quality filtering follows fastp's defaults (`-q 15`, `-u 40`, `-n 5`); `MINLEN:36` becomes the `fastp_min_length` param. Cost on the influenza test sample: 4,322 of 2,404,726 reads dropped (0.18%). The variant and coverage TSVs change; consensus FASTAs and Liftoff GFF3s do not.
 - Fix interleaved input, which was broken whenever `skip_qc` was false.
