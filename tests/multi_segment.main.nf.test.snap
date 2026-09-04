@@ -8,9 +8,9 @@
                 "errorReport": "",
                 "failed": false,
                 "trace": {
-                    "tasksCount": 94,
+                    "tasksCount": 95,
                     "tasksFailed": 0,
-                    "tasksSucceeded": 94
+                    "tasksSucceeded": 95
                 },
                 "stdout": [
                     
@@ -61,7 +61,7 @@
                 "SRR3360139_PB2.ref_coords.tsv:md5,017a865e082544c78362f74dd9de7cc3"
             ]
         ],
-        "timestamp": "2026-08-31T17:02:53.75629",
+        "timestamp": "2026-09-04T14:21:05.058483",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

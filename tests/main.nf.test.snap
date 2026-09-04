@@ -8,9 +8,9 @@
                 "errorReport": "",
                 "failed": false,
                 "trace": {
-                    "tasksCount": 99,
+                    "tasksCount": 96,
                     "tasksFailed": 0,
-                    "tasksSucceeded": 99
+                    "tasksSucceeded": 96
                 },
                 "stdout": [
                     
@@ -32,17 +32,15 @@
             [
                 "102602009_A.remap.sorted_coverage.tsv:md5,9aff82506f49e3c0bf7da2c877666226",
                 "102602009_B.remap.sorted_coverage.tsv:md5,b25775c1baa0603faf623c5c132b8619",
-                "107301003_A.remap.sorted_coverage.tsv:md5,74b4e10e602421c1a42a9dec178a0ce4",
-                "107301003_B.remap.sorted_coverage.tsv:md5,e9944f089c699add6f987b168bc18846"
+                "107301003_A.remap.sorted_coverage.tsv:md5,74b4e10e602421c1a42a9dec178a0ce4"
             ],
             [
                 "102602009_A.ref_coords.tsv:md5,33ba51492dc5745b53ed0a25be577845",
                 "102602009_B.ref_coords.tsv:md5,3328d3e5e50224613d46e568bcb795fe",
-                "107301003_A.ref_coords.tsv:md5,93c3a8c769ace9bee465280f3c71d831",
-                "107301003_B.ref_coords.tsv:md5,ac97f336c43fc46bf0c061e87b8bf4ec"
+                "107301003_A.ref_coords.tsv:md5,93c3a8c769ace9bee465280f3c71d831"
             ]
         ],
-        "timestamp": "2026-08-31T17:24:30.088923",
+        "timestamp": "2026-09-04T14:08:40.898571",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
