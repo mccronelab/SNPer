@@ -3,6 +3,7 @@
 include { AMPLICON_CLIP } from "../modules/amplicon_clip"
 include { BWA_MEM as BWA_MEM_REF; BWA_MEM as BWA_MEM_ROUGH; BWA_MEM as BWA_MEM_POL;
   BWA_REMAP as BWA_REMAP_ROUGH; BWA_REMAP as BWA_REMAP_POL } from "../modules/bwa_mem"
+include { COUNT_MAPPED_READS } from "../modules/count_mapped_reads"
 include { DEDUPLICATE_READS as DEDUP_UMI;  DEDUPLICATE_READS as DEDUP_POS } from "../modules/deduplicate_reads"
 include { FILTER_SORT_INDEX as FSI_CON; FILTER_SORT_INDEX as FSI_VAR;
   FILTER_SORT_INDEX as FSI_POL  } from "../modules/filter_sort_index"
@@ -14,8 +15,8 @@ include { SORT_INDEX_BAM as SI_REF; SORT_INDEX_BAM as SI_ROUGH; SORT_INDEX_BAM a
   from "../modules/sort_index_bam"
 include { SPLIT_BAM_BY_SEGMENT } from "../modules/split_bam_by_segment"
 
-// Name outputs with a segment token only for a multi-record reference; N=1 keeps
-// the historical single-segment names (123_polished.fa).
+// Name outputs with a segment token only for a multi-record reference; N=1 drops it
+// (123.fa rather than 123_MN908947.3.fa).
 def segmentLabel(segment, n_segments) {
     n_segments > 1 ? "_${segment}" : ""
 }
@@ -48,8 +49,7 @@ workflow CONSENSUS_GEN {
         }
 
     // further split into different types of bam for differential processing. Add reference for amplicon_clip.nf
-    unprocessed_bam = consensus_bam.unprocessed.map { meta, sortedBam, bamIndex -> [meta, sortedBam, bamIndex, reference] } 
-      | filter { _meta, sortedBam, _bamIndex, _reference-> sortedBam.size() >= 1000 } //filter out empty BAMs
+    unprocessed_bam = consensus_bam.unprocessed.map { meta, sortedBam, bamIndex -> [meta, sortedBam, bamIndex, reference] }
       | branch { meta, _sortedBam, _bamIndex, _reference ->
         amplicon:       meta.read_deduplication.toLowerCase() == "amplicon"
         umi:            meta.read_deduplication.toLowerCase() == "umi"
@@ -69,15 +69,17 @@ workflow CONSENSUS_GEN {
     amplicon_bam = amplicon_bam_unp
       | map { meta, bam, index, ref -> [meta, bam, index, ref, meta.primer_bedfile] }
       | AMPLICON_CLIP  //  tuple val(meta), path("*.primertrim.bam")
-      | concat(preprocessed_bam.amplicon) // add back in BAMs derived from pre-trimmed FASTQs
+      | mix(preprocessed_bam.amplicon) // add back in BAMs derived from pre-trimmed FASTQs
       | PS_CON // tuple val(meta), path("*.removed.primertrim.sorted.bam"), path("*.removed.primertrim.sorted.bai")
 
     umi_bam = umi_bam_unp // we'll add UMI trimming process later, so preserve this structure for now
-      | concat(preprocessed_bam.umi)
+      | map { meta, bam, _index, _ref -> [meta, bam] } // DEDUP takes (meta, bam); the branch added an index and reference for AMPLICON_CLIP
+      | mix(preprocessed_bam.umi)
       | DEDUP_UMI
 
-    positional_bam = positional_bam_unp // we'll add hybrid-capture read trimming later, so preserve this structure for now
-      | concat(preprocessed_bam.positional)
+    positional_bam = positional_bam_unp
+      | map { meta, bam, _index, _ref -> [meta, bam] }
+      | mix(preprocessed_bam.positional)
       | DEDUP_POS
 
     // put all samples back into same channel, then split each per-replicate BAM
@@ -86,7 +88,31 @@ workflow CONSENSUS_GEN {
     // path: N=1 for a single-record reference. Stamp meta.segment from the
     // parent dir name of each split BAM, building a FRESH map per segment so
     // map aliasing can't overwrite it across the fan-out.
-    processed_bam = amplicon_bam.concat(umi_bam, positional_bam)
+    trimmed_bam = amplicon_bam.mix(umi_bam, positional_bam)
+
+    // Removes samples with less mapped reads than --min_mapped_reads. If your primer
+    // scheme does not match your samples, ampliconclip will drop almost
+    // all reads, which can cause this filter to fail samples with deep coverage
+    gated_bam = trimmed_bam
+      | COUNT_MAPPED_READS // [meta, mapped read count]
+      | map { meta, mapped -> [meta, mapped.trim() as Integer] }
+      | join(trimmed_bam) // [meta, mapped, bam, bai]
+      | branch { _meta, mapped, _bam, _bai ->
+        keep:    mapped > (params.min_mapped_reads as Integer)
+        dropped: true
+      }
+
+    gated_bam.dropped.subscribe { meta, mapped, _bam, _bai ->
+      log.warn "Dropping ${meta.replicate_id}: ${mapped} mapped reads, at or below min_mapped_reads (${params.min_mapped_reads})."
+    }
+
+    gated_bam.dropped
+      .map { meta, mapped, _bam, _bai -> "${meta.sample}\t${meta.replicate_id}\t${mapped}\n" }
+      .collectFile(name: 'dropped_samples.tsv', storeDir: params.output_dir, sort: true,
+                   seed: "sample\treplicate_id\tmapped_reads\n")
+
+    processed_bam = gated_bam.keep
+      | map { meta, _mapped, bam, bai -> [meta, bam, bai] }
       | SPLIT_BAM_BY_SEGMENT // [meta, [segment bams], [segment bais]]
       | map { meta, bams, bais -> [meta, [bams].flatten(), [bais].flatten()] } // force lists when N=1
       | transpose() // [meta, segment bam, segment bai]
@@ -104,7 +130,9 @@ workflow CONSENSUS_GEN {
     bams_grouped_by_sample = processed_bam
       | groupTuple(by:[0,1]) // sample, segment
 
-    consensus_sequence = bams_grouped_by_sample.map{ sample, segment, meta, bam, bai -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, reference, "_rough"] }
+    // The rough consensus is an internal remap target: suffixed to keep it distinct
+    // from the polished sequence, and not published.
+    consensus_sequence = bams_grouped_by_sample.map{ sample, segment, meta, bam, bai -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, reference, "_rough", false] }
       | ROUGH_CONSENSUS // sample, segment, consensus
       // filter out consensus with no sequence, which sometimes occurs
       | filter { _sample, _segment, consensus_fa ->
@@ -127,10 +155,15 @@ workflow CONSENSUS_GEN {
       | combine(consensus_sequence, by:[0,1])
 
     polished_consensus = variant_bams_grouped_by_sample
-      | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, consensus, "_polished"] }
+      // No suffix: this is the published sequence, so it carries the plain
+      // sample/segment name in both the filename and the FASTA header. That name
+      // flows on to the nextclade query rows and the per-sample GFF3s.
+      | map { sample, segment, meta, bam, bai, consensus -> [sample, segment, segmentLabel(segment, n_segments), meta, bam, bai, consensus, "", true] }
       | POLISH_CONSENSUS
       | GET_CONSENSUS_COVERAGE
-      | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage)>= params.consensus_coverage_cutoff }
+      // Coerce the cutoff: a --consensus_coverage_cutoff given on the command line
+      // arrives as a String, which Groovy refuses to compare against a Float.
+      | filter { _sample, _segment, _consensus, coverage -> Float.parseFloat(coverage) >= (params.consensus_coverage_cutoff as Float) }
       | map { sample, segment, consensus, _coverage -> [sample, segment, consensus] }
 
     variant_bam_polished = variant_bam
@@ -139,7 +172,12 @@ workflow CONSENSUS_GEN {
       | BWA_REMAP_POL
       | SI_POL
 
-    GET_VARIANT_READ_DEPTH(variant_bam_polished)
+    // Re-join the polished consensus, dropped by the remap, for depth reporting.
+    variant_bam_polished
+      | map { meta, bam, bai -> [meta.sample, meta.segment, meta, bam, bai] }
+      | combine(polished_consensus, by:[0,1])
+      | map { _sample, _segment, meta, bam, bai, consensus -> [meta, bam, bai, consensus] }
+      | GET_VARIANT_READ_DEPTH
 
   emit:
     variant_bams = variant_bam_polished // [meta, bam, bai]

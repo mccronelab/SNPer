@@ -3,6 +3,111 @@
 #!processor NCBI annotwriter
 #!genome-build ViralMultiSegProj15521
 #!genome-build-accession NCBI_Assembly:GCF_000865725.1
+#
+# ============================================================================
+# PR8 annotation for data/reference/pHW2000_PR8-N_A.fa
+#
+# Derived from NCBI RefSeq GCF_000865725.1 (NC_002016-NC_002023,
+# A/Puerto Rico/8/1934), with two local modifications:
+#
+#   1. seqids renamed from accessions to segment names
+#   2. HA coordinates corrected against GenBank EF467821.1
+#
+# Both are recorded below, because both are the kind of edit that looks
+# arbitrary a year later.
+#
+# ---------------------------------------------------------------------------
+# 1. Why the seqids are segment names and not accessions
+# ---------------------------------------------------------------------------
+# SNPer requires one name to be identical across every artifact:
+#
+#     reference FASTA headers == GFF seqids == primer BED chrom
+#         == consensus record IDs == meta.segment
+#
+# Liftoff transfers annotations by seqid, `samtools ampliconclip` matches
+# primer BED chrom against each read's reference name, and the split-by-
+# segment step keys on reference name. If these drift, annotation transfer,
+# primer trimming and the coordinate lift-back all misfire silently.
+#
+# pHW2000_PR8-N_A.fa is a DNASTAR export whose headers are segment names
+# (PB2, PB1, PA, HA, NP, N_A, M, NS) and which carries no accession, so the
+# GFF is what had to move. NA is spelled "N_A" to match the FASTA.
+#
+# ---------------------------------------------------------------------------
+# 2. Why HA differs from RefSeq
+# ---------------------------------------------------------------------------
+# The reference is derived from ATCC VR-1469 stock, which matches GenBank
+# EF467821.1 (assembly GCA_037915385.1, "passage level ExMDCK6") -- not the
+# RefSeq PR8 lineage. PR8 is not a single sequence; separately passaged
+# laboratory stocks have measurably diverged, and this one is 3 nt shorter
+# in HA than NC_002017.1:
+#
+#                     5'UTR      CDS       3'UTR    total   protein
+#     this reference    32   +   1698   +    45   =  1775    565 aa
+#     NC_002017.1       32   +   1701   +    45   =  1778    566 aa
+#
+# Both UTRs are intact at their canonical lengths, the ATG at position 33 is
+# the first ATG in the sequence, and there is a single clean TGA at codon 566
+# with no internal stop. The three missing nucleotides are one in-frame codon
+# deleted from inside the CDS -- real lineage sequence, not a truncated
+# assembly (which would have eaten a UTR or shifted the frame).
+#
+# Comparing HA sub-features against EF467821.1 localizes it to HA1, the
+# antigenic head domain: the signal peptide is identical (33..83, aa 1-17),
+# HA1 is one residue shorter (aa 18-343 vs 18-344), and HA2 is the same
+# length shifted 3 nt earlier. The exact codon is not pinned down.
+#
+# What the uncorrected annotation did wrong: CDS 33..1733 overran the real
+# stop codon by one codon. Nothing errored -- nextclade kept the CDS and iVar
+# accepted the GFF -- but iVar annotated variants at 1731-1733 as a missense
+# D->A in HA when those positions are 3' UTR and never translated. Verified
+# by running `ivar variants` over both annotations on a synthetic variant at
+# position 1732: the corrected file reports GFF_FEATURE=NA, as it should.
+#
+# ---------------------------------------------------------------------------
+# Why RefSeq was corrected rather than replaced by GCA_037915385.1
+# ---------------------------------------------------------------------------
+# GCA_037915385.1 matches this reference exactly (all 8 segment lengths, all
+# 11 CDS translate cleanly) and was used as the authority for every corrected
+# value below. It was not adopted wholesale because:
+#
+#   - it has no PA-X; that submission predates PA-X's characterization,
+#     while RefSeq annotates it at 25..597+599..784 (validates clean)
+#   - it names NEP "NS2", the legacy name
+#   - its protein IDs differ (NP_040980.1 vs ABO21709.1), which would change
+#     every iVar GFF_FEATURE string in published variants/ output
+#   - its seqids are accessions, so the rename in (1) would be needed anyway
+#
+# Every non-HA CDS coordinate is already identical between the two files.
+# HA was the only disagreement, so HA is the only thing changed.
+#
+# ---------------------------------------------------------------------------
+# Exact HA changes, applied on top of the seqid rename (all sourced from EF467821.1)
+# ---------------------------------------------------------------------------
+#   ##sequence-region HA          1 1778     ->  1 1775
+#   region                        1..1778    ->  1..1775
+#   region ID           NC_002017.1:1..1778  ->  HA:1..1775
+#   gene                          33..1733   ->  33..1730
+#   CDS                           33..1733   ->  33..1730
+#   signal_peptide_region_of_CDS  33..83         unchanged
+#   mature_protein_region_of_CDS  84..1064   ->  84..1061    (ID :18..344  -> :18..343)
+#   mature_protein_region_of_CDS  1065..1730 ->  1062..1727  (ID :345..566 -> :344..565)
+#
+# The region ID dropped the accession rather than becoming NC_002017.1:1..1775,
+# because this HA is not a subrange of NC_002017.1 -- it is a different lineage's
+# sequence. Naming EF467821.1 there would assert a base-for-base identity that
+# has not been checked (only lengths and CDS validity were). Provenance lives in
+# this header; the ID only has to be unique within the file. The other seven
+# segments keep their accession IDs, which are still accurate.
+#
+# Known remaining wart: the HA sub-features use Parent=gene-FLUAVs4gp1 rather
+# than Parent=cds-NP_040980.1. That is a workaround for Liftoff, not a
+# transcription error -- restore the correct cds- parent only once Liftoff is
+# removed from the pipeline, since undoing it earlier re-breaks Liftoff.
+#
+# Conner Copeland, 2026-08-25
+# ============================================================================
+#
 ##sequence-region PB2 1 2341
 ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
 PB2	RefSeq	region	1	2341	.	+	.	ID=NC_002023.1:1..2341;Dbxref=taxon:211044;Name=1;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=1;serotype=H1N1;strain=A/Puerto Rico/8/1934
@@ -23,14 +128,14 @@ PA	RefSeq	CDS	25	2175	.	+	0	ID=cds-NP_040986.1;Parent=gene-FLUAVs3gp1;Dbxref=GOA
 PA	RefSeq	gene	25	784	.	+	.	ID=gene-FLUAVs3gp2;Dbxref=GeneID:13229134;Name=PA-X;gbkey=Gene;gene=PA-X;gene_biotype=protein_coding;locus_tag=FLUAVs3gp2
 PA	RefSeq	CDS	25	597	.	+	0	ID=cds-YP_006495785.1;Parent=gene-FLUAVs3gp2;Dbxref=GenBank:YP_006495785.1,GeneID:13229134;Name=YP_006495785.1;exception=ribosomal slippage;gbkey=CDS;gene=PA-X;locus_tag=FLUAVs3gp2;product=PA-X protein;protein_id=YP_006495785.1
 PA	RefSeq	CDS	599	784	.	+	0	ID=cds-YP_006495785.1;Parent=gene-FLUAVs3gp2;Dbxref=GenBank:YP_006495785.1,GeneID:13229134;Name=YP_006495785.1;exception=ribosomal slippage;gbkey=CDS;gene=PA-X;locus_tag=FLUAVs3gp2;product=PA-X protein;protein_id=YP_006495785.1
-##sequence-region HA 1 1778
+##sequence-region HA 1 1775
 ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
-HA	RefSeq	region	1	1778	.	+	.	ID=NC_002017.1:1..1778;Dbxref=taxon:211044;Name=4;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=4;serotype=H1N1;strain=A/Puerto Rico/8/1934
-HA	RefSeq	gene	33	1733	.	+	.	ID=gene-FLUAVs4gp1;Dbxref=GeneID:956529;Name=HA;gbkey=Gene;gene=HA;gene_biotype=protein_coding;locus_tag=FLUAVs4gp1
-HA	RefSeq	CDS	33	1733	.	+	0	ID=cds-NP_040980.1;Parent=gene-FLUAVs4gp1;Dbxref=GOA:P03452,UniProtKB/Swiss-Prot:P03452,GenBank:NP_040980.1,GeneID:956529;Name=NP_040980.1;gbkey=CDS;gene=HA;locus_tag=FLUAVs4gp1;product=haemagglutinin;protein_id=NP_040980.1
+HA	RefSeq	region	1	1775	.	+	.	ID=HA:1..1775;Dbxref=taxon:211044;Name=4;collection-date=1934;country=Puerto Rico;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Puerto Rico/8/34(H1N1));segment=4;serotype=H1N1;strain=A/Puerto Rico/8/1934
+HA	RefSeq	gene	33	1730	.	+	.	ID=gene-FLUAVs4gp1;Dbxref=GeneID:956529;Name=HA;gbkey=Gene;gene=HA;gene_biotype=protein_coding;locus_tag=FLUAVs4gp1
+HA	RefSeq	CDS	33	1730	.	+	0	ID=cds-NP_040980.1;Parent=gene-FLUAVs4gp1;Dbxref=GOA:P03452,UniProtKB/Swiss-Prot:P03452,GenBank:NP_040980.1,GeneID:956529;Name=NP_040980.1;gbkey=CDS;gene=HA;locus_tag=FLUAVs4gp1;product=haemagglutinin;protein_id=NP_040980.1
 HA	RefSeq	signal_peptide_region_of_CDS	33	83	.	+	.	ID=id-NP_040980.1:1..17;Parent=gene-FLUAVs4gp1;gbkey=Prot
-HA	RefSeq	mature_protein_region_of_CDS	84	1064	.	+	.	ID=id-NP_040980.1:18..344;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA1;protein_id=YP_163735.1
-HA	RefSeq	mature_protein_region_of_CDS	1065	1730	.	+	.	ID=id-NP_040980.1:345..566;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA2;protein_id=YP_163736.1
+HA	RefSeq	mature_protein_region_of_CDS	84	1061	.	+	.	ID=id-NP_040980.1:18..343;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA1;protein_id=YP_163735.1
+HA	RefSeq	mature_protein_region_of_CDS	1062	1727	.	+	.	ID=id-NP_040980.1:344..565;Parent=gene-FLUAVs4gp1;gbkey=Prot;product=HA2;protein_id=YP_163736.1
 ##sequence-region NP 1 1565
 ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=211044
 NP	RefSeq	region	1	1565	.	+	.	ID=NC_002019.1:1..1565;Dbxref=taxon:211044;Name=5;gbkey=Src;genome=genomic;mol_type=viral cRNA;segment=5;strain=A/Puerto Rico/8/1934(H1N1)

@@ -1,0 +1,76 @@
+nextflow_process {
+
+    name "Test Process FASTP"
+    script "modules/fastp.nf"
+    process "FASTP"
+
+    // Both cases run off FASTQs tracked in data/fastq/, so this test needs no
+    // network access and no sample-sheet secret.
+
+    test("Paired-end input is adapter trimmed") {
+
+        when {
+            params {
+                fastp_min_length = 36
+                output_dir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ replicate_id: 'pe_test', interleaved: false ],
+                    [
+                        file("$baseDir/data/fastq/HS10498-A_1.fastq.gz"),
+                        file("$baseDir/data/fastq/HS10498-A_2.fastq.gz")
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.out.reads[0][1].size() == 2
+
+            // The regression this guards: Trimmomatic's ILLUMINACLIP adapter file was
+            // never staged into the task dir, so it dropped the clipping step, logged a
+            // FileNotFoundException and still exited 0. Asserting on process success
+            // would have passed throughout. Assert that clipping actually happened.
+            def report = path(process.out.json[0][1]).json
+            assert report.adapter_cutting.adapter_trimmed_reads > 0
+            assert report.adapter_cutting.adapter_trimmed_bases > 0
+        }
+    }
+
+    test("Interleaved input is split into paired output") {
+
+        // Interleaved input was broken under the process this replaces: TRIMMOMATIC
+        // always ran `PE` against ${paired_reads}, which for an interleaved sample is a
+        // single file where TrimmomaticPE requires two. fastp reads it natively.
+
+        when {
+            params {
+                fastp_min_length = 36
+                output_dir = "$outputDir"
+            }
+            process {
+                """
+                input[0] = [
+                    [ replicate_id: 'interleaved_test', interleaved: true ],
+                    [ file("$baseDir/data/fastq/HS10498-A_interleaved_5k.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+
+            // one file in, two out -- READS_QC relies on this to flip meta.interleaved
+            // to false, since everything downstream expects a genuine R1/R2 pair.
+            assert process.out.reads[0][1].size() == 2
+
+            def report = path(process.out.json[0][1]).json
+            assert report.summary.before_filtering.total_reads == 10000
+        }
+    }
+}

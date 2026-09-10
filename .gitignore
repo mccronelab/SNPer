@@ -14,6 +14,7 @@ tests/work
 # Written at CI run time from the ACTIONS_SAMPLESHEET secret; its URLs are
 # masked in the workflow logs, so it must never be committed
 tests/gh_actions_samples.csv
+tests/gh_actions_samples_archive.csv
 
 # Pipeline output dirs (multiseg-out/ deliberately NOT ignored — it is the
 # multi-segment test output currently under review, and only a few MB)
