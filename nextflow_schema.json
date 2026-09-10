@@ -37,6 +37,12 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "Directory to publish results into."
+                },
+                "publish_bam": {
+                    "type": "boolean",
+                    "description": "Flag that controls whether final variant-calling BAM files are included in workflow output. Defaults to False.",
+                    "default": false,
+                    "help_text": "When set, this flag directs the workflow to create an output directory (variant_call_bams) that contains BAM files for each variant TSV."
                 }
             }
         },
