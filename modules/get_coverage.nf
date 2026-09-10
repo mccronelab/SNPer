@@ -1,6 +1,7 @@
 process GET_VARIANT_READ_DEPTH {
     label 'process_high'
     publishDir "${params.output_dir}/replicate_coverage", mode: 'copy'
+    publishDir "${params.output_dir}/variant_call_bams/", mode: 'copy', pattern: "*.bam", enabled: params.publish_bam
     tag "${meta.replicate_id}"
 
     cpus 1
@@ -12,6 +13,7 @@ process GET_VARIANT_READ_DEPTH {
 
     output:
         path "*.tsv"
+        path "${bam}"
 
     script:
     // Same mpileup as ivar_variants.nf, so the published depth is the depth iVar saw.

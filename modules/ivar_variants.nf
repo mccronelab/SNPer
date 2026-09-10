@@ -8,7 +8,6 @@ process IVAR_VARIANTS {
     memory { 2G * task.attempt }
     time { 4.h * task.attempt }
     tag "${meta.replicate_id}"
-    publishDir "${params.output_dir}/variant_call_bams/", mode: 'copy', pattern: "*.bam", enabled: params.publish_bam
 
     input:
         tuple val(meta), path(bam), path(consensus), path(gff)
