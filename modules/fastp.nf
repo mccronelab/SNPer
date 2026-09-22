@@ -31,9 +31,11 @@ process FASTP {
     def input_args = meta.interleaved
         ? "--interleaved_in --in1 ${reads[0]}"
         : "--in1 ${reads[0]} --in2 ${reads[1]} --detect_adapter_for_pe"
+    def config_args = task.ext.args ?: ' ' 
     """
     fastp \\
         ${input_args} \\
+        ${config_args} \\
         --out1 ${rep_id}_paired.r1.fastq.gz \\
         --out2 ${rep_id}_paired.r2.fastq.gz \\
         --length_required ${params.fastp_min_length} \\
