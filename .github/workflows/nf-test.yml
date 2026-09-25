@@ -33,6 +33,11 @@ jobs:
     - name: build-image
       run: docker build -t snper-ci:latest containers/
 
+    - name: unit-test-bin-scripts
+      run: |
+        python3 -m pip install --quiet pytest biopython
+        python3 -m pytest tests/ -q
+
     - name: get-samplesheet
       env:
         SAMPLES_URL: ${{ secrets.SAMPLES_URL }}
@@ -42,4 +47,4 @@ jobs:
         echo "$ACTIONS_SAMPLESHEET" > tests/gh_actions_samples.csv
 
     - name: run-test
-      run: nf-test test tests/gh_actions.main.nf.test --profile ci_test --ci
+      run: nf-test test tests/gh_actions.main.nf.test tests/fastp.nf.test --profile ci_test --ci
