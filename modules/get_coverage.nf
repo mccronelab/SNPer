@@ -1,6 +1,6 @@
 process GET_VARIANT_READ_DEPTH {
     label 'process_high'
-    publishDir "${params.output_dir}/replicate_coverage", mode: 'copy'
+    publishDir "${params.output_dir}/replicate_coverage", mode: 'copy', pattern: "*.tsv"
     publishDir "${params.output_dir}/variant_call_bams/", mode: 'copy', pattern: "*.bam", enabled: params.publish_bam
     tag "${meta.replicate_id}"
 
