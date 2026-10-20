@@ -198,6 +198,12 @@
                     "description": "samtools mpileup -q (map quality) for the variant pileup.",
                     "default": 20,
                     "help_text": "Applies to the published replicate_coverage/ depths as well."
+                },
+                "variant_use_BAQ":{
+                    "type":"boolean",
+                    "description": "update quality scores with BAQ prior to ivar variants",
+                    "default":true,
+                    "help_text":"Set to false to trigger '-B' in samtools mpileup and skip the BAQ component of the quality score."
                 }
             }
         },
