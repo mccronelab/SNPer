@@ -198,6 +198,18 @@
                     "description": "samtools mpileup -q (map quality) for the variant pileup.",
                     "default": 20,
                     "help_text": "Applies to the published replicate_coverage/ depths as well."
+                },
+                "variant_use_BAQ":{
+                    "type":"boolean",
+                    "description": "update quality scores with BAQ prior to ivar variants",
+                    "default":true,
+                    "help_text":"Set to false to trigger '-B' in samtools mpileup and skip the BAQ component of the quality score."
+                },
+                "variant_disable_overlap":{
+                    "type":"boolean",
+                    "description": "By default mpileup updates base qualities when the same base is detected in both members of a read pair. Doing so represents confidence the base is not a sequence error, but such overlaps may not be evenly distributed across the genome. ",
+                    "default":false,
+                    "help_text":"Disable the overlap detection in samtools mpileup. true inserts -x into the mpileup command"
                 }
             }
         },

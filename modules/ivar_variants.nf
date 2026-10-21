@@ -18,11 +18,13 @@ process IVAR_VARIANTS {
     script:
     // name from meta, not the BAM: simpleName truncates at the first dot, which
     // would collide segments whose names share a prefix (MN908947.1 / MN908947.3)
+    def use_BAQ=params.variant_use_BAQ ? '':'--no-BAQ'
+    def disable_overlap=params.variant_disable_overlap? '-x':''
     """
     {
         samtools faidx ${consensus}
         samtools sort ${bam} \
-        | samtools mpileup -a -d 0 -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ}  -f ${consensus} - \
+        | samtools mpileup -a -d 0 -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ}  -f ${consensus} ${use_BAQ} ${disable_overlap} - \
         | ivar variants -p ${meta.replicate_id}${meta.segment_label}.variants -q ${params.variant_minQ} -m ${params.variant_min_depth} -t ${params.variant_freq_threshold} -r ${consensus} -g ${gff}
     } 2> var_errors.txt
 

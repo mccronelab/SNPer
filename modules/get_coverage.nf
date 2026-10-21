@@ -18,9 +18,11 @@ process GET_VARIANT_READ_DEPTH {
     script:
     // Same mpileup as ivar_variants.nf, so the published depth is the depth iVar saw.
     // This is mpileup, so -Q is the base-quality floor.
+        def use_BAQ=params.variant_use_BAQ ? '':'--no-BAQ'
+        def disable_overlap=params.variant_disable_overlap? '-x':''
         """
         samtools faidx ${consensus}
-        samtools mpileup -a -d 0 -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ} -f ${consensus} ${bam} \
+        samtools mpileup -a -d 0 -Q ${params.variant_min_baseQ} -q ${params.variant_min_mapQ} -f ${consensus} ${use_BAQ} ${disable_overlap} ${bam} \
             | cut -f1,2,4 > ${bam.baseName}_coverage.tsv
         """
 }

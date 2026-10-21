@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.1-Beta
+- Add 'variant_use_BAQ', an option that specifies whether `samtools mpileup` should use BAQ during variant calling (default: true).
+- Add `variant_disable_overlap`, an option that disables `samtools mpileup` detection of overlapping reads in a read pair during variant calling (default: false). Read overlap detection can cause very high PHRED scores, since it sums overlapping base qualities that agree with each other.
+
 ## v2.4.0-Beta
 - Add `count_mapped_reads.nf` and a `min_mapped_reads` param (default 1000), giving the pipeline one explicit point where a replicate leaves the run. `build_consensus.nf` counts mapped reads once per replicate after clipping and deduplication, drops those at or below the threshold with a named warning, and lists them in `dropped_samples.tsv` in the output directory. **Behaviour change: a replicate with too few mapped reads is now dropped rather than failing the run.** Previously such a replicate reached `SPLIT_BAM_BY_SEGMENT`, which emitted no files and crashed the workflow. Counted after clipping rather than after alignment.
 - Fix `consensus_coverage_cutoff` failing the run when passed on the command line. `--consensus_coverage_cutoff 0.75` arrives as a String, which Groovy refuses to compare against the parsed coverage Float. Values from `nextflow.config`, a profile or a `-params-file` were already numbers and unaffected.
